@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="A short guide to writing practical SOPs that stay useful in day-to-day work."
+    />
+    <title>What makes a practical SOP actually useful | Mezbaul Blog</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --surface: rgba(255, 255, 255, 0.78);
+        --surface-strong: #fcfaf6;
+        --text: #1f2933;
+        --muted: #5d6b74;
+        --accent: #2f6b5f;
+        --border: rgba(31, 41, 51, 0.12);
+        --shadow: 0 20px 45px rgba(31, 41, 51, 0.06);
+        --max-width: 980px;
+        --reading-width: 720px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(47, 107, 95, 0.12), transparent 28%),
+          linear-gradient(180deg, #f7f4ed 0%, var(--bg) 100%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        width: min(calc(100% - 2rem), var(--max-width));
+        margin: 0 auto;
+        padding: 1.25rem 0 4rem;
+      }
+
+      .topbar,
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .topbar {
+        padding: 0.9rem 0 2.6rem;
+      }
+
+      .brand,
+      .nav a,
+      .home-link,
+      .footer a {
+        text-decoration: none;
+      }
+
+      .brand {
+        font-size: 0.95rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .nav {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .nav a,
+      .footer a {
+        color: var(--muted);
+      }
+
+      .article-shell,
+      .footer {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .article-shell {
+        border-radius: 28px;
+        padding: 2rem;
+      }
+
+      .eyebrow,
+      .meta,
+      .section-label {
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.76rem;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      h1,
+      h2 {
+        font-weight: 400;
+        line-height: 1.08;
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 13ch;
+        font-size: clamp(2.8rem, 7vw, 5rem);
+        margin-top: 0.8rem;
+      }
+
+      .intro {
+        max-width: 58ch;
+        font-size: 1.14rem;
+        line-height: 1.8;
+        color: var(--muted);
+        margin: 1.25rem 0 0;
+      }
+
+      .hero-media {
+        margin-top: 1.8rem;
+      }
+
+      .hero-media img {
+        display: block;
+        width: 100%;
+        height: auto;
+        border-radius: 20px;
+      }
+
+      .hero-media figcaption {
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+
+      .meta {
+        display: block;
+        margin-top: 1.3rem;
+        color: var(--muted);
+      }
+
+      article {
+        max-width: var(--reading-width);
+        margin-top: 2.6rem;
+      }
+
+      article p {
+        margin: 1rem 0 0;
+        line-height: 1.9;
+        color: #33424d;
+        font-size: 1.05rem;
+      }
+
+      article h2 {
+        font-size: 2rem;
+        margin-top: 2.4rem;
+      }
+
+      .related {
+        margin-top: 3rem;
+        padding-top: 1.6rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .related-list {
+        display: grid;
+        gap: 0.9rem;
+        margin-top: 1rem;
+      }
+
+      .related-item {
+        padding: 1rem 1.1rem;
+        border-radius: 18px;
+        background: var(--surface-strong);
+        border: 1px solid var(--border);
+      }
+
+      .related-item a {
+        text-decoration: none;
+      }
+
+      .related-item strong {
+        display: block;
+        font-weight: 400;
+        font-size: 1.05rem;
+      }
+
+      .related-item span {
+        display: block;
+        margin-top: 0.35rem;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .footer {
+        margin-top: 2rem;
+        padding: 1.2rem 1.3rem;
+        border-radius: 20px;
+      }
+
+      .footer small {
+        color: var(--muted);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(calc(100% - 1.25rem), var(--max-width));
+        }
+
+        .topbar,
+        .footer {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .article-shell {
+          padding: 1.35rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <a class="brand" href="../index.html">Mezbaul Blog</a>
+        <nav class="nav" aria-label="Primary">
+          <a href="../index.html#featured">Featured</a>
+          <a href="../index.html#writing">Writing</a>
+          <a href="../index.html#about">About</a>
+        </nav>
+      </header>
+
+      <main class="article-shell">
+        <a class="home-link meta" href="../index.html">Back to homepage</a>
+        <p class="eyebrow">Documentation</p>
+        <h1>What makes a practical SOP actually useful</h1>
+        <p class="intro">
+          A procedure is not valuable because it is long or formal. It is
+          valuable when someone can use it during real work without needing a
+          second explanation.
+        </p>
+        <span class="meta">April 4, 2026 · 4 min read</span>
+        <figure class="hero-media">
+          <img
+            src="../images/posts/sop-cover.jpg"
+            alt="An office desk with papers, a cup, and office tools"
+            width="1280"
+            height="853"
+            decoding="async"
+            fetchpriority="high"
+          />
+          <figcaption>
+            Photo: <a href="https://commons.wikimedia.org/wiki/File:New_Office_Desk_(2459273720).jpg">Wikimedia Commons</a>
+          </figcaption>
+        </figure>
+
+        <article>
+          <p>
+            Many SOPs fail for a simple reason: they are written to look
+            complete, not to be used. They become documents that sit in a
+            folder, difficult to scan and disconnected from the situations they
+            were meant to support. A practical SOP has a different purpose. It
+            helps someone do the work with more confidence and less confusion.
+          </p>
+          <p>
+            The first test of a useful SOP is clarity. Can a person understand
+            when this process applies, what the expected outcome is, and what
+            steps matter most? If the answer is no, the document may be
+            detailed, but it is not helpful yet.
+          </p>
+
+          <h2>Keep it close to the real workflow</h2>
+          <p>
+            A strong SOP follows the actual order of work. It does not jump
+            between exceptions, background, and edge cases before the main path
+            is clear. People need the normal route first. Extra detail can come
+            after that.
+          </p>
+
+          <h2>Write for the person doing the task</h2>
+          <p>
+            The document should respect the reader's time. Short sections,
+            direct language, and obvious decision points help far more than
+            formal wording. It is also useful to name the owner of the process,
+            any required inputs, and the signs that the task is complete.
+          </p>
+
+          <h2>Review and adjust after real use</h2>
+          <p>
+            Documentation improves when it meets reality. If teammates keep
+            asking the same question, skipping a step, or inventing their own
+            workaround, that is feedback. The SOP should evolve with the work
+            instead of pretending the first version was perfect.
+          </p>
+
+          <p>
+            A good procedure creates confidence. It helps people act without
+            guessing, reduces avoidable mistakes, and makes handoffs easier. In
+            that sense, a practical SOP is not just documentation. It is a tool
+            for steadier operations.
+          </p>
+        </article>
+
+        <section class="related" aria-labelledby="related-title">
+          <p class="section-label">More writing</p>
+          <h2 id="related-title">Related posts</h2>
+          <div class="related-list">
+            <div class="related-item">
+              <a href="how-operational-clarity-saves-technical-time.html">
+                <strong>How operational clarity saves technical time</strong>
+                <span>Clear systems reduce interruptions before they become technical delays.</span>
+              </a>
+            </div>
+            <div class="related-item">
+              <a href="support-requests-and-follow-through.html">
+                <strong>A simple approach to support requests and follow-through</strong>
+                <span>Support processes become more reliable when requests and ownership stay visible.</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <small>Mezbaul Blog. Built for thoughtful writing.</small>
+        <nav class="nav" aria-label="Footer">
+          <a href="../index.html">Home</a>
+          <a href="https://mezbaul.bd/">Portfolio</a>
+          <a href="https://mezbaul.bd/#contact">Contact</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>

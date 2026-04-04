@@ -3,10 +3,646 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Mezbaul's blog on operations, systems, workflows, and practical writing."
+    />
     <title>Mezbaul Blog</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --surface: rgba(255, 255, 255, 0.72);
+        --surface-strong: #fcfaf6;
+        --text: #1f2933;
+        --muted: #5d6b74;
+        --accent: #2f6b5f;
+        --accent-soft: rgba(47, 107, 95, 0.12);
+        --border: rgba(31, 41, 51, 0.12);
+        --shadow: 0 20px 45px rgba(31, 41, 51, 0.06);
+        --max-width: 1120px;
+        --reading-width: 720px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(47, 107, 95, 0.12), transparent 28%),
+          linear-gradient(180deg, #f7f4ed 0%, var(--bg) 100%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        width: min(calc(100% - 2rem), var(--max-width));
+        margin: 0 auto;
+        padding: 1.25rem 0 4rem;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 0.9rem 0;
+      }
+
+      .brand {
+        text-decoration: none;
+        font-size: 0.95rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .nav {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .nav a {
+        text-decoration: none;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+
+      .hero {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(260px, 0.8fr);
+        gap: 2rem;
+        padding: 4rem 0 3rem;
+        align-items: end;
+      }
+
+      .eyebrow,
+      .section-label {
+        margin: 0 0 1rem;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        font-size: 0.76rem;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-weight: 400;
+        line-height: 1.06;
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 11ch;
+        font-size: clamp(3rem, 7vw, 5.8rem);
+      }
+
+      .hero p {
+        max-width: 58ch;
+        font-size: 1.14rem;
+        line-height: 1.75;
+        color: var(--muted);
+        margin: 1.4rem 0 0;
+      }
+
+      .hero-note {
+        padding: 1.4rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 22px;
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(14px);
+      }
+
+      .hero-note p {
+        margin: 0;
+        font-size: 0.98rem;
+        line-height: 1.7;
+      }
+
+      .hero-actions {
+        display: flex;
+        gap: 0.9rem;
+        flex-wrap: wrap;
+        margin-top: 1.75rem;
+      }
+
+      .button,
+      .button-secondary {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 1rem;
+        border-radius: 999px;
+        text-decoration: none;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 0.94rem;
+      }
+
+      .button {
+        background: var(--text);
+        color: #f8f5ef;
+      }
+
+      .button-secondary {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.5);
+      }
+
+      section {
+        padding-top: 2.5rem;
+      }
+
+      .section-head {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .section-head p {
+        max-width: 48ch;
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 1.25rem;
+      }
+
+      .card,
+      .post-row,
+      .about,
+      .footer {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .card {
+        border-radius: 24px;
+        overflow: hidden;
+      }
+
+      .card-body {
+        padding: 1.5rem;
+      }
+
+      .card-media {
+        display: block;
+        aspect-ratio: 16 / 10;
+        background: var(--accent-soft);
+      }
+
+      .card-media img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .card span,
+      .post-row .meta,
+      .footer small {
+        display: inline-block;
+        color: var(--muted);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 0.82rem;
+        letter-spacing: 0.04em;
+      }
+
+      .card h3 {
+        font-size: 1.55rem;
+        margin-top: 0.85rem;
+      }
+
+      .card p {
+        color: var(--muted);
+        line-height: 1.75;
+        margin: 0.9rem 0 0;
+      }
+
+      .card a,
+      .post-row a {
+        text-decoration: none;
+      }
+
+      .post-list {
+        display: grid;
+        gap: 1rem;
+      }
+
+      .post-row {
+        display: grid;
+        grid-template-columns: 180px minmax(0, 1fr);
+        gap: 1.25rem;
+        align-items: start;
+        padding: 1rem;
+        border-radius: 20px;
+      }
+
+      .post-row-media {
+        display: block;
+        aspect-ratio: 16 / 10;
+        border-radius: 16px;
+        overflow: hidden;
+        background: var(--accent-soft);
+      }
+
+      .post-row-media img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .post-row h3 {
+        font-size: 1.45rem;
+        margin-bottom: 0.45rem;
+      }
+
+      .post-row p {
+        margin: 0;
+        line-height: 1.7;
+        color: var(--muted);
+      }
+
+      .about {
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(220px, 0.8fr);
+        gap: 2rem;
+        padding: 1.75rem;
+        border-radius: 26px;
+      }
+
+      .about p {
+        max-width: var(--reading-width);
+        line-height: 1.8;
+        color: var(--muted);
+        margin: 0.9rem 0 0;
+      }
+
+      .about-list {
+        display: grid;
+        gap: 0.9rem;
+        align-content: start;
+      }
+
+      .about-list div {
+        padding: 1rem 1.1rem;
+        border-radius: 18px;
+        background: var(--surface-strong);
+        border: 1px solid var(--border);
+      }
+
+      .about-list strong {
+        display: block;
+        margin-bottom: 0.3rem;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 0.82rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--accent);
+      }
+
+      .about-list span {
+        color: var(--muted);
+        line-height: 1.6;
+      }
+
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+        margin-top: 3rem;
+        padding: 1.2rem 1.3rem;
+        border-radius: 20px;
+      }
+
+      .footer nav {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .footer a {
+        text-decoration: none;
+        color: var(--muted);
+      }
+
+      .muted-link {
+        color: var(--accent);
+      }
+
+      @media (max-width: 920px) {
+        .hero,
+        .about,
+        .feature-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .hero {
+          padding-top: 2.8rem;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(calc(100% - 1.25rem), var(--max-width));
+        }
+
+        .topbar,
+        .section-head,
+        .footer {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .post-row {
+          grid-template-columns: 1fr;
+          gap: 0.6rem;
+        }
+
+        h1 {
+          max-width: 12ch;
+        }
+      }
+    </style>
   </head>
   <body>
-    <h1>Mezbaul Blog</h1>
-    <p>Coming soon.</p>
+    <div class="page">
+      <header class="topbar">
+        <a class="brand" href="#top">Mezbaul Blog</a>
+        <nav class="nav" aria-label="Primary">
+          <a href="#featured">Featured</a>
+          <a href="#writing">Writing</a>
+          <a href="#about">About</a>
+        </nav>
+      </header>
+
+      <main id="top">
+        <section class="hero" aria-labelledby="hero-title">
+          <div>
+            <p class="eyebrow">Notes on work, tech, travel, and everyday curiosity</p>
+            <h1 id="hero-title">A quiet place for practical writing.</h1>
+            <p>
+              A personal blog for ideas, lessons, and observations across
+              different parts of life, from engineering operations and web
+              fundamentals to travel, systems, and whatever feels worth
+              writing down.
+            </p>
+            <div class="hero-actions">
+              <a class="button" href="#writing">Read Articles</a>
+              <a class="button-secondary" href="https://mezbaul.bd/">Visit Portfolio</a>
+            </div>
+          </div>
+
+          <aside class="hero-note" aria-label="Site note">
+            <p class="section-label">Editorial note</p>
+            <p>
+              This blog is designed to feel calm, direct, and useful. The goal
+              is to keep a thoughtful record of things I learn, notice, and
+              want to return to.
+            </p>
+          </aside>
+        </section>
+
+        <section id="featured" aria-labelledby="featured-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Featured</p>
+              <h2 id="featured-title">Featured posts</h2>
+            </div>
+            <p>
+              The blog is open to different topics, but these first published
+              pieces start with the work I know most closely.
+            </p>
+          </div>
+
+          <div class="feature-grid">
+            <article class="card">
+              <a class="card-media" href="posts/how-operational-clarity-saves-technical-time.html" aria-label="Read How operational clarity saves technical time">
+                <img
+                  src="images/posts/operations-thumb.jpg"
+                  alt="A laptop on a desk beside a notebook"
+                  width="500"
+                  height="369"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 920px) calc(100vw - 2.5rem), 30vw"
+                />
+              </a>
+              <div class="card-body">
+                <span>Operations</span>
+                <h3>
+                  <a href="posts/how-operational-clarity-saves-technical-time.html">How operational clarity saves technical time</a>
+                </h3>
+                <p>
+                  Why stronger routines, handoffs, and documentation free up
+                  engineers to focus on actual technical work.
+                </p>
+              </div>
+            </article>
+
+            <article class="card">
+              <a class="card-media" href="posts/support-requests-and-follow-through.html" aria-label="Read A simple approach to support requests and follow-through">
+                <img
+                  src="images/posts/support-thumb.jpg"
+                  alt="A group of people working together outdoors"
+                  width="500"
+                  height="357"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 920px) calc(100vw - 2.5rem), 30vw"
+                />
+              </a>
+              <div class="card-body">
+                <span>Support Systems</span>
+                <h3>
+                  <a href="posts/support-requests-and-follow-through.html">A simple approach to support requests and follow-through</a>
+                </h3>
+                <p>
+                  A practical approach to intake, ownership, and communication so
+                  internal support work does not get lost.
+                </p>
+              </div>
+            </article>
+
+            <article class="card">
+              <a class="card-media" href="posts/practical-sop-guide.html" aria-label="Read What makes a practical SOP actually useful">
+                <img
+                  src="images/posts/sop-thumb.jpg"
+                  alt="An office desk with papers, a cup, and office tools"
+                  width="500"
+                  height="333"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 920px) calc(100vw - 2.5rem), 30vw"
+                />
+              </a>
+              <div class="card-body">
+                <span>Documentation</span>
+                <h3>
+                  <a href="posts/practical-sop-guide.html">What makes a practical SOP actually useful</a>
+                </h3>
+                <p>
+                  A short guide to writing procedures people will actually use in
+                  day-to-day work.
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="writing" aria-labelledby="writing-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">Recent Writing</p>
+              <h2 id="writing-title">Structured like a notebook, not a newsroom</h2>
+            </div>
+            <p>
+              A simple list keeps the focus on titles and reading flow. More
+              topics can grow from here without changing the structure.
+            </p>
+          </div>
+
+          <div class="post-list">
+            <article class="post-row">
+              <a class="post-row-media" href="posts/how-operational-clarity-saves-technical-time.html" aria-label="Read How operational clarity saves technical time">
+                <img
+                  src="images/posts/operations-thumb.jpg"
+                  alt="A laptop on a desk beside a notebook"
+                  width="500"
+                  height="369"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 640px) calc(100vw - 2.5rem), 180px"
+                />
+              </a>
+              <div>
+                <div class="meta">Operations</div>
+                <h3><a href="posts/how-operational-clarity-saves-technical-time.html">How operational clarity saves technical time</a></h3>
+                <p>
+                  Why better routines, documentation, and ownership can remove
+                  invisible work from engineering teams.
+                </p>
+              </div>
+            </article>
+
+            <article class="post-row">
+              <a class="post-row-media" href="posts/support-requests-and-follow-through.html" aria-label="Read A simple approach to support requests and follow-through">
+                <img
+                  src="images/posts/support-thumb.jpg"
+                  alt="A group of people working together outdoors"
+                  width="500"
+                  height="357"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 640px) calc(100vw - 2.5rem), 180px"
+                />
+              </a>
+              <div>
+                <div class="meta">Support</div>
+                <h3><a href="posts/support-requests-and-follow-through.html">A simple approach to support requests and follow-through</a></h3>
+                <p>
+                  Designing office and internal support workflows that are easy
+                  to track, easy to understand, and harder to forget.
+                </p>
+              </div>
+            </article>
+
+            <article class="post-row">
+              <a class="post-row-media" href="posts/practical-sop-guide.html" aria-label="Read What makes a practical SOP actually useful">
+                <img
+                  src="images/posts/sop-thumb.jpg"
+                  alt="An office desk with papers, a cup, and office tools"
+                  width="500"
+                  height="333"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 640px) calc(100vw - 2.5rem), 180px"
+                />
+              </a>
+              <div>
+                <div class="meta">Documentation</div>
+                <h3><a href="posts/practical-sop-guide.html">What makes a practical SOP actually useful</a></h3>
+                <p>
+                  A short guide to writing documentation people will use in
+                  real work instead of documents that only look complete.
+                </p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section id="about" aria-labelledby="about-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">About</p>
+              <h2 id="about-title">Professional in tone, personal in intent</h2>
+            </div>
+          </div>
+
+          <div class="about">
+            <div>
+              <p>
+                I work in engineering operations, but I do not want this site
+                to be limited to one lane. This blog is meant to hold a wider
+                mix of writing: professional lessons, technical notes, travel
+                reflections, and other ideas that feel useful or memorable.
+              </p>
+              <p>
+                If the portfolio site is the formal introduction, this blog is
+                the slower, more flexible companion to it.
+              </p>
+            </div>
+
+            <div class="about-list" aria-label="Site principles">
+              <div>
+                <strong>Minimal</strong>
+                <span>Low noise, strong hierarchy, generous whitespace.</span>
+              </div>
+              <div>
+                <strong>Readable</strong>
+                <span>Editorial width, calm pacing, easy scanning.</span>
+              </div>
+              <div>
+                <strong>Grounded</strong>
+                <span>Useful writing over visual excess.</span>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer class="footer">
+        <small>Mezbaul Blog. Built for thoughtful writing.</small>
+        <nav aria-label="Footer">
+          <a href="https://mezbaul.bd/">Portfolio</a>
+          <a href="https://mezbaul.bd/#contact">Contact</a>
+          <a class="muted-link" href="#top">Back to top</a>
+        </nav>
+      </footer>
+    </div>
   </body>
 </html>
