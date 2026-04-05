@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="About Mezbaul Blog and the ideas behind the writing."
+    />
+    <title>About | Mezbaul Blog</title>
+    <style>
+      :root {
+        --bg: #f4f1ea;
+        --surface: rgba(255, 255, 255, 0.78);
+        --surface-strong: #fcfaf6;
+        --text: #1f2933;
+        --muted: #5d6b74;
+        --accent: #2f6b5f;
+        --border: rgba(31, 41, 51, 0.12);
+        --shadow: 0 20px 45px rgba(31, 41, 51, 0.06);
+        --max-width: 980px;
+        --reading-width: 720px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Georgia, "Times New Roman", serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top left, rgba(47, 107, 95, 0.12), transparent 28%),
+          linear-gradient(180deg, #f7f4ed 0%, var(--bg) 100%);
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .page {
+        width: min(calc(100% - 2rem), var(--max-width));
+        margin: 0 auto;
+        padding: 1.25rem 0 4rem;
+      }
+
+      .topbar,
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .topbar {
+        padding: 0.9rem 0 2.6rem;
+      }
+
+      .brand,
+      .nav a,
+      .footer a {
+        text-decoration: none;
+      }
+
+      .brand {
+        font-size: 0.95rem;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      .nav {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .nav a,
+      .footer a {
+        color: var(--muted);
+      }
+
+      .shell,
+      .footer,
+      .principles li {
+        border: 1px solid var(--border);
+        background: var(--surface);
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(12px);
+      }
+
+      .shell {
+        border-radius: 28px;
+        padding: 2rem;
+      }
+
+      .eyebrow,
+      .section-label {
+        margin: 0 0 1rem;
+        color: var(--accent);
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        font-size: 0.76rem;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      h1,
+      h2 {
+        font-weight: 400;
+        line-height: 1.08;
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 11ch;
+        font-size: clamp(2.8rem, 7vw, 5rem);
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      .intro,
+      .content p {
+        max-width: var(--reading-width);
+        color: var(--muted);
+        line-height: 1.85;
+      }
+
+      .intro {
+        font-size: 1.14rem;
+        margin: 1.25rem 0 0;
+      }
+
+      .content {
+        margin-top: 2.6rem;
+      }
+
+      .content p {
+        margin: 1rem 0 0;
+      }
+
+      .principles {
+        list-style: none;
+        padding: 0;
+        margin: 2rem 0 0;
+        display: grid;
+        gap: 1rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .principles li {
+        border-radius: 20px;
+        padding: 1.1rem;
+      }
+
+      .principles strong {
+        display: block;
+        margin-bottom: 0.35rem;
+        font-weight: 400;
+        font-size: 1.05rem;
+      }
+
+      .principles span {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .footer {
+        margin-top: 2rem;
+        padding: 1.2rem 1.3rem;
+        border-radius: 20px;
+      }
+
+      .footer small {
+        color: var(--muted);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      @media (max-width: 760px) {
+        .principles {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          width: min(calc(100% - 1.25rem), var(--max-width));
+        }
+
+        .topbar,
+        .footer {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .shell {
+          padding: 1.35rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <header class="topbar">
+        <a class="brand" href="index.html">Mezbaul Blog</a>
+        <nav class="nav" aria-label="Primary">
+          <a href="archive.html">Archive</a>
+          <a href="about.html">About</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </header>
+
+      <main class="shell">
+        <p class="eyebrow">About</p>
+        <h1>A slower companion to the portfolio.</h1>
+        <p class="intro">
+          This blog holds a wider kind of writing than a portfolio can. It is
+          where work notes, technical lessons, travel reflections, and everyday
+          observations can live side by side without needing to fit one strict
+          category.
+        </p>
+
+        <section class="content" aria-labelledby="why-title">
+          <p class="section-label">Why this site exists</p>
+          <h2 id="why-title">Writing that stays useful after the moment passes</h2>
+          <p>
+            I work in engineering operations, which means I spend a lot of time
+            thinking about coordination, support systems, documentation,
+            logistics, and the invisible work that helps teams move well. Those
+            topics naturally belong here, but I also want the blog to stay open
+            to other interests.
+          </p>
+          <p>
+            Some posts will be practical and work-related. Some will be more
+            reflective. Others may come from travel, tools, websites, process
+            design, or something small that feels worth keeping. The common
+            thread is simple: if an idea helps me understand something better, I
+            want to give it a clear place to live.
+          </p>
+        </section>
+
+        <ul class="principles" aria-label="Writing principles">
+          <li>
+            <strong>Minimal</strong>
+            <span>Low noise, clear hierarchy, and room to read without hurry.</span>
+          </li>
+          <li>
+            <strong>Practical</strong>
+            <span>Useful lessons matter more than performative polish.</span>
+          </li>
+          <li>
+            <strong>Personal</strong>
+            <span>Professional in tone, but open to life outside work.</span>
+          </li>
+        </ul>
+      </main>
+
+      <footer class="footer">
+        <small>Mezbaul Blog. Built for thoughtful writing.</small>
+        <nav class="nav" aria-label="Footer">
+          <a href="index.html">Home</a>
+          <a href="archive.html">Archive</a>
+          <a href="contact.html">Contact</a>
+        </nav>
+      </footer>
+    </div>
+  </body>
+</html>
