@@ -11,62 +11,262 @@
     <style>
       :root {
         --bg: #f4f1ea;
-        --surface: rgba(255, 255, 255, 0.78);
-        --surface-strong: #fcfaf6;
-        --text: #1f2933;
-        --muted: #5d6b74;
-        --accent: #2f6b5f;
-        --border: rgba(31, 41, 51, 0.12);
-        --shadow: 0 20px 45px rgba(31, 41, 51, 0.06);
+        --surface: #fffdf9;
+        --text: #24313a;
+        --muted: #5f6b72;
+        --border: #d7dcd6;
+        --accent: #2f5d50;
         --max-width: 980px;
         --reading-width: 720px;
       }
 
-      * { box-sizing: border-box; }
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: Georgia, "Times New Roman", serif;
+        font-family: Charter, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
         color: var(--text);
-        background:
-          radial-gradient(circle at top left, rgba(47, 107, 95, 0.12), transparent 28%),
-          linear-gradient(180deg, #f7f4ed 0%, var(--bg) 100%);
+        background: var(--bg);
       }
-      a { color: inherit; }
-      .page { width: min(calc(100% - 2rem), var(--max-width)); margin: 0 auto; padding: 1.25rem 0 4rem; }
-      .topbar, .footer { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
-      .topbar { padding: 0.9rem 0 2.6rem; }
-      .brand, .nav a, .home-link, .footer a, .pager a, .related-item a { text-decoration: none; }
-      .brand { font-size: 0.95rem; letter-spacing: 0.16em; text-transform: uppercase; }
-      .nav { display: flex; gap: 1rem; flex-wrap: wrap; }
-      .nav a, .footer a { color: var(--muted); }
-      .article-shell, .footer, .pager a, .related-item { border: 1px solid var(--border); background: var(--surface); box-shadow: var(--shadow); backdrop-filter: blur(12px); }
-      .article-shell { border-radius: 28px; padding: 2rem; }
-      .eyebrow, .meta, .section-label, .pager-label { color: var(--accent); text-transform: uppercase; letter-spacing: 0.16em; font-size: 0.76rem; font-family: Arial, Helvetica, sans-serif; }
-      h1, h2 { font-weight: 400; line-height: 1.08; margin: 0; }
-      h1 { max-width: 12ch; font-size: clamp(2.8rem, 7vw, 5rem); margin-top: 0.8rem; }
-      .intro { max-width: 58ch; font-size: 1.14rem; line-height: 1.8; color: var(--muted); margin: 1.25rem 0 0; }
-      .hero-media { margin-top: 1.8rem; }
-      .hero-media img { display: block; width: 100%; height: auto; border-radius: 20px; }
-      .hero-media figcaption { margin-top: 0.65rem; color: var(--muted); font-size: 0.92rem; line-height: 1.6; }
-      .meta { display: block; margin-top: 1.3rem; color: var(--muted); }
-      article { max-width: var(--reading-width); margin-top: 2.6rem; }
-      article p { margin: 1rem 0 0; line-height: 1.9; color: #33424d; font-size: 1.05rem; }
-      article h2 { font-size: 2rem; margin-top: 2.4rem; }
-      .pager { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; margin-top: 2.8rem; }
-      .pager a { border-radius: 20px; padding: 1rem 1.1rem; }
-      .pager strong { display: block; margin-top: 0.35rem; font-weight: 400; font-size: 1.05rem; }
-      .related { margin-top: 3rem; padding-top: 1.6rem; border-top: 1px solid var(--border); }
-      .related-list { display: grid; gap: 0.9rem; margin-top: 1rem; }
-      .related-item { padding: 1rem 1.1rem; border-radius: 18px; }
-      .related-item strong { display: block; font-weight: 400; font-size: 1.05rem; }
-      .related-item span { display: block; margin-top: 0.35rem; color: var(--muted); line-height: 1.7; }
-      .footer { margin-top: 2rem; padding: 1.2rem 1.3rem; border-radius: 20px; }
-      .footer small { color: var(--muted); font-family: Arial, Helvetica, sans-serif; }
+
+      a {
+        color: inherit;
+      }
+
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .page {
+        width: min(calc(100% - 2rem), var(--max-width));
+        margin: 0 auto;
+        padding: 1.25rem 0 4rem;
+      }
+
+      .topbar,
+      .footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .topbar {
+        padding: 0.75rem 0 2.5rem;
+      }
+
+      .brand,
+      .nav a,
+      .home-link,
+      .footer a,
+      .pager a,
+      .related-item a {
+        text-decoration: none;
+      }
+
+      .brand {
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .nav,
+      .footer nav {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+
+      .nav a,
+      .footer a,
+      .home-link {
+        color: var(--muted);
+      }
+
+      .article-shell,
+      .footer,
+      .pager a,
+      .related-item {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+      }
+
+      .article-shell {
+        padding: 2rem;
+      }
+
+      .eyebrow,
+      .meta,
+      .section-label,
+      .pager-label,
+      .footer small {
+        margin: 0 0 0.9rem;
+        color: var(--muted);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        font-weight: 400;
+        line-height: 1.08;
+      }
+
+      h1 {
+        max-width: 12ch;
+        margin-top: 0.55rem;
+        font-size: clamp(2.9rem, 7vw, 5rem);
+      }
+
+      .intro {
+        max-width: 58ch;
+        margin: 1.25rem 0 0;
+        color: var(--muted);
+        font-size: 1.08rem;
+        line-height: 1.8;
+      }
+
+      .home-link {
+        display: inline-block;
+        margin-bottom: 0.5rem;
+      }
+
+      .meta {
+        display: block;
+        margin-top: 1rem;
+      }
+
+      .hero-media {
+        margin-top: 1.75rem;
+      }
+
+      .hero-media img {
+        border-radius: 8px;
+        border: 1px solid var(--border);
+      }
+
+      .hero-media figcaption {
+        margin-top: 0.65rem;
+        color: var(--muted);
+        font-size: 0.92rem;
+        line-height: 1.6;
+      }
+
+      article {
+        max-width: var(--reading-width);
+        margin-top: 2.4rem;
+      }
+
+      article p {
+        margin: 1rem 0 0;
+        color: #33424d;
+        font-size: 1.05rem;
+        line-height: 1.9;
+      }
+
+      article h2 {
+        margin-top: 2.3rem;
+        font-size: 1.9rem;
+      }
+
+      .pager {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 1rem;
+        margin-top: 2.6rem;
+      }
+
+      .pager a {
+        padding: 1rem 1.1rem;
+      }
+
+      .pager strong {
+        display: block;
+        margin-top: 0.35rem;
+        font-weight: 400;
+        font-size: 1.05rem;
+      }
+
+      .related {
+        margin-top: 2.8rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--border);
+      }
+
+      .related-list {
+        display: grid;
+        gap: 1rem;
+        margin-top: 1rem;
+      }
+
+      .related-item {
+        padding: 1rem 1.1rem;
+      }
+
+      .related-item strong {
+        display: block;
+        font-weight: 400;
+        font-size: 1.05rem;
+      }
+
+      .related-item span {
+        display: block;
+        margin-top: 0.35rem;
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .footer {
+        margin-top: 2rem;
+        padding: 1.15rem 1.25rem;
+      }
+
+      .muted-link {
+        color: var(--accent);
+      }
+      @media (max-width: 760px) {
+        .pager {
+          grid-template-columns: 1fr;
+        }
+      }
       @media (max-width: 640px) {
-        .page { width: min(calc(100% - 1.25rem), var(--max-width)); }
-        .topbar, .footer, .pager { align-items: start; flex-direction: column; grid-template-columns: 1fr; }
-        .article-shell { padding: 1.35rem; }
+        .page {
+          width: min(calc(100% - 1.25rem), var(--max-width));
+        }
+
+        .topbar,
+        .footer {
+          align-items: start;
+          flex-direction: column;
+        }
+
+        .article-shell {
+          padding: 1.35rem;
+        }
+
+        h1 {
+          max-width: 12ch;
+        }
       }
     </style>
   </head>
@@ -80,7 +280,7 @@
           <a href="../contact.html">Contact</a>
         </nav>
       </header>
-      <main class="article-shell">
+      <main id="top" class="article-shell">
         <a class="home-link meta" href="../index.html">Back to homepage</a>
         <p class="eyebrow">Travel</p>
         <h1>Things travel teaches you that routine cannot</h1>
@@ -172,7 +372,8 @@
         <nav class="nav" aria-label="Footer">
           <a href="../index.html">Home</a>
           <a href="../archive.html">Archive</a>
-          <a href="../about.html">About</a>
+          <a href="../contact.html">Contact</a>
+          <a class="muted-link" href="#top">Back to top</a>
         </nav>
       </footer>
     </div>

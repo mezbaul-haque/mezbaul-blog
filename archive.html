@@ -11,33 +11,44 @@
     <style>
       :root {
         --bg: #f4f1ea;
-        --surface: rgba(255, 255, 255, 0.78);
-        --surface-strong: #fcfaf6;
-        --text: #1f2933;
-        --muted: #5d6b74;
-        --accent: #2f6b5f;
-        --accent-soft: rgba(47, 107, 95, 0.12);
-        --border: rgba(31, 41, 51, 0.12);
-        --shadow: 0 20px 45px rgba(31, 41, 51, 0.06);
-        --max-width: 1120px;
+        --surface: #fffdf9;
+        --text: #24313a;
+        --muted: #5f6b72;
+        --border: #d7dcd6;
+        --accent: #2f5d50;
+        --max-width: 1040px;
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html {
+        scroll-behavior: smooth;
+      }
+
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: Georgia, "Times New Roman", serif;
+        font-family: Charter, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
         color: var(--text);
-        background:
-          radial-gradient(circle at top left, rgba(47, 107, 95, 0.12), transparent 28%),
-          linear-gradient(180deg, #f7f4ed 0%, var(--bg) 100%);
+        background: var(--bg);
       }
 
       a {
         color: inherit;
+      }
+
+      a:focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 3px;
+      }
+
+      img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
       }
 
       .page {
@@ -47,16 +58,16 @@
       }
 
       .topbar,
+      .section-head,
       .footer {
         display: flex;
         align-items: center;
         justify-content: space-between;
         gap: 1rem;
-        flex-wrap: wrap;
       }
 
       .topbar {
-        padding: 0.9rem 0 2.6rem;
+        padding: 0.75rem 0 2.5rem;
       }
 
       .brand,
@@ -68,11 +79,13 @@
 
       .brand {
         font-size: 0.95rem;
-        letter-spacing: 0.16em;
+        font-weight: 600;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
-      .nav {
+      .nav,
+      .footer nav {
         display: flex;
         gap: 1rem;
         flex-wrap: wrap;
@@ -83,107 +96,118 @@
         color: var(--muted);
       }
 
-      .shell,
-      .footer,
-      .archive-card {
-        border: 1px solid var(--border);
-        background: var(--surface);
-        box-shadow: var(--shadow);
-        backdrop-filter: blur(12px);
-      }
-
-      .shell {
-        border-radius: 28px;
-        padding: 2rem;
-      }
-
       .eyebrow,
-      .meta {
-        margin: 0 0 1rem;
-        color: var(--accent);
+      .meta,
+      .section-label,
+      .footer small {
+        margin: 0 0 0.9rem;
+        color: var(--muted);
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        font-size: 0.78rem;
+        letter-spacing: 0.12em;
         text-transform: uppercase;
-        letter-spacing: 0.16em;
-        font-size: 0.76rem;
-        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      h1,
+      h2 {
+        margin: 0;
+        font-weight: 400;
+        line-height: 1.08;
       }
 
       h1 {
         max-width: 9ch;
-        font-size: clamp(2.8rem, 7vw, 5rem);
-        font-weight: 400;
-        line-height: 1.08;
-        margin: 0;
+        font-size: clamp(2.9rem, 7vw, 5rem);
+      }
+
+      h2 {
+        font-size: 1.7rem;
+      }
+
+      .hero {
+        padding-bottom: 2.8rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .intro,
+      .section-copy,
+      .archive-card p {
+        color: var(--muted);
+        line-height: 1.8;
       }
 
       .intro {
         max-width: 58ch;
-        font-size: 1.14rem;
-        line-height: 1.8;
-        color: var(--muted);
         margin: 1.25rem 0 0;
+        font-size: 1.08rem;
+      }
+
+      .section {
+        padding-top: 3rem;
+      }
+
+      .section-head {
+        align-items: end;
+        margin-bottom: 1.4rem;
+      }
+
+      .section-copy {
+        max-width: 42ch;
+        margin: 0;
       }
 
       .archive-list {
         display: grid;
         gap: 1rem;
-        margin-top: 2.6rem;
+      }
+
+      .archive-card,
+      .footer {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 10px;
       }
 
       .archive-card {
         display: grid;
-        grid-template-columns: 240px minmax(0, 1fr);
+        grid-template-columns: 220px minmax(0, 1fr);
         gap: 1rem;
-        border-radius: 22px;
-        overflow: hidden;
+        padding: 1rem;
+        align-items: start;
       }
 
       .archive-media {
-        display: block;
-        aspect-ratio: 16 / 10;
-        background: var(--accent-soft);
+        aspect-ratio: 16 / 11;
+        overflow: hidden;
+        border-radius: 6px;
+        background: #e9eeea;
       }
 
-      .archive-media img {
-        display: block;
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+      .archive-body h2 {
+        margin-bottom: 0.45rem;
       }
 
-      .archive-body {
-        padding: 1.2rem 1.25rem 1.2rem 0;
-      }
-
-      .archive-card h2 {
-        font-size: 1.6rem;
-        font-weight: 400;
-        margin: 0.3rem 0 0;
-      }
-
-      .archive-card p {
-        color: var(--muted);
-        line-height: 1.75;
-        margin: 0.8rem 0 0;
+      .archive-body p {
+        margin: 0;
       }
 
       .footer {
-        margin-top: 2rem;
-        padding: 1.2rem 1.3rem;
-        border-radius: 20px;
+        margin-top: 3rem;
+        padding: 1.15rem 1.25rem;
       }
 
-      .footer small {
-        color: var(--muted);
-        font-family: Arial, Helvetica, sans-serif;
+      .muted-link {
+        color: var(--accent);
       }
 
       @media (max-width: 760px) {
-        .archive-card {
-          grid-template-columns: 1fr;
+        .section-head {
+          align-items: start;
+          flex-direction: column;
         }
 
-        .archive-body {
-          padding: 0 1.2rem 1.2rem;
+        .archive-card {
+          grid-template-columns: 1fr;
         }
       }
 
@@ -198,8 +222,8 @@
           flex-direction: column;
         }
 
-        .shell {
-          padding: 1.35rem;
+        h1 {
+          max-width: 12ch;
         }
       }
     </style>
@@ -215,155 +239,153 @@
         </nav>
       </header>
 
-      <main class="shell">
-        <p class="eyebrow">Archive</p>
-        <h1>All writing in one place.</h1>
-        <p class="intro">
-          A simple archive page keeps the site easy to browse as the number of
-          posts grows.
-        </p>
+      <main id="top">
+        <section class="hero" aria-labelledby="archive-title">
+          <p class="eyebrow">Archive</p>
+          <h1 id="archive-title">All writing in one place.</h1>
+          <p class="intro">
+            A simple archive page keeps the site easy to browse as the number
+            of posts grows.
+          </p>
+        </section>
 
-        <section class="archive-list" aria-label="All posts">
-          <article class="archive-card">
-            <a class="archive-media" href="posts/small-websites-still-matter.html" aria-label="Read Small websites still matter">
-              <img
-                src="images/posts/sop-thumb.jpg"
-                alt="An office desk with papers, a cup, and office tools"
-                width="500"
-                height="333"
-                loading="lazy"
-                decoding="async"
-                sizes="(max-width: 760px) calc(100vw - 2.5rem), 240px"
-              />
-            </a>
-            <div class="archive-body">
-              <div class="meta">Web · April 5, 2026</div>
-              <h2><a href="posts/small-websites-still-matter.html">Small websites still matter</a></h2>
-              <p>
-                A case for websites that stay clear, direct, and independent
-                instead of trying to become platforms.
-              </p>
+        <section class="section" aria-labelledby="all-posts-title">
+          <div class="section-head">
+            <div>
+              <p class="section-label">All posts</p>
+              <h2 id="all-posts-title">Browse by title and topic</h2>
             </div>
-          </article>
+            <p class="section-copy">
+              Every article in one running list, with enough context to scan
+              quickly and choose where to start.
+            </p>
+          </div>
 
-          <article class="archive-card">
-            <a class="archive-media" href="posts/what-i-actually-want-from-a-simple-piece-of-tech.html" aria-label="Read What I actually want from a simple piece of tech">
-              <img
-                src="images/posts/operations-thumb.jpg"
-                alt="A laptop on a desk beside a notebook"
-                width="500"
-                height="369"
-                loading="lazy"
-                decoding="async"
-                sizes="(max-width: 760px) calc(100vw - 2.5rem), 240px"
-              />
-            </a>
-            <div class="archive-body">
-              <div class="meta">Tech · April 5, 2026</div>
-              <h2><a href="posts/what-i-actually-want-from-a-simple-piece-of-tech.html">What I actually want from a simple piece of tech</a></h2>
-              <p>
-                A note on choosing technology that stays useful, calm, and easy
-                to live with.
-              </p>
-            </div>
-          </article>
+          <div class="archive-list" aria-label="All posts">
+            <article class="archive-card">
+              <a class="archive-media" href="posts/small-websites-still-matter.html" aria-label="Read Small websites still matter">
+                <img
+                  src="images/posts/operations-thumb.jpg"
+                  alt="A laptop on a desk beside a notebook"
+                  width="500"
+                  height="369"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 760px) calc(100vw - 2.5rem), 220px"
+                />
+              </a>
+              <div class="archive-body">
+                <div class="meta">Web · April 5, 2026</div>
+                <h2><a href="posts/small-websites-still-matter.html">Small websites still matter</a></h2>
+                <p>A case for websites that stay clear, direct, and independent instead of trying to become platforms.</p>
+              </div>
+            </article>
 
-          <article class="archive-card">
-            <a class="archive-media" href="posts/things-travel-teaches-you-that-routine-cannot.html" aria-label="Read Things travel teaches you that routine cannot">
-              <img
-                src="images/posts/support-thumb.jpg"
-                alt="A group of people working together outdoors"
-                width="500"
-                height="357"
-                loading="lazy"
-                decoding="async"
-                sizes="(max-width: 760px) calc(100vw - 2.5rem), 240px"
-              />
-            </a>
-            <div class="archive-body">
-              <div class="meta">Travel · April 5, 2026</div>
-              <h2><a href="posts/things-travel-teaches-you-that-routine-cannot.html">Things travel teaches you that routine cannot</a></h2>
-              <p>
-                Reflections on movement, unfamiliar places, and how travel
-                sharpens attention.
-              </p>
-            </div>
-          </article>
+            <article class="archive-card">
+              <a class="archive-media" href="posts/what-i-actually-want-from-a-simple-piece-of-tech.html" aria-label="Read What I actually want from a simple piece of tech">
+                <img
+                  src="images/posts/operations-thumb.jpg"
+                  alt="A laptop on a desk beside a notebook"
+                  width="500"
+                  height="369"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 760px) calc(100vw - 2.5rem), 220px"
+                />
+              </a>
+              <div class="archive-body">
+                <div class="meta">Tech · April 5, 2026</div>
+                <h2><a href="posts/what-i-actually-want-from-a-simple-piece-of-tech.html">What I actually want from a simple piece of tech</a></h2>
+                <p>A note on choosing technology that stays useful, calm, and easy to live with.</p>
+              </div>
+            </article>
 
-          <article class="archive-card">
-            <a class="archive-media" href="posts/how-operational-clarity-saves-technical-time.html" aria-label="Read How operational clarity saves technical time">
-              <img
-                src="images/posts/operations-thumb.jpg"
-                alt="A laptop on a desk beside a notebook"
-                width="500"
-                height="369"
-                loading="lazy"
-                decoding="async"
-                sizes="(max-width: 760px) calc(100vw - 2.5rem), 240px"
-              />
-            </a>
-            <div class="archive-body">
-              <div class="meta">Operations · April 4, 2026</div>
-              <h2><a href="posts/how-operational-clarity-saves-technical-time.html">How operational clarity saves technical time</a></h2>
-              <p>
-                Why better routines, documentation, and ownership can remove
-                invisible work from engineering teams.
-              </p>
-            </div>
-          </article>
+            <article class="archive-card">
+              <a class="archive-media" href="posts/things-travel-teaches-you-that-routine-cannot.html" aria-label="Read Things travel teaches you that routine cannot">
+                <img
+                  src="images/posts/support-thumb.jpg"
+                  alt="A group of people working together outdoors"
+                  width="500"
+                  height="357"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 760px) calc(100vw - 2.5rem), 220px"
+                />
+              </a>
+              <div class="archive-body">
+                <div class="meta">Travel · April 5, 2026</div>
+                <h2><a href="posts/things-travel-teaches-you-that-routine-cannot.html">Things travel teaches you that routine cannot</a></h2>
+                <p>Reflections on movement, unfamiliar places, and how travel sharpens attention.</p>
+              </div>
+            </article>
 
-          <article class="archive-card">
-            <a class="archive-media" href="posts/support-requests-and-follow-through.html" aria-label="Read A simple approach to support requests and follow-through">
-              <img
-                src="images/posts/support-thumb.jpg"
-                alt="A group of people working together outdoors"
-                width="500"
-                height="357"
-                loading="lazy"
-                decoding="async"
-                sizes="(max-width: 760px) calc(100vw - 2.5rem), 240px"
-              />
-            </a>
-            <div class="archive-body">
-              <div class="meta">Support · April 4, 2026</div>
-              <h2><a href="posts/support-requests-and-follow-through.html">A simple approach to support requests and follow-through</a></h2>
-              <p>
-                Designing office and internal support workflows that are easy
-                to track, easy to understand, and harder to forget.
-              </p>
-            </div>
-          </article>
+            <article class="archive-card">
+              <a class="archive-media" href="posts/how-operational-clarity-saves-technical-time.html" aria-label="Read How operational clarity saves technical time">
+                <img
+                  src="images/posts/operations-thumb.jpg"
+                  alt="A laptop on a desk beside a notebook"
+                  width="500"
+                  height="369"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 760px) calc(100vw - 2.5rem), 220px"
+                />
+              </a>
+              <div class="archive-body">
+                <div class="meta">Operations · April 4, 2026</div>
+                <h2><a href="posts/how-operational-clarity-saves-technical-time.html">How operational clarity saves technical time</a></h2>
+                <p>Why better routines, documentation, and ownership can remove invisible work from engineering teams.</p>
+              </div>
+            </article>
 
-          <article class="archive-card">
-            <a class="archive-media" href="posts/practical-sop-guide.html" aria-label="Read What makes a practical SOP actually useful">
-              <img
-                src="images/posts/sop-thumb.jpg"
-                alt="An office desk with papers, a cup, and office tools"
-                width="500"
-                height="333"
-                loading="lazy"
-                decoding="async"
-                sizes="(max-width: 760px) calc(100vw - 2.5rem), 240px"
-              />
-            </a>
-            <div class="archive-body">
-              <div class="meta">Documentation · April 4, 2026</div>
-              <h2><a href="posts/practical-sop-guide.html">What makes a practical SOP actually useful</a></h2>
-              <p>
-                A short guide to writing documentation people will use in real
-                work instead of documents that only look complete.
-              </p>
-            </div>
-          </article>
+            <article class="archive-card">
+              <a class="archive-media" href="posts/support-requests-and-follow-through.html" aria-label="Read A simple approach to support requests and follow-through">
+                <img
+                  src="images/posts/support-thumb.jpg"
+                  alt="A group of people working together outdoors"
+                  width="500"
+                  height="357"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 760px) calc(100vw - 2.5rem), 220px"
+                />
+              </a>
+              <div class="archive-body">
+                <div class="meta">Support · April 4, 2026</div>
+                <h2><a href="posts/support-requests-and-follow-through.html">A simple approach to support requests and follow-through</a></h2>
+                <p>Designing office and internal support workflows that are easy to track, easy to understand, and harder to forget.</p>
+              </div>
+            </article>
+
+            <article class="archive-card">
+              <a class="archive-media" href="posts/practical-sop-guide.html" aria-label="Read What makes a practical SOP actually useful">
+                <img
+                  src="images/posts/sop-thumb.jpg"
+                  alt="An office desk with papers, a cup, and office tools"
+                  width="500"
+                  height="333"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(max-width: 760px) calc(100vw - 2.5rem), 220px"
+                />
+              </a>
+              <div class="archive-body">
+                <div class="meta">Documentation · April 4, 2026</div>
+                <h2><a href="posts/practical-sop-guide.html">What makes a practical SOP actually useful</a></h2>
+                <p>A short guide to writing documentation people will use in real work instead of documents that only look complete.</p>
+              </div>
+            </article>
+          </div>
         </section>
       </main>
 
       <footer class="footer">
         <small>Mezbaul Blog. Built for thoughtful writing.</small>
-        <nav class="nav" aria-label="Footer">
+        <nav aria-label="Footer">
           <a href="index.html">Home</a>
           <a href="about.html">About</a>
           <a href="contact.html">Contact</a>
+          <a class="muted-link" href="#top">Back to top</a>
         </nav>
       </footer>
     </div>
