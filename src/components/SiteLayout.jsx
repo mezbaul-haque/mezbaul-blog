@@ -4,6 +4,7 @@ import {
   Box,
   Button,
   Container,
+  Divider,
   Drawer,
   IconButton,
   Link as MuiLink,
@@ -13,7 +14,7 @@ import {
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
-import { navItems } from '../data/siteData';
+import { navItems, siteDescription, siteTitle } from '../data';
 
 function NavLink({ to, label, onClick }) {
   const { pathname } = useLocation();
@@ -42,6 +43,7 @@ function NavLink({ to, label, onClick }) {
 
 export function SiteLayout({ children }) {
   const [open, setOpen] = useState(false);
+  const currentYear = new Date().getFullYear();
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -68,10 +70,12 @@ export function SiteLayout({ children }) {
                 fontSize: '0.95rem',
               }}
             >
-              Mezbaul Blog
+              {siteTitle}
             </MuiLink>
 
             <Stack
+              component="nav"
+              aria-label="Primary navigation"
               direction="row"
               spacing={3}
               sx={{ display: { xs: 'none', md: 'flex' } }}
@@ -95,39 +99,72 @@ export function SiteLayout({ children }) {
         {children}
       </Container>
 
-      <Container maxWidth="lg" sx={{ pb: 5 }}>
-        <Box
-          component="footer"
-          sx={{
-            display: 'flex',
-            flexDirection: { xs: 'column', sm: 'row' },
-            justifyContent: 'space-between',
-            gap: 2,
-            p: 2,
-            border: '1px solid',
-            borderColor: 'divider',
-            borderRadius: 3,
-            bgcolor: 'background.paper',
-          }}
-        >
-          <Typography variant="overline" sx={{ m: 0 }}>
-            Mezbaul Blog. Built for thoughtful writing.
-          </Typography>
-          <Stack direction="row" spacing={2} flexWrap="wrap">
-            {navItems.map((item) => (
-              <NavLink key={`footer-${item.to}`} {...item} />
-            ))}
-            <Button
-              color="primary"
-              size="small"
-              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              sx={{ minHeight: 0, p: 0, minWidth: 0 }}
+      <Box
+        component="footer"
+        sx={{
+          mt: 2,
+          borderTop: '1px solid',
+          borderColor: 'divider',
+          bgcolor: 'background.paper',
+        }}
+      >
+        <Container maxWidth="lg">
+          <Stack spacing={3} sx={{ py: { xs: 3, md: 4 } }}>
+            <Stack
+              direction={{ xs: 'column', md: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ xs: 'flex-start', md: 'center' }}
+              spacing={3}
             >
-              Back to top
-            </Button>
+              <Box sx={{ maxWidth: 420 }}>
+                <Typography
+                  variant="overline"
+                  sx={{ display: 'block', mb: 0.75 }}
+                >
+                  {siteTitle}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {siteDescription}
+                </Typography>
+              </Box>
+
+              <Stack
+                component="nav"
+                direction="row"
+                spacing={3}
+                useFlexGap
+                flexWrap="wrap"
+                aria-label="Footer navigation"
+              >
+                {navItems.map((item) => (
+                  <NavLink key={`footer-${item.to}`} {...item} />
+                ))}
+              </Stack>
+            </Stack>
+
+            <Divider />
+
+            <Stack
+              direction={{ xs: 'column', sm: 'row' }}
+              justifyContent="space-between"
+              alignItems={{ xs: 'flex-start', sm: 'center' }}
+              spacing={1.5}
+            >
+              <Typography variant="body2" color="text.secondary">
+                © {currentYear} Mezbaul Blog. All rights reserved.
+              </Typography>
+              <Button
+                color="primary"
+                size="small"
+                onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                sx={{ minHeight: 0, p: 0, minWidth: 0 }}
+              >
+                Back to top
+              </Button>
+            </Stack>
           </Stack>
-        </Box>
-      </Container>
+        </Container>
+      </Box>
 
       <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
         <Stack sx={{ p: 3, minWidth: 220 }} spacing={2}>

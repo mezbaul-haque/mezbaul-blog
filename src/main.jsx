@@ -9,6 +9,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ThemeProvider theme={theme}>
       <CssBaseline />
+      {/* GitHub Pages deployment does not yet include SPA rewrite fallback for BrowserRouter. */}
       <HashRouter>
         <App />
       </HashRouter>
