@@ -7,5 +7,6 @@ export const navItems = [
   { label: 'Home', to: '/' },
   { label: 'Archive', to: '/archive' },
   { label: 'About', to: '/about' },
+  { label: 'Writers', to: '/writers' },
   { label: 'Contact', to: '/contact' },
 ];

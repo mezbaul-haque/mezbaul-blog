@@ -3,10 +3,12 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import { SiteLayout } from './components/SiteLayout';
 import { AboutPage } from './pages/AboutPage';
 import { ArchivePage } from './pages/ArchivePage';
+import { AuthorPage } from './pages/AuthorPage';
 import { ContactPage } from './pages/ContactPage';
 import { HomePage } from './pages/HomePage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { PostPage } from './pages/PostPage';
+import { WritersPage } from './pages/WritersPage';
 
 function ScrollToTop() {
   const { pathname } = useLocation();
@@ -26,6 +28,8 @@ export default function App() {
         <Route path="/" element={<HomePage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/archive" element={<ArchivePage />} />
+        <Route path="/writers" element={<WritersPage />} />
+        <Route path="/writers/:authorId" element={<AuthorPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/posts/:slug" element={<PostPage />} />
         <Route path="*" element={<NotFoundPage />} />

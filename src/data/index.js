@@ -1,3 +1,4 @@
 export * from './pages';
 export * from './posts';
 export * from './siteMeta';
+export * from './authors';

@@ -3,6 +3,7 @@ export const posts = [
     slug: 'small-websites-still-matter',
     title: 'Small websites still matter',
     category: 'Web',
+  authorId: 'mezbaul',
     date: 'April 5, 2026',
     readTime: '4 min read',
     summary:
@@ -59,6 +60,7 @@ export const posts = [
     slug: 'what-i-actually-want-from-a-simple-piece-of-tech',
     title: 'What I actually want from a simple piece of tech',
     category: 'Tech',
+  authorId: 'nova',
     date: 'April 5, 2026',
     readTime: '4 min read',
     summary:
@@ -115,6 +117,7 @@ export const posts = [
     slug: 'things-travel-teaches-you-that-routine-cannot',
     title: 'Things travel teaches you that routine cannot',
     category: 'Travel',
+  authorId: 'rio',
     date: 'April 5, 2026',
     readTime: '4 min read',
     summary:
@@ -170,6 +173,7 @@ export const posts = [
     slug: 'how-operational-clarity-saves-technical-time',
     title: 'How operational clarity saves technical time',
     category: 'Operations',
+  authorId: 'aisha',
     date: 'April 4, 2026',
     readTime: '4 min read',
     summary:
@@ -226,6 +230,7 @@ export const posts = [
     slug: 'support-requests-and-follow-through',
     title: 'A simple approach to support requests and follow-through',
     category: 'Support',
+  authorId: 'aisha',
     date: 'April 4, 2026',
     readTime: '4 min read',
     summary:
@@ -282,6 +287,7 @@ export const posts = [
     slug: 'practical-sop-guide',
     title: 'What makes a practical SOP actually useful',
     category: 'Documentation',
+  authorId: 'nova',
     date: 'April 4, 2026',
     readTime: '4 min read',
     summary:

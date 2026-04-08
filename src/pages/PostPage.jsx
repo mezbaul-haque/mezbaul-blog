@@ -12,7 +12,8 @@ import {
 import { Link as RouterLink, Navigate, useParams } from 'react-router-dom';
 import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
-import { getPostBySlug, posts } from '../data';
+import { AuthorCard } from '../components/AuthorCard';
+import { authors, getAuthorById, getPostBySlug, posts } from '../data';
 
 function AdjacentPostCard({ eyebrow, post }) {
   if (!post) return null;
@@ -40,6 +41,7 @@ export function PostPage() {
     return <Navigate to="/" replace />;
   }
 
+  const author = getAuthorById(post.authorId) ?? authors.mezbaul;
   const previousPost = postIndex > 0 ? posts[postIndex - 1] : undefined;
   const nextPost = postIndex < posts.length - 1 ? posts[postIndex + 1] : undefined;
 
@@ -62,6 +64,8 @@ export function PostPage() {
           useChips
           ChipComponent={Chip}
         />
+
+        <AuthorCard author={author} profileUrl={`/writers/${author.id}`} />
 
         <Box sx={{ mt: 3 }}>
           <Box

@@ -10,8 +10,19 @@ import {
 import EastIcon from '@mui/icons-material/East';
 import { Link as RouterLink } from 'react-router-dom';
 import { PostMeta } from './PostMeta';
+import { getAuthorById } from '../data';
 
 export function PostCard({ post, horizontal = false }) {
+  const author = getAuthorById(post.authorId);
+  const authorInitials = author?.name
+    ? author.name
+        .split(' ')
+        .map((part) => part[0])
+        .slice(0, 2)
+        .join('')
+        .toUpperCase()
+    : null;
+
   return (
     <Card
       sx={{
@@ -74,6 +85,38 @@ export function PostCard({ post, horizontal = false }) {
               {post.title}
             </Typography>
             <Typography color="text.secondary">{post.summary}</Typography>
+            {author ? (
+              <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 2 }}>
+                <Box
+                  sx={{
+                    width: 32,
+                    height: 32,
+                    borderRadius: '50%',
+                    bgcolor: 'divider',
+                    color: 'text.primary',
+                    display: 'grid',
+                    placeItems: 'center',
+                    fontSize: '0.75rem',
+                    fontWeight: 700,
+                    overflow: 'hidden',
+                  }}
+                >
+                  {author.avatar ? (
+                    <Box
+                      component="img"
+                      src={author.avatar}
+                      alt={author.name}
+                      sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                    />
+                  ) : (
+                    authorInitials
+                  )}
+                </Box>
+                <Typography variant="body2" color="text.secondary">
+                  {author.name}
+                </Typography>
+              </Stack>
+            ) : null}
           </Box>
           <PostMeta date={post.date} readTime={post.readTime} />
           <Stack
