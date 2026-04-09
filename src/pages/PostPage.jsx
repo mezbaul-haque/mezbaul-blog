@@ -65,7 +65,11 @@ export function PostPage() {
           ChipComponent={Chip}
         />
 
-        <AuthorCard author={author} profileUrl={`/writers/${author.id}`} />
+        <AuthorCard
+          author={author}
+          profileUrl={`/writers/${author.id}`}
+          compact={true}
+        />
 
         <Box sx={{ mt: 3 }}>
           <Box

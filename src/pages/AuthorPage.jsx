@@ -31,11 +31,29 @@ export function AuthorPage() {
         <SectionHeading
           eyebrow="Perspective"
           title="What this writer cares about"
-          copy="These posts are grouped by the author’s specific focus, experience, and voice." 
+          copy="These posts are grouped by the author's specific focus, experience, and voice."
         />
         <Typography color="text.secondary" sx={{ maxWidth: 720, mt: 2 }}>
           {author.bio}
         </Typography>
+        <Stack direction="row" spacing={3} sx={{ mt: 3 }}>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              {authorPosts.length}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {authorPosts.length === 1 ? 'Post' : 'Posts'} published
+            </Typography>
+          </Box>
+          <Box>
+            <Typography variant="h4" sx={{ fontWeight: 700 }}>
+              {new Set(authorPosts.map(post => post.category)).size}
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              Categories covered
+            </Typography>
+          </Box>
+        </Stack>
       </Box>
 
       <Box>

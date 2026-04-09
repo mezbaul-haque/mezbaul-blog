@@ -99,6 +99,10 @@ export function PostCard({ post, horizontal = false }) {
                     fontSize: '0.75rem',
                     fontWeight: 700,
                     overflow: 'hidden',
+                    transition: 'transform 180ms ease',
+                    '&:hover': {
+                      transform: 'scale(1.1)',
+                    },
                   }}
                 >
                   {author.avatar ? (
@@ -112,13 +116,42 @@ export function PostCard({ post, horizontal = false }) {
                     authorInitials
                   )}
                 </Box>
-                <Typography variant="body2" color="text.secondary">
-                  {author.name}
-                </Typography>
+                <Box sx={{ minWidth: 0, flex: 1 }}>
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      fontWeight: 500,
+                      cursor: 'pointer',
+                      transition: 'color 180ms ease',
+                      '&:hover': {
+                        color: 'primary.main',
+                      },
+                    }}
+                    component={RouterLink}
+                    to={`/writers/${author.id}`}
+                  >
+                    {author.name}
+                  </Typography>
+                  {author.title && (
+                    <Typography
+                      variant="caption"
+                      color="text.secondary"
+                      sx={{
+                        display: 'block',
+                        lineHeight: 1.2,
+                        mt: 0.25,
+                        opacity: 0.75,
+                      }}
+                    >
+                      {author.title}
+                    </Typography>
+                  )}
+                </Box>
               </Stack>
             ) : null}
           </Box>
-          <PostMeta date={post.date} readTime={post.readTime} />
+          <PostMeta date={post.date} readTime={post.readTime} compact={true} />
           <Stack
             direction="row"
             spacing={1}
