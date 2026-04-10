@@ -36,24 +36,46 @@ export function AuthorPage() {
         <Typography color="text.secondary" sx={{ maxWidth: 720, mt: 2 }}>
           {author.bio}
         </Typography>
-        <Stack direction="row" spacing={3} sx={{ mt: 3 }}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              {authorPosts.length}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {authorPosts.length === 1 ? 'Post' : 'Posts'} published
-            </Typography>
-          </Box>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 700 }}>
-              {new Set(authorPosts.map(post => post.category)).size}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Categories covered
-            </Typography>
-          </Box>
-        </Stack>
+        <Grid container spacing={2} sx={{ mt: 3 }}>
+          <Grid item xs={6} sm={3}>
+            <Box
+              sx={{
+                textAlign: 'center',
+                p: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                bgcolor: 'background.paper'
+              }}
+            >
+              <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                {authorPosts.length}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {authorPosts.length === 1 ? 'Post' : 'Posts'}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={6} sm={3}>
+            <Box
+              sx={{
+                textAlign: 'center',
+                p: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                borderRadius: 2,
+                bgcolor: 'background.paper'
+              }}
+            >
+              <Typography variant="h4" sx={{ fontWeight: 700, color: 'primary.main' }}>
+                {new Set(authorPosts.map(post => post.category)).size}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                Categories
+              </Typography>
+            </Box>
+          </Grid>
+        </Grid>
       </Box>
 
       <Box>

@@ -19,7 +19,14 @@ import { navItems, siteDescription, siteTitle } from '../data';
 function NavLink({ to, label, onClick }) {
   const { pathname } = useLocation();
   const active = useMemo(
-    () => (to === '/' ? pathname === '/' : pathname.startsWith(to)),
+    () => {
+      if (to === '/') return pathname === '/';
+      if (to === '/archive') return pathname === '/archive';
+      if (to === '/about') return pathname === '/about';
+      if (to === '/writers') return pathname === '/writers' || pathname.startsWith('/writers/');
+      if (to === '/contact') return pathname === '/contact';
+      return pathname.startsWith(to);
+    },
     [pathname, to],
   );
 
@@ -44,6 +51,14 @@ function NavLink({ to, label, onClick }) {
 export function SiteLayout({ children }) {
   const [open, setOpen] = useState(false);
   const currentYear = new Date().getFullYear();
+
+  const handleDrawerToggle = () => {
+    setOpen(!open);
+  };
+
+  const handleDrawerClose = () => {
+    setOpen(false);
+  };
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -86,7 +101,9 @@ export function SiteLayout({ children }) {
             </Stack>
 
             <IconButton
-              onClick={() => setOpen(true)}
+              onClick={handleDrawerToggle}
+              aria-expanded={open}
+              aria-label="Open navigation menu"
               sx={{ display: { xs: 'inline-flex', md: 'none' } }}
             >
               <MenuIcon />
@@ -166,13 +183,13 @@ export function SiteLayout({ children }) {
         </Container>
       </Box>
 
-      <Drawer anchor="right" open={open} onClose={() => setOpen(false)}>
+      <Drawer anchor="right" open={open} onClose={handleDrawerClose}>
         <Stack sx={{ p: 3, minWidth: 220 }} spacing={2}>
           {navItems.map((item) => (
             <NavLink
               key={`drawer-${item.to}`}
               {...item}
-              onClick={() => setOpen(false)}
+              onClick={handleDrawerClose}
             />
           ))}
         </Stack>

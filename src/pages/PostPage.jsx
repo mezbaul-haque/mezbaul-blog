@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardActionArea,
   CardContent,
@@ -48,10 +49,40 @@ export function PostPage() {
   return (
     <Stack spacing={4}>
       <Card sx={{ p: { xs: 3, md: 4 } }}>
-        <MuiLink component={RouterLink} to="/" color="text.secondary" sx={{ mb: 2, display: 'inline-block' }}>
-          Back to homepage
-        </MuiLink>
-        <Typography variant="overline">{post.category}</Typography>
+        <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+          <Button
+            component={RouterLink}
+            to="/"
+            variant="text"
+            size="small"
+            sx={{
+              color: 'text.secondary',
+              textTransform: 'none',
+              fontSize: '0.875rem',
+              fontWeight: 400,
+              p: 0,
+              minHeight: 'auto',
+              '&:hover': {
+                color: 'primary.main',
+                bgcolor: 'transparent'
+              }
+            }}
+            startIcon="←"
+          >
+            Back to homepage
+          </Button>
+          <Chip
+            label={post.category}
+            variant="outlined"
+            size="small"
+            sx={{
+              fontWeight: 500,
+              textTransform: 'uppercase',
+              letterSpacing: '0.05em',
+              fontSize: '0.75rem'
+            }}
+          />
+        </Stack>
         <Typography variant="h1" sx={{ maxWidth: '12ch' }}>
           {post.title}
         </Typography>
@@ -76,6 +107,7 @@ export function PostPage() {
             component="img"
             src={post.heroImage}
             alt={post.heroAlt}
+            loading="lazy"
             sx={{
               width: '100%',
               borderRadius: 2,

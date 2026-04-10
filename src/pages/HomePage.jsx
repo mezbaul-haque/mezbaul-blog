@@ -5,6 +5,7 @@ import {
   Card,
   CardContent,
   CardMedia,
+  Chip,
   Grid,
   Stack,
   Typography,
@@ -61,12 +62,24 @@ export function HomePage() {
                 component="img"
                 image={featuredPost.heroImage}
                 alt={featuredPost.heroAlt}
+                loading="lazy"
                 sx={{ height: { xs: 280, md: '100%' }, bgcolor: '#e9eeea' }}
               />
             </Grid>
             <Grid item xs={12} md={8}>
               <CardContent sx={{ p: 4 }}>
-                <Typography variant="overline">{featuredPost.category}</Typography>
+                <Chip
+                  label={featuredPost.category}
+                  variant="outlined"
+                  size="small"
+                  sx={{
+                    mb: 2,
+                    fontWeight: 500,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    fontSize: '0.75rem'
+                  }}
+                />
                 <Typography variant="h2" sx={{ mb: 2 }}>
                   {featuredPost.title}
                 </Typography>

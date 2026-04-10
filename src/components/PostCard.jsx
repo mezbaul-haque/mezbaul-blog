@@ -4,6 +4,7 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
+  Chip,
   Stack,
   Typography,
 } from '@mui/material';
@@ -64,8 +65,9 @@ export function PostCard({ post, horizontal = false }) {
           image={post.thumbImage}
           alt={post.heroAlt}
           className="post-card-media"
+          loading="lazy"
           sx={{
-            height: horizontal ? { xs: 220, sm: '100%' } : 240,
+            height: horizontal ? { xs: 140, sm: '100%' } : 240,
             bgcolor: '#e9eeea',
             transition: 'transform 220ms ease',
           }}
@@ -80,7 +82,19 @@ export function PostCard({ post, horizontal = false }) {
           }}
         >
           <Box>
-            <Typography variant="overline">{post.category}</Typography>
+            <Chip
+              label={post.category}
+              variant="outlined"
+              size="small"
+              sx={{
+                mb: 1.5,
+                fontWeight: 500,
+                textTransform: 'uppercase',
+                letterSpacing: '0.05em',
+                fontSize: '0.7rem',
+                height: 24
+              }}
+            />
             <Typography variant="h3" gutterBottom>
               {post.title}
             </Typography>
@@ -123,6 +137,7 @@ export function PostCard({ post, horizontal = false }) {
                     sx={{
                       fontWeight: 500,
                       cursor: 'pointer',
+                      textDecoration: 'none',
                       transition: 'color 180ms ease',
                       '&:hover': {
                         color: 'primary.main',
