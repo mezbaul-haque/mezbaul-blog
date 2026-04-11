@@ -13,7 +13,6 @@ import {
 import { Link as RouterLink, Navigate, useParams } from 'react-router-dom';
 import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
-import { AuthorCard } from '../components/AuthorCard';
 import { PostCard } from '../components/PostCard';
 import { authors, getAuthorById, getPostBySlug, posts } from '../data';
 
@@ -44,6 +43,12 @@ export function PostPage() {
   }
 
   const author = getAuthorById(post.authorId) ?? authors.mezbaul;
+  const authorInitials = author.name
+    .split(' ')
+    .map((part) => part[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
   const previousPost = postIndex > 0 ? posts[postIndex - 1] : undefined;
   const nextPost = postIndex < posts.length - 1 ? posts[postIndex + 1] : undefined;
 
@@ -90,29 +95,70 @@ export function PostPage() {
         <Typography color="text.secondary" sx={{ maxWidth: 720, mt: 2, fontSize: '1.08rem', lineHeight: 1.85 }}>
           {post.intro}
         </Typography>
-        <PostMeta
-          date={post.date}
-          readTime={post.readTime}
-          useChips
-          ChipComponent={Chip}
-        />
+        <PostMeta date={post.date} readTime={post.readTime} />
 
         <Box
           sx={{
             mt: 3,
+            pt: 2.5,
+            borderTop: '1px solid',
+            borderColor: 'divider',
           }}
         >
-          <Typography
-            variant="overline"
-            sx={{ display: 'block', mb: 1, color: 'text.secondary' }}
-          >
-            About the writer
-          </Typography>
-          <AuthorCard
-            author={author}
-            profileUrl={`/writers/${author.id}`}
-            compact={false}
-          />
+          <Stack direction="row" spacing={1.25} alignItems="center">
+            <Box
+              component={RouterLink}
+              to={`/writers/${author.id}`}
+              aria-label={`View ${author.name}'s writer profile`}
+              sx={{
+                width: 36,
+                height: 36,
+                minWidth: 36,
+                borderRadius: '50%',
+                bgcolor: 'divider',
+                color: 'text.primary',
+                display: 'grid',
+                placeItems: 'center',
+                overflow: 'hidden',
+                fontSize: '0.76rem',
+                fontWeight: 700,
+                textDecoration: 'none',
+                transition: 'transform 180ms ease, box-shadow 180ms ease',
+                '&:hover': {
+                  transform: 'scale(1.04)',
+                  boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+                },
+              }}
+            >
+              {author.avatar ? (
+                <Box
+                  component="img"
+                  src={author.avatar}
+                  alt={author.name}
+                  sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                />
+              ) : (
+                authorInitials
+              )}
+            </Box>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="body2" color="text.secondary">
+                Written by{' '}
+                <MuiLink
+                  component={RouterLink}
+                  to={`/writers/${author.id}`}
+                  sx={{ color: 'text.primary', fontWeight: 500 }}
+                >
+                  {author.name}
+                </MuiLink>
+              </Typography>
+              {author.title ? (
+                <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
+                  {author.title}
+                </Typography>
+              ) : null}
+            </Box>
+          </Stack>
         </Box>
 
         <Box sx={{ mt: 3 }}>
@@ -129,7 +175,7 @@ export function PostPage() {
               display: 'block',
             }}
           />
-          <Typography color="text.secondary" variant="body2" sx={{ mt: 1 }}>
+          <Typography color="text.secondary" variant="body2" sx={{ mt: 1, fontSize: '0.82rem' }}>
             Photo:{' '}
             <MuiLink href={post.photoCreditUrl} target="_blank" rel="noreferrer">
               {post.photoCreditLabel}
