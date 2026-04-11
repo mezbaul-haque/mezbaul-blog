@@ -1,5 +1,7 @@
-import { Box, Link as MuiLink, Stack, Typography } from '@mui/material';
+import { Box, Link as MuiLink, Stack, Typography, Tooltip } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import LanguageIcon from '@mui/icons-material/Language';
 
 export function AuthorCard({ author, showLink = true, profileUrl, compact = false }) {
   const initials = author.name
@@ -12,23 +14,31 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
   const websiteLabel = author.website
     ? author.website.replace(/^https?:\/\/(www\.)?/, '')
     : null;
-
+  const twitterHandle = author.twitter
+    ? author.twitter.replace(/^https?:\/\/(www\.)?twitter\.com\//, '')
+    : null;
   const avatarSize = compact ? 64 : 96;
 
   return (
     <Stack
-      direction="row"
+      direction={{ xs: 'column', sm: 'row' }}
       spacing={compact ? 2 : 3}
-      alignItems="center"
+      alignItems={{ xs: 'flex-start', sm: 'center' }}
       sx={{
-        mt: compact ? 2 : 4,
-        mb: compact ? 2 : 4,
-        p: compact ? 2 : 0,
-        borderRadius: compact ? 2 : 0,
-        transition: 'background-color 180ms ease',
-        '&:hover': compact ? {
-          bgcolor: 'action.hover',
-        } : {},
+        p: compact ? 2 : { xs: 2.5, md: 3 },
+        borderRadius: 2,
+        border: '1px solid',
+        borderColor: compact ? 'transparent' : 'divider',
+        bgcolor: compact ? 'transparent' : 'rgba(255, 253, 249, 0.7)',
+        transition: 'background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease',
+        '&:hover': compact
+          ? {
+              bgcolor: 'action.hover',
+            }
+          : {
+              borderColor: 'primary.main',
+              boxShadow: '0 10px 24px rgba(36, 49, 58, 0.06)',
+            },
       }}
     >
       <Box
@@ -63,8 +73,11 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
         )}
       </Box>
 
-      <Box sx={{ maxWidth: compact ? 480 : 680, flex: 1 }}>
-        <Typography variant="overline" sx={{ fontSize: compact ? '0.7rem' : '0.75rem' }}>
+      <Box sx={{ maxWidth: compact ? 480 : 680, flex: 1, minWidth: 0 }}>
+        <Typography
+          variant="overline"
+          sx={{ fontSize: compact ? '0.7rem' : '0.75rem', color: 'text.secondary' }}
+        >
           {compact ? 'By' : 'Writer'}
         </Typography>
         <Typography variant={compact ? "h5" : "h3"} sx={{ mb: 0.5 }}>
@@ -96,47 +109,95 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
         {showLink && (profileUrl || author.website || author.twitter) ? (
           <Stack
             direction="row"
-            spacing={compact ? 1.5 : 2}
+            spacing={compact ? 1 : 1.5}
             sx={{
-              mt: compact ? 1 : 2,
+              mt: compact ? 1.5 : 2,
               flexWrap: 'wrap',
-              '& .MuiLink-root': {
-                fontSize: compact ? '0.8rem' : '0.875rem',
-                transition: 'color 180ms ease',
-                '&:hover': {
-                  color: 'primary.main',
-                },
-              },
+              rowGap: 1,
+              alignItems: 'center',
             }}
           >
             {profileUrl ? (
               <MuiLink
                 component={RouterLink}
                 to={profileUrl}
-                sx={{ fontWeight: 500 }}
+                sx={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 0.5,
+                  fontWeight: 600,
+                  fontSize: compact ? '0.8rem' : '0.875rem',
+                  transition: 'color 180ms ease, transform 180ms ease',
+                  color: 'primary.main',
+                  '&:hover': {
+                    color: 'primary.dark',
+                    transform: 'translateX(2px)',
+                  },
+                }}
               >
-                View profile →
+                View profile
+                <Box component="span" sx={{ fontSize: '1.1em', opacity: 0.8 }}>→</Box>
               </MuiLink>
             ) : null}
             {websiteLabel ? (
-              <MuiLink
-                href={author.website}
-                target="_blank"
-                rel="noreferrer"
-                sx={{ opacity: 0.8 }}
-              >
-                {websiteLabel}
-              </MuiLink>
+              <Tooltip title={websiteLabel} arrow>
+                <MuiLink
+                  href={author.website}
+                  target="_blank"
+                  rel="noreferrer"
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 0.4,
+                    fontSize: compact ? '0.8rem' : '0.875rem',
+                    transition: 'color 180ms ease, opacity 180ms ease',
+                    opacity: 0.85,
+                    color: 'text.secondary',
+                    '&:hover': {
+                      color: 'primary.main',
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  <LanguageIcon sx={{ fontSize: '1rem' }} />
+                  {websiteLabel}
+                  <OpenInNewIcon sx={{ fontSize: '0.95rem', opacity: 0.75 }} />
+                </MuiLink>
+              </Tooltip>
             ) : null}
-            {author.twitter ? (
-              <MuiLink
-                href={author.twitter}
-                target="_blank"
-                rel="noreferrer"
-                sx={{ opacity: 0.8 }}
-              >
-                @{author.twitter.replace(/^https?:\/\/(www\.)?twitter\.com\//, '')}
-              </MuiLink>
+            {twitterHandle ? (
+              <Tooltip title={`@${twitterHandle}`} arrow>
+                <MuiLink
+                  href={author.twitter}
+                  target="_blank"
+                  rel="noreferrer"
+                  sx={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 0.4,
+                    fontSize: compact ? '0.8rem' : '0.875rem',
+                    transition: 'color 180ms ease, opacity 180ms ease',
+                    opacity: 0.85,
+                    color: 'text.secondary',
+                    '&:hover': {
+                      color: '#1DA1F2',
+                      opacity: 1,
+                    },
+                  }}
+                >
+                  <svg
+                    width="1rem"
+                    height="1rem"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    style={{ display: 'block' }}
+                  >
+                    <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2s9 5 20 5a9.5 9.5 0 00-9-5.5c4.75 2.25 7-7 7-7" />
+                  </svg>
+                  @{twitterHandle}
+                  <OpenInNewIcon sx={{ fontSize: '0.95rem', opacity: 0.75 }} />
+                </MuiLink>
+              </Tooltip>
             ) : null}
           </Stack>
         ) : null}

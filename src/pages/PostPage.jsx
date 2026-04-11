@@ -14,6 +14,7 @@ import { Link as RouterLink, Navigate, useParams } from 'react-router-dom';
 import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
 import { AuthorCard } from '../components/AuthorCard';
+import { PostCard } from '../components/PostCard';
 import { authors, getAuthorById, getPostBySlug, posts } from '../data';
 
 function AdjacentPostCard({ eyebrow, post }) {
@@ -96,11 +97,23 @@ export function PostPage() {
           ChipComponent={Chip}
         />
 
-        <AuthorCard
-          author={author}
-          profileUrl={`/writers/${author.id}`}
-          compact={true}
-        />
+        <Box
+          sx={{
+            mt: 3,
+          }}
+        >
+          <Typography
+            variant="overline"
+            sx={{ display: 'block', mb: 1, color: 'text.secondary' }}
+          >
+            About the writer
+          </Typography>
+          <AuthorCard
+            author={author}
+            profileUrl={`/writers/${author.id}`}
+            compact={false}
+          />
+        </Box>
 
         <Box sx={{ mt: 3 }}>
           <Box
@@ -172,6 +185,24 @@ export function PostPage() {
               </Grid>
             );
           })}
+        </Grid>
+      </Box>
+
+      <Box>
+        <SectionHeading 
+          eyebrow={`By ${author.name}`}
+          title="More from this writer" 
+          copy={`Explore other articles by ${author.name} and discover more of their perspectives.`}
+        />
+        <Grid container spacing={2}>
+          {posts
+            .filter((p) => p.authorId === author.id && p.slug !== post.slug)
+            .slice(0, 2)
+            .map((authorPost) => (
+              <Grid item xs={12} md={6} key={authorPost.slug}>
+                <PostCard post={authorPost} />
+              </Grid>
+            ))}
         </Grid>
       </Box>
     </Stack>
