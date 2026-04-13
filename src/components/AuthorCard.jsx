@@ -15,7 +15,7 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
       sx={{
         width: '100%',
         height: '100%',
-        minHeight: 420,
+        minHeight: 360,
         transition: 'transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease',
         '&:hover': {
           transform: 'translateY(-3px)',
@@ -82,15 +82,15 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
         </Box>
 
         {/* Name, Title, and Bio */}
-        <Stack spacing={1.5} sx={{ width: '100%', textAlign: 'center' }}>
+        <Stack spacing={1.25} sx={{ width: '100%', textAlign: 'center' }}>
           {/* Name and Title */}
           <Stack spacing={0.5} alignItems="center">
             <Typography
               variant="h5"
               sx={{
                 fontWeight: 700,
-                fontSize: '1.1rem',
-                lineHeight: 1.1,
+                fontSize: '1.25rem',
+                lineHeight: 1.2,
                 letterSpacing: '-0.01em',
               }}
             >
@@ -99,7 +99,7 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
             <Typography
               color="text.secondary"
               sx={{
-                fontSize: '0.85rem',
+                fontSize: '0.95rem',
                 lineHeight: 1.4,
                 fontWeight: 500,
                 letterSpacing: '0.02em',
@@ -117,8 +117,8 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
             <Typography
               color="text.secondary"
               sx={{
-                fontSize: '0.875rem',
-                lineHeight: 1.6,
+                fontSize: '0.9rem',
+                lineHeight: 1.5,
                 fontWeight: 400,
                 letterSpacing: '0.01em',
               }}
