@@ -1,4 +1,4 @@
-import { Box, Card, CardActionArea, CardMedia, Stack, Typography } from '@mui/material';
+import { Box, Card, CardActionArea, CardMedia, Divider, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 
 export function AuthorCard({ author, showLink = true, profileUrl, compact = false, variant = 'default' }) {
@@ -15,7 +15,7 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
       sx={{
         width: '100%',
         height: '100%',
-        minHeight: 360,
+        minHeight: 420,
         transition: 'transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease',
         '&:hover': {
           transform: 'translateY(-3px)',
@@ -81,30 +81,51 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
           )}
         </Box>
 
-        {/* Name and Title */}
-        <Stack spacing={0.5} alignItems="center" sx={{ textAlign: 'center', flex: 1, justifyContent: 'center' }}>
-          <Typography
-            variant="h5"
-            sx={{
-              fontWeight: 700,
-              fontSize: '1.1rem',
-              lineHeight: 1.1,
-              letterSpacing: '-0.01em',
-            }}
-          >
-            {author.name}
-          </Typography>
-          <Typography
-            color="text.secondary"
-            sx={{
-              fontSize: '0.85rem',
-              lineHeight: 1.4,
-              fontWeight: 500,
-              letterSpacing: '0.02em',
-            }}
-          >
-            {author.title}
-          </Typography>
+        {/* Name, Title, and Bio */}
+        <Stack spacing={1.5} sx={{ width: '100%', textAlign: 'center' }}>
+          {/* Name and Title */}
+          <Stack spacing={0.5} alignItems="center">
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: 700,
+                fontSize: '1.1rem',
+                lineHeight: 1.1,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              {author.name}
+            </Typography>
+            <Typography
+              color="text.secondary"
+              sx={{
+                fontSize: '0.85rem',
+                lineHeight: 1.4,
+                fontWeight: 500,
+                letterSpacing: '0.02em',
+              }}
+            >
+              {author.title}
+            </Typography>
+          </Stack>
+
+          {/* Divider */}
+          <Divider sx={{ borderColor: '#d7dcd6' }} />
+
+          {/* Bio */}
+          {author.bio && (
+            <Typography
+              color="text.secondary"
+              sx={{
+                fontSize: '0.875rem',
+                lineHeight: 1.6,
+                fontWeight: 400,
+                letterSpacing: '0.01em',
+              }}
+            >
+              {author.bio}
+            </Typography>
+          )}
         </Stack>
       </CardActionArea>
     </Card>
