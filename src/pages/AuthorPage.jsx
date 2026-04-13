@@ -3,7 +3,7 @@ import { useParams, Navigate } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { PostCard } from '../components/PostCard';
 import { SectionHeading } from '../components/SectionHeading';
-import { AuthorCard } from '../components/AuthorCard';
+import { AuthorProfile } from '../components/AuthorProfile';
 import { getAuthorById, posts } from '../data';
 
 export function AuthorPage() {
@@ -25,7 +25,7 @@ export function AuthorPage() {
         titleWidth="22ch"
       />
 
-      <AuthorCard author={author} showLink={false} />
+      <AuthorProfile author={author} />
 
       <Box>
         <SectionHeading
@@ -33,9 +33,6 @@ export function AuthorPage() {
           title="What this writer cares about"
           copy="These posts are grouped by the author's specific focus, experience, and voice."
         />
-        <Typography color="text.secondary" sx={{ maxWidth: 720, mt: 2 }}>
-          {author.bio}
-        </Typography>
         <Grid container spacing={2} sx={{ mt: 3 }}>
           <Grid item xs={6} sm={3}>
             <Box

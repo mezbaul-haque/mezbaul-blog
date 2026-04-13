@@ -1,9 +1,10 @@
-import { Box, Card, CardActionArea, CardContent, CardMedia, Link as MuiLink, Stack, Typography, Tooltip } from '@mui/material';
+import { useState } from 'react';
+import { Box, Card, CardMedia, Button, Stack, Typography, IconButton, Tooltip } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import LanguageIcon from '@mui/icons-material/Language';
+import FlipIcon from '@mui/icons-material/Flip';
 
-export function AuthorCard({ author, showLink = true, profileUrl, compact = false, variant = 'default' }) {
+export function AuthorCard({ author, showLink = true, profileUrl, compact = false, variant = 'default', disableFlip = false }) {
+  const [isFlipped, setIsFlipped] = useState(false);
   const initials = author.name
     .split(' ')
     .map((part) => part[0])
@@ -11,300 +12,221 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
     .join('')
     .toUpperCase();
 
-  const websiteLabel = author.website
-    ? author.website.replace(/^https?:\/\/(www\.)?/, '')
-    : null;
   const isDirectory = variant === 'directory';
   const avatarSize = compact ? 60 : 82;
 
-  if (isDirectory) {
-    return (
-      <Card
-        sx={{
-          width: '100%',
-          height: '100%',
-          minHeight: 180,
-          maxHeight: 180,
-          transition: 'transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease',
-          '&:hover': {
-            transform: 'translateY(-3px)',
-            boxShadow: '0 14px 30px rgba(36, 49, 58, 0.08)',
-            borderColor: 'primary.main',
-          },
-          '&:hover .author-card-media, &:focus-within .author-card-media': {
-            transform: 'scale(1.03)',
-          },
-        }}
-      >
-        <CardActionArea
-          component={RouterLink}
-          to={profileUrl}
-          sx={{
-            height: '100%',
-            display: 'grid',
-            gridTemplateColumns: '110px 1fr',
-            alignItems: 'stretch',
-            '&.Mui-focusVisible': {
-              outline: '2px solid',
-              outlineColor: 'primary.main',
-              outlineOffset: '-2px',
-            },
-          }}
-        >
-          {author.avatar ? (
-            <CardMedia
-              component="img"
-              image={author.avatar}
-              alt={author.name}
-              className="author-card-media"
-              loading="lazy"
-              sx={{
-                height: '100%',
-                bgcolor: '#e9eeea',
-                transition: 'transform 220ms ease',
-              }}
-            />
-          ) : (
-            <Box
-              sx={{
-                height: '100%',
-                bgcolor: '#e9eeea',
-                display: 'grid',
-                placeItems: 'center',
-              }}
-            >
-              <Typography variant="h2" sx={{ fontWeight: 400, color: 'text.secondary' }}>
-                {initials}
-              </Typography>
-            </Box>
-          )}
-
-            <CardContent
-            sx={{
-              p: 2,
-              display: 'flex',
-              flexDirection: 'column',
-              flexGrow: 1,
-              minWidth: 0,
-              height: 1,
-            }}
-          >
-            <Typography variant="h3" sx={{ mb: 0.4, fontSize: '1.05rem', lineHeight: 1.2 }}>
-              {author.name}
-            </Typography>
-            <Typography
-              color="text.secondary"
-              sx={{
-                fontSize: '0.78rem',
-                lineHeight: 1.45,
-                mb: 0.7,
-                height: '2.3em',
-                display: '-webkit-box',
-                overflow: 'hidden',
-                WebkitBoxOrient: 'vertical',
-                WebkitLineClamp: 1,
-              }}
-            >
-              {author.title}
-            </Typography>
-            {author.bio ? (
-              <Typography
-                color="text.secondary"
-                sx={{
-                  mb: 0.9,
-                  height: '4.1em',
-                  display: '-webkit-box',
-                  overflow: 'hidden',
-                  WebkitBoxOrient: 'vertical',
-                  WebkitLineClamp: 2,
-                  fontSize: '0.76rem',
-                  lineHeight: 1.45,
-                }}
-              >
-                {author.bio}
-              </Typography>
-            ) : null}
-            <Stack direction="row" spacing={1} alignItems="center" sx={{ mt: 'auto' }}>
-              <Typography variant="overline" sx={{ color: 'text.secondary', fontSize: '0.64rem', lineHeight: 1 }}>
-                View profile
-              </Typography>
-              {showLink && websiteLabel ? (
-                <Tooltip title={websiteLabel} arrow>
-                  <MuiLink
-                    href={author.website}
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={(event) => event.stopPropagation()}
-                    sx={{
-                      display: 'inline-flex',
-                      alignItems: 'center',
-                      gap: 0.35,
-                      ml: 'auto',
-                      fontSize: '0.68rem',
-                      color: 'text.secondary',
-                      opacity: 0.85,
-                      transition: 'color 180ms ease, opacity 180ms ease',
-                      '&:hover': {
-                        color: 'primary.main',
-                        opacity: 1,
-                      },
-                    }}
-                  >
-                    <LanguageIcon sx={{ fontSize: '0.95rem' }} />
-                    <OpenInNewIcon sx={{ fontSize: '0.9rem', opacity: 0.75 }} />
-                  </MuiLink>
-                </Tooltip>
-              ) : null}
-            </Stack>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    );
-  }
-
+  // Card component with flip button and round photo
   return (
-    <Stack
-      direction={{ xs: 'column', sm: 'row' }}
-      spacing={compact ? 2 : 3}
-      alignItems={{ xs: 'flex-start', sm: 'flex-start' }}
+    <Card
       sx={{
+        width: '100%',
         height: '100%',
-        p: compact ? 2 : { xs: 2.5, md: 3 },
-        borderRadius: 2,
-        border: '1px solid',
-        borderColor: compact ? 'transparent' : 'divider',
-        bgcolor: compact ? 'transparent' : 'background.paper',
-        transition: 'border-color 180ms ease, box-shadow 180ms ease',
-        '&:hover': compact
-          ? { bgcolor: 'action.hover' }
-          : {
-              borderColor: 'primary.main',
-              boxShadow: '0 8px 20px rgba(36, 49, 58, 0.05)',
-            },
+        minHeight: 380,
+        position: 'relative',
+        transition: 'box-shadow 200ms ease',
+        '&:hover': {
+          boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+        },
       }}
     >
       <Box
         sx={{
-          width: avatarSize,
-          height: avatarSize,
-          borderRadius: '50%',
-          bgcolor: 'divider',
-          color: 'text.primary',
-          display: 'grid',
-          placeItems: 'center',
-          overflow: 'hidden',
-          flexShrink: 0,
+          width: '100%',
+          height: '100%',
+          position: 'relative',
+          display: 'flex',
+          flexDirection: 'column',
         }}
       >
-        {author.avatar ? (
-          <Box
-            component="img"
-            src={author.avatar}
-            alt={author.name}
-            sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
-          />
-        ) : (
-          <Typography variant={compact ? "h5" : "h4"} sx={{ fontWeight: 700 }}>
-            {initials}
-          </Typography>
-        )}
-      </Box>
-
-      <Stack sx={{ maxWidth: compact ? 480 : 680, flex: 1, minWidth: 0, height: '100%' }}>
-        <Typography
-          variant="overline"
-          sx={{ fontSize: compact ? '0.7rem' : '0.75rem', color: 'text.secondary', mb: 0.5 }}
-        >
-          {compact ? 'By' : 'Writer'}
-        </Typography>
-        <Typography variant={compact ? "h5" : "h3"} sx={{ mb: 0.5 }}>
-          {author.name}
-        </Typography>
-        <Typography
-          color="text.secondary"
+        {/* Front side - Photo and Info */}
+        <Box
           sx={{
-            fontSize: compact ? '0.875rem' : '1rem',
-            lineHeight: 1.5
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            p: 3,
+            opacity: isFlipped ? 0 : 1,
+            transition: 'opacity 300ms ease',
+            pointerEvents: isFlipped ? 'none' : 'auto',
           }}
         >
-          {author.title}
-        </Typography>
-        {author.bio && !compact && (
-          <Typography
-            color="text.secondary"
+          {/* Flip Button - Top Right */}
+          {!disableFlip && (
+            <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
+              <Tooltip title="See bio" arrow>
+                <IconButton
+                  onClick={() => setIsFlipped(true)}
+                  aria-label="View bio"
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    bgcolor: 'rgba(0, 0, 0, 0.05)',
+                    transition: 'all 200ms ease',
+                    '&:hover': {
+                      bgcolor: 'rgba(0, 0, 0, 0.1)',
+                    },
+                  }}
+                >
+                  <FlipIcon 
+                    sx={{ 
+                      fontSize: '1.1rem', 
+                      color: 'text.secondary',
+                      transition: 'transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    }} 
+                  />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          )}
+
+          {/* Round Photo */}
+          <Box
             sx={{
-              mt: 1.25,
-              fontSize: '0.95rem',
-              lineHeight: 1.6,
-              opacity: 0.9,
+              width: 120,
+              height: 120,
+              borderRadius: '50%',
+              bgcolor: '#e9eeea',
+              display: 'grid',
+              placeItems: 'center',
+              overflow: 'hidden',
+              flexShrink: 0,
+              mb: 2.5,
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.12)',
+              border: '1px solid rgba(215, 220, 214, 0.5)',
+            }}
+          >
+            {author.avatar ? (
+              <CardMedia
+                component="img"
+                image={author.avatar}
+                alt={author.name}
+                sx={{ 
+                  width: '100%', 
+                  height: '100%', 
+                  objectFit: 'cover',
+                }}
+              />
+            ) : (
+              <Typography variant="h4" sx={{ fontWeight: 500, color: 'text.secondary' }}>
+                {initials}
+              </Typography>
+            )}
+          </Box>
+
+          {/* Name and Title */}
+          <Stack spacing={0.75} alignItems="center" sx={{ textAlign: 'center', mb: 3, flex: 1, justifyContent: 'center' }}>
+            <Typography 
+              variant="h5" 
+              sx={{ 
+                fontWeight: 700, 
+                fontSize: '1.15rem',
+                lineHeight: 1.1,
+                letterSpacing: '-0.01em',
+              }}
+            >
+              {author.name}
+            </Typography>
+            <Typography 
+              color="text.secondary" 
+              sx={{ 
+                fontSize: '0.875rem', 
+                lineHeight: 1.5, 
+                fontWeight: 500,
+                letterSpacing: '0.02em',
+              }}
+            >
+              {author.title}
+            </Typography>
+          </Stack>
+
+          {/* View Profile Button */}
+          {profileUrl && (
+            <Button
+              component={RouterLink}
+              to={profileUrl}
+              variant="outlined"
+              size="medium"
+              sx={{
+                textTransform: 'none',
+                fontSize: '0.9rem',
+                fontWeight: 600,
+                letterSpacing: '0.01em',
+                transition: 'all 200ms ease',
+                '&:hover': {
+                  backgroundColor: 'rgba(47, 93, 80, 0.04)',
+                  transform: 'translateY(-2px)',
+                },
+              }}
+            >
+              View Profile →
+            </Button>
+          )}
+        </Box>
+
+        {/* Back side - Bio */}
+        <Box
+          sx={{
+            position: 'absolute',
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            p: 3,
+            bgcolor: 'background.paper',
+            opacity: isFlipped ? 1 : 0,
+            transition: 'opacity 300ms ease',
+            pointerEvents: isFlipped ? 'auto' : 'none',
+          }}
+        >
+          {/* Flip Back Button - Top Right */}
+          {!disableFlip && (
+            <Box sx={{ position: 'absolute', top: 12, right: 12 }}>
+              <Tooltip title="Back" arrow>
+                <IconButton
+                  onClick={() => setIsFlipped(false)}
+                  aria-label="Back to profile"
+                  sx={{
+                    width: 36,
+                    height: 36,
+                    bgcolor: 'rgba(0, 0, 0, 0.05)',
+                    transition: 'all 200ms ease',
+                    '&:hover': {
+                      bgcolor: 'rgba(0, 0, 0, 0.1)',
+                    },
+                  }}
+                >
+                  <FlipIcon 
+                    sx={{ 
+                      fontSize: '1.1rem', 
+                      color: 'text.secondary', 
+                      transform: 'scaleX(-1)',
+                      transition: 'transform 300ms cubic-bezier(0.34, 1.56, 0.64, 1)',
+                    }} 
+                  />
+                </IconButton>
+              </Tooltip>
+            </Box>
+          )}
+
+          <Typography 
+            color="text.secondary" 
+            sx={{ 
+              fontSize: '0.95rem', 
+              lineHeight: 1.7,
+              textAlign: 'center',
+              fontWeight: 400,
+              letterSpacing: '0.01em',
+              maxWidth: '95%',
             }}
           >
             {author.bio}
           </Typography>
-        )}
-        {showLink && (profileUrl || author.website) ? (
-          <Stack
-            direction="row"
-            spacing={compact ? 1 : 1.5}
-            sx={{
-              mt: 'auto',
-              pt: compact ? 1.5 : 2,
-              flexWrap: 'wrap',
-              rowGap: 1,
-              alignItems: 'center',
-            }}
-          >
-            {profileUrl ? (
-              <MuiLink
-                component={RouterLink}
-                to={profileUrl}
-                sx={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 0.5,
-                  fontWeight: 500,
-                  fontSize: compact ? '0.8rem' : '0.875rem',
-                  transition: 'color 180ms ease, transform 180ms ease',
-                  color: 'primary.main',
-                  '&:hover': {
-                    color: 'primary.dark',
-                    transform: 'translateX(2px)',
-                  },
-                }}
-              >
-                View profile
-                <Box component="span" sx={{ fontSize: '1.1em', opacity: 0.8 }}>→</Box>
-              </MuiLink>
-            ) : null}
-            {websiteLabel ? (
-              <Tooltip title={websiteLabel} arrow>
-                <MuiLink
-                  href={author.website}
-                  target="_blank"
-                  rel="noreferrer"
-                  sx={{
-                    display: 'inline-flex',
-                    alignItems: 'center',
-                    gap: 0.4,
-                    fontSize: compact ? '0.8rem' : '0.875rem',
-                    transition: 'color 180ms ease, opacity 180ms ease',
-                    opacity: 0.85,
-                    color: 'text.secondary',
-                    '&:hover': {
-                      color: 'primary.main',
-                      opacity: 1,
-                    },
-                  }}
-                >
-                  <LanguageIcon sx={{ fontSize: '1rem' }} />
-                  {websiteLabel}
-                  <OpenInNewIcon sx={{ fontSize: '0.95rem', opacity: 0.75 }} />
-                </MuiLink>
-              </Tooltip>
-            ) : null}
-          </Stack>
-        ) : null}
-      </Stack>
-    </Stack>
+        </Box>
+      </Box>
+    </Card>
   );
 }

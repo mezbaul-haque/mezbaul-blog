@@ -25,7 +25,7 @@ export function WritersPage() {
           }}
         >
           {authorList.map((author) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={author.id}>
+            <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} key={author.id}>
               <AuthorCard
                 author={author}
                 profileUrl={`/writers/${author.id}`}
