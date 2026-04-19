@@ -11,7 +11,7 @@ export function AuthorProfile({ author }) {
   return (
     <Card
       sx={{
-        maxWidth: 500,
+        maxWidth: '100%',
         mx: 'auto',
         p: 4,
         textAlign: 'center',
