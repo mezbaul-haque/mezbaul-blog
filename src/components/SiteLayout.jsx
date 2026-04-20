@@ -14,6 +14,7 @@ import {
 } from '@mui/material';
 import { useMemo, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 import { navItems, siteDescription, siteTitle } from '../data';
 
 function NavLink({ to, label, onClick }) {
@@ -51,6 +52,7 @@ function NavLink({ to, label, onClick }) {
 export function SiteLayout({ children }) {
   const [open, setOpen] = useState(false);
   const currentYear = new Date().getFullYear();
+  const { isAuthenticated, isAdmin, userProfile, logOut } = useAuth();
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -59,6 +61,11 @@ export function SiteLayout({ children }) {
   const handleDrawerClose = () => {
     setOpen(false);
   };
+
+  async function handleLogout() {
+    await logOut();
+    handleDrawerClose();
+  }
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
@@ -98,6 +105,40 @@ export function SiteLayout({ children }) {
               {navItems.map((item) => (
                 <NavLink key={item.to} {...item} />
               ))}
+            </Stack>
+
+            <Stack
+              direction="row"
+              spacing={1}
+              sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}
+            >
+              {isAuthenticated ? (
+                <>
+                  <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
+                    {userProfile?.name || 'Writer'}
+                  </Typography>
+                  {isAdmin && (
+                    <Button component={RouterLink} to="/admin" variant="text">
+                      Admin
+                    </Button>
+                  )}
+                  <Button component={RouterLink} to="/dashboard" variant="outlined">
+                    Dashboard
+                  </Button>
+                  <Button onClick={handleLogout} variant="text">
+                    Sign out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button component={RouterLink} to="/login" variant="text">
+                    Sign in
+                  </Button>
+                  <Button component={RouterLink} to="/register" variant="contained">
+                    Become a writer
+                  </Button>
+                </>
+              )}
             </Stack>
 
             <IconButton
@@ -168,7 +209,7 @@ export function SiteLayout({ children }) {
               spacing={1.5}
             >
               <Typography variant="body2" color="text.secondary">
-                © {currentYear} Mezbaul Blog. All rights reserved.
+                © {currentYear} Eubello. All rights reserved.
               </Typography>
               <Button
                 color="primary"
@@ -192,6 +233,37 @@ export function SiteLayout({ children }) {
               onClick={handleDrawerClose}
             />
           ))}
+          <Divider />
+          {isAuthenticated ? (
+            <>
+              <Typography variant="body2" color="text.secondary">
+                Signed in as {userProfile?.name || 'Writer'}
+              </Typography>
+              {isAdmin && (
+                <Button component={RouterLink} to="/admin" onClick={handleDrawerClose}>
+                  Admin
+                </Button>
+              )}
+              <Button component={RouterLink} to="/dashboard" onClick={handleDrawerClose}>
+                Dashboard
+              </Button>
+              <Button onClick={handleLogout}>Sign out</Button>
+            </>
+          ) : (
+            <>
+              <Button component={RouterLink} to="/login" onClick={handleDrawerClose}>
+                Sign in
+              </Button>
+              <Button
+                component={RouterLink}
+                to="/register"
+                variant="contained"
+                onClick={handleDrawerClose}
+              >
+                Become a writer
+              </Button>
+            </>
+          )}
         </Stack>
       </Drawer>
     </Box>

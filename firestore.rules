@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+
+    function isWriter(userId) {
+      return isAuthenticated()
+        && request.auth.uid == userId
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['writer', 'admin'];
+    }
+
+    function isAdmin() {
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    function isActiveWriter() {
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isActive == true;
+    }
+
+    // Users collection - public read, writers manage own profile, admins manage all
+    match /users/{userId} {
+      allow read: if (resource.data.approvalStatus == 'approved' && resource.data.isProfileVisible == true)
+        || isOwner(userId)
+        || isAdmin();
+      allow create: if isOwner(userId)
+        && request.resource.data.role == 'writer'
+        && request.resource.data.approvalStatus == 'pending'
+        && request.resource.data.isProfileVisible == false;
+      allow update: if isAdmin()
+        || (
+          isWriter(userId)
+          && request.resource.data.role == resource.data.role
+          && request.resource.data.isActive == resource.data.isActive
+          && request.resource.data.approvalStatus == resource.data.approvalStatus
+          && request.resource.data.isProfileVisible == resource.data.isProfileVisible
+          && request.resource.data.approvedAt == resource.data.approvedAt
+          && request.resource.data.approvedBy == resource.data.approvedBy
+        );
+      allow delete: if isAdmin();
+    }
+
+    // Posts collection - public read, admins write
+    match /posts/{slug} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
+    // Drafts collection - private per writer, admins can review
+    match /drafts/{draftId} {
+      allow read: if isActiveWriter()
+        && (resource.data.authorId == request.auth.uid || isAdmin());
+      allow create: if isActiveWriter()
+        && request.resource.data.authorId == request.auth.uid
+        && request.resource.data.status == 'draft';
+      allow update: if (isActiveWriter() && resource.data.authorId == request.auth.uid)
+        || isAdmin();
+      allow delete: if isActiveWriter() && resource.data.authorId == request.auth.uid
+        || isAdmin();
+    }
+  }
+}

@@ -14,7 +14,7 @@ import { Link as RouterLink, Navigate, useParams } from 'react-router-dom';
 import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
 import { PostCard } from '../components/PostCard';
-import { authors, getAuthorById, getPostBySlug, posts } from '../data';
+import { usePublicContent } from '../services/content';
 
 function AdjacentPostCard({ eyebrow, post }) {
   if (!post) return null;
@@ -35,6 +35,7 @@ function AdjacentPostCard({ eyebrow, post }) {
 
 export function PostPage() {
   const { slug } = useParams();
+  const { authorsById, postsBySlug, posts } = usePublicContent();
   const postIndex = posts.findIndex((item) => item.slug === slug);
   const post = postIndex >= 0 ? posts[postIndex] : undefined;
 
@@ -42,8 +43,18 @@ export function PostPage() {
     return <Navigate to="/" replace />;
   }
 
-  const author = getAuthorById(post.authorId) ?? authors.mezbaul;
-  const authorInitials = author.name
+  const author = authorsById[post.authorId] || (
+    post.authorName
+      ? {
+          id: post.authorId,
+          name: post.authorName,
+          title: post.authorTitle,
+          avatar: post.authorAvatar,
+        }
+      : null
+  );
+  const authorProfileUrl = author ? `/writers/${author.id}` : '/writers';
+  const authorInitials = (author?.name || 'Unknown writer')
     .split(' ')
     .map((part) => part[0])
     .slice(0, 2)
@@ -108,8 +119,8 @@ export function PostPage() {
           <Stack direction="row" spacing={1.25} alignItems="center">
             <Box
               component={RouterLink}
-              to={`/writers/${author.id}`}
-              aria-label={`View ${author.name}'s writer profile`}
+              to={authorProfileUrl}
+              aria-label={`View ${(author?.name || 'this writer')}'s writer profile`}
               sx={{
                 width: 36,
                 height: 36,
@@ -130,7 +141,7 @@ export function PostPage() {
                 },
               }}
             >
-              {author.avatar ? (
+              {author?.avatar ? (
                 <Box
                   component="img"
                   src={author.avatar}
@@ -146,13 +157,13 @@ export function PostPage() {
                 Written by{' '}
                 <MuiLink
                   component={RouterLink}
-                  to={`/writers/${author.id}`}
+                  to={authorProfileUrl}
                   sx={{ color: 'text.primary', fontWeight: 500 }}
                 >
-                  {author.name}
+                  {author?.name || 'Unknown writer'}
                 </MuiLink>
               </Typography>
-              {author.title ? (
+              {author?.title ? (
                 <Typography variant="caption" color="text.secondary" sx={{ display: 'block', mt: 0.25 }}>
                   {author.title}
                 </Typography>
@@ -213,7 +224,7 @@ export function PostPage() {
         <SectionHeading eyebrow="More writing" title="Related posts" />
         <Grid container spacing={2}>
           {post.related.map((item) => {
-            const relatedPost = getPostBySlug(item.slug);
+            const relatedPost = postsBySlug[item.slug];
             if (!relatedPost) return null;
 
             return (
@@ -236,13 +247,13 @@ export function PostPage() {
 
       <Box>
         <SectionHeading 
-          eyebrow={`By ${author.name}`}
+          eyebrow={`By ${author?.name || 'this writer'}`}
           title="More from this writer" 
-          copy={`Explore other articles by ${author.name} and discover more of their perspectives.`}
+          copy={`Explore other articles by ${author?.name || 'this writer'} and discover more of their perspectives.`}
         />
         <Grid container spacing={2}>
           {posts
-            .filter((p) => p.authorId === author.id && p.slug !== post.slug)
+            .filter((p) => p.authorId === author?.id && p.slug !== post.slug)
             .slice(0, 2)
             .map((authorPost) => (
               <Grid item xs={12} md={6} key={authorPost.slug}>

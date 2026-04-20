@@ -1,9 +1,11 @@
 import { Box, Grid, Stack } from '@mui/material';
 import { PageHeader } from '../components/PageHeader';
 import { AuthorCard } from '../components/AuthorCard';
-import { authorList } from '../data';
+import { usePublicContent } from '../services/content';
 
 export function WritersPage() {
+  const { authors } = usePublicContent();
+
   return (
       <Stack spacing={5}>
       <PageHeader
@@ -24,7 +26,7 @@ export function WritersPage() {
             },
           }}
         >
-          {authorList.map((author) => (
+          {authors.map((author) => (
             <Grid size={{ xs: 12, sm: 6, md: 6, lg: 4, xl: 3 }} key={author.id}>
               <AuthorCard
                 author={author}

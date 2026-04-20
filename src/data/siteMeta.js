@@ -1,4 +1,4 @@
-export const siteTitle = 'Mezbaul Blog';
+export const siteTitle = 'Eubello';
 
 export const siteDescription =
   'Thoughtful writing on work, systems, technology, and everyday life.';

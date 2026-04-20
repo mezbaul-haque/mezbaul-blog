@@ -13,15 +13,16 @@ import { useMemo, useState } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { PostCard } from '../components/PostCard';
 import { SectionHeading } from '../components/SectionHeading';
-import { posts } from '../data';
+import { usePublicContent } from '../services/content';
 
 export function ArchivePage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [query, setQuery] = useState('');
+  const { posts } = usePublicContent();
 
   const categories = useMemo(
     () => ['All', ...new Set(posts.map((post) => post.category))],
-    [],
+    [posts],
   );
 
   const filteredPosts = useMemo(() => {
@@ -38,7 +39,7 @@ export function ArchivePage() {
 
       return matchesCategory && matchesQuery;
     });
-  }, [query, selectedCategory]);
+  }, [posts, query, selectedCategory]);
 
   return (
     <Stack spacing={5}>

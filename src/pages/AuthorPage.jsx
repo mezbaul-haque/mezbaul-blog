@@ -4,11 +4,12 @@ import { PageHeader } from '../components/PageHeader';
 import { PostCard } from '../components/PostCard';
 import { SectionHeading } from '../components/SectionHeading';
 import { AuthorProfile } from '../components/AuthorProfile';
-import { getAuthorById, posts } from '../data';
+import { usePublicContent } from '../services/content';
 
 export function AuthorPage() {
   const { authorId } = useParams();
-  const author = getAuthorById(authorId);
+  const { authorsById, posts } = usePublicContent();
+  const author = authorsById[authorId];
 
   if (!author) {
     return <Navigate to="/writers" replace />;

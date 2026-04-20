@@ -14,12 +14,19 @@ import { Link as RouterLink } from 'react-router-dom';
 import { PostCard } from '../components/PostCard';
 import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
-import { featuredPostSlug, getPostBySlug, posts } from '../data';
-
-const featuredPost = getPostBySlug(featuredPostSlug);
+import { useAuth } from '../contexts/AuthContext';
+import { featuredPostSlug } from '../data';
+import { usePublicContent } from '../services/content';
 
 export function HomePage() {
-  const recentPosts = posts.filter((post) => post.slug !== featuredPostSlug).slice(0, 3);
+  const { isAuthenticated, isAdmin, userProfile } = useAuth();
+  const { postsBySlug, posts } = usePublicContent();
+  const featuredPost = postsBySlug[featuredPostSlug] || posts[0];
+  const recentPosts = posts.filter((post) => post.slug !== featuredPost?.slug).slice(0, 3);
+
+  if (!featuredPost) {
+    return null;
+  }
 
   return (
     <Stack spacing={6}>
@@ -46,7 +53,78 @@ export function HomePage() {
           <Button variant="outlined" component={RouterLink} to="/archive">
             View Archive
           </Button>
+          {isAuthenticated ? (
+            <Button variant="outlined" component={RouterLink} to="/dashboard">
+              Open Dashboard
+            </Button>
+          ) : (
+            <Button variant="outlined" component={RouterLink} to="/register">
+              Writer Sign Up
+            </Button>
+          )}
         </Stack>
+      </Box>
+
+      <Box>
+        <SectionHeading
+          eyebrow="Writer Portal"
+          title={isAuthenticated ? `Welcome back, ${userProfile?.name || 'writer'}` : 'Contribute to Eubello'}
+          copy={
+            isAuthenticated
+              ? 'Your writing workflow is now connected to Firebase with account access, draft management, and admin review tools.'
+              : 'Firebase-backed writer accounts, private drafts, and editorial review are now built into the site.'
+          }
+        />
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Authentication
+                </Typography>
+                <Typography color="text.secondary" sx={{ mb: 2 }}>
+                  Writers can register, sign in, and keep a persistent profile.
+                </Typography>
+                <Button component={RouterLink} to={isAuthenticated ? '/dashboard/profile' : '/login'}>
+                  {isAuthenticated ? 'Edit profile' : 'Sign in'}
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Draft Workflow
+                </Typography>
+                <Typography color="text.secondary" sx={{ mb: 2 }}>
+                  Create drafts, save progress, and submit posts for review from the dashboard.
+                </Typography>
+                <Button component={RouterLink} to={isAuthenticated ? '/dashboard/drafts' : '/register'}>
+                  {isAuthenticated ? 'View drafts' : 'Create writer account'}
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Card sx={{ height: '100%' }}>
+              <CardContent>
+                <Typography variant="h6" gutterBottom>
+                  Editorial Review
+                </Typography>
+                <Typography color="text.secondary" sx={{ mb: 2 }}>
+                  Admins can review incoming drafts, manage writers, and publish approved work.
+                </Typography>
+                <Button
+                  component={RouterLink}
+                  to={isAdmin ? '/admin' : isAuthenticated ? '/dashboard' : '/login'}
+                >
+                  {isAdmin ? 'Open admin panel' : 'See dashboard'}
+                </Button>
+              </CardContent>
+            </Card>
+          </Grid>
+        </Grid>
       </Box>
 
       <Box>
