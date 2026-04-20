@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { authors as staticAuthors } from '../data/authors';
 import { posts as staticPosts } from '../data/posts';
-import { db } from './firebase';
+import { db, isFirebaseConfigured } from './firebase';
 
 function toDateValue(value) {
   if (!value) return null;
@@ -114,6 +114,11 @@ export function usePublicContent() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!isFirebaseConfigured || !db) {
+      setIsLoading(false);
+      return undefined;
+    }
+
     const postsQuery = collection(db, 'posts');
     const authorsQuery = collection(db, 'users');
 

@@ -13,8 +13,23 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+const requiredFirebaseKeys = [
+  firebaseConfig.apiKey,
+  firebaseConfig.authDomain,
+  firebaseConfig.projectId,
+  firebaseConfig.storageBucket,
+  firebaseConfig.messagingSenderId,
+  firebaseConfig.appId,
+];
 
-export const auth = getAuth(app);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+export const isFirebaseConfigured = requiredFirebaseKeys.every(Boolean);
+
+const app = isFirebaseConfigured ? initializeApp(firebaseConfig) : null;
+
+if (!isFirebaseConfigured) {
+  console.warn('Firebase env vars are missing. Auth and live content features are disabled.');
+}
+
+export const auth = app ? getAuth(app) : null;
+export const db = app ? getFirestore(app) : null;
+export const storage = app ? getStorage(app) : null;

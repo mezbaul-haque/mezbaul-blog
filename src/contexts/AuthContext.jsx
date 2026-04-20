@@ -6,7 +6,7 @@ import {
   signOut,
 } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
-import { auth, db } from '../services/firebase';
+import { auth, db, isFirebaseConfigured } from '../services/firebase';
 
 const AuthContext = createContext(null);
 
@@ -16,6 +16,11 @@ export function AuthProvider({ children }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!isFirebaseConfigured || !auth || !db) {
+      setIsLoading(false);
+      return undefined;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
         const profile = await fetchUserProfile(firebaseUser.uid);
@@ -32,6 +37,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   async function fetchUserProfile(uid) {
+    if (!db) return null;
     const docRef = doc(db, 'users', uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -41,6 +47,9 @@ export function AuthProvider({ children }) {
   }
 
   async function signUp(email, password, { name }) {
+    if (!auth || !db) {
+      throw new Error('Firebase is not configured');
+    }
     const credential = await createUserWithEmailAndPassword(auth, email, password);
     const newUser = {
       id: credential.user.uid,
@@ -66,12 +75,16 @@ export function AuthProvider({ children }) {
   }
 
   async function signIn(email, password) {
+    if (!auth) {
+      throw new Error('Firebase is not configured');
+    }
     const credential = await signInWithEmailAndPassword(auth, email, password);
     const profile = await fetchUserProfile(credential.user.uid);
     return { user: credential.user, profile };
   }
 
   async function logOut() {
+    if (!auth) return;
     await signOut(auth);
   }
 
@@ -79,6 +92,7 @@ export function AuthProvider({ children }) {
     user,
     userProfile,
     isLoading,
+    isFirebaseConfigured,
     isAuthenticated: !!user,
     isAdmin: userProfile?.role === 'admin',
     signIn,
