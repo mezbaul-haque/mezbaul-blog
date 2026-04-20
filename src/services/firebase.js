@@ -13,6 +13,13 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+// Debug: log what env vars are detected
+console.log('Firebase env check:', {
+  apiKey: firebaseConfig.apiKey ? 'SET' : 'MISSING',
+  authDomain: firebaseConfig.authDomain ? 'SET' : 'MISSING',
+  projectId: firebaseConfig.projectId ? 'SET' : 'MISSING',
+});
+
 const requiredFirebaseKeys = [
   firebaseConfig.apiKey,
   firebaseConfig.authDomain,
