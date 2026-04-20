@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
+import { getAuthErrorMessage } from '../../services/authErrors';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
@@ -32,7 +33,7 @@ export function LoginPage() {
       await signIn(email, password);
       navigate(from, { replace: true });
     } catch (err) {
-      setError('Invalid email or password');
+      setError(getAuthErrorMessage(err, 'Sign in failed.'));
     } finally {
       setIsSubmitting(false);
     }

@@ -11,6 +11,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
+import { getAuthErrorMessage } from '../../services/authErrors';
 
 export function RegisterPage() {
   const [name, setName] = useState('');
@@ -42,11 +43,7 @@ export function RegisterPage() {
       await signUp(email, password, { name });
       navigate('/dashboard');
     } catch (err) {
-      if (err.code === 'auth/email-already-in-use') {
-        setError('An account with this email already exists');
-      } else {
-        setError('Failed to create account');
-      }
+      setError(getAuthErrorMessage(err, 'Failed to create account.'));
     } finally {
       setIsSubmitting(false);
     }
