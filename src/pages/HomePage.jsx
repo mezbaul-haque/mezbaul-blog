@@ -19,7 +19,7 @@ import { featuredPostSlug } from '../data';
 import { usePublicContent } from '../services/content';
 
 export function HomePage() {
-  const { isAuthenticated, isAdmin, userProfile } = useAuth();
+  const { isAuthenticated, isAdmin, canWritePosts, userProfile } = useAuth();
   const { postsBySlug, posts } = usePublicContent();
   const featuredPost = postsBySlug[featuredPostSlug] || posts[0];
   const recentPosts = posts.filter((post) => post.slug !== featuredPost?.slug).slice(0, 3);
@@ -53,13 +53,17 @@ export function HomePage() {
           <Button variant="outlined" component={RouterLink} to="/archive">
             View Archive
           </Button>
-          {isAuthenticated ? (
+          {canWritePosts ? (
             <Button variant="outlined" component={RouterLink} to="/dashboard">
               Open Dashboard
             </Button>
+          ) : isAuthenticated ? (
+            <Button variant="outlined" component={RouterLink} to="/writers">
+              Explore Writers
+            </Button>
           ) : (
             <Button variant="outlined" component={RouterLink} to="/register">
-              Writer Sign Up
+              Join the Community
             </Button>
           )}
         </Stack>
@@ -68,10 +72,12 @@ export function HomePage() {
       <Box>
         <SectionHeading
           eyebrow="Writer Portal"
-          title={isAuthenticated ? `Welcome back, ${userProfile?.name || 'writer'}` : 'Contribute to Eubello'}
+          title={isAuthenticated ? `Welcome back, ${userProfile?.name || 'reader'}` : 'Contribute to Eubello'}
           copy={
-            isAuthenticated
+            canWritePosts
               ? 'Your writing workflow is now connected to Firebase with account access, draft management, and admin review tools.'
+              : isAuthenticated
+              ? 'Your account is ready for reader features now, with likes, follows, and comments ready to grow next.'
               : 'Firebase-backed writer accounts, private drafts, and editorial review are now built into the site.'
           }
         />
@@ -83,10 +89,10 @@ export function HomePage() {
                   Authentication
                 </Typography>
                 <Typography color="text.secondary" sx={{ mb: 2 }}>
-                  Writers can register, sign in, and keep a persistent profile.
+                  Readers and writers can register, sign in, and keep a persistent account.
                 </Typography>
-                <Button component={RouterLink} to={isAuthenticated ? '/dashboard/profile' : '/login'}>
-                  {isAuthenticated ? 'Edit profile' : 'Sign in'}
+                <Button component={RouterLink} to={canWritePosts ? '/dashboard/profile' : '/login'}>
+                  {canWritePosts ? 'Edit profile' : 'Sign in'}
                 </Button>
               </CardContent>
             </Card>
@@ -100,8 +106,8 @@ export function HomePage() {
                 <Typography color="text.secondary" sx={{ mb: 2 }}>
                   Create drafts, save progress, and submit posts for review from the dashboard.
                 </Typography>
-                <Button component={RouterLink} to={isAuthenticated ? '/dashboard/drafts' : '/register'}>
-                  {isAuthenticated ? 'View drafts' : 'Create writer account'}
+                <Button component={RouterLink} to={canWritePosts ? '/dashboard/drafts' : '/register'}>
+                  {canWritePosts ? 'View drafts' : 'Create writer account'}
                 </Button>
               </CardContent>
             </Card>
@@ -117,9 +123,9 @@ export function HomePage() {
                 </Typography>
                 <Button
                   component={RouterLink}
-                  to={isAdmin ? '/admin' : isAuthenticated ? '/dashboard' : '/login'}
+                  to={isAdmin ? '/admin' : canWritePosts ? '/dashboard' : '/register'}
                 >
-                  {isAdmin ? 'Open admin panel' : 'See dashboard'}
+                  {isAdmin ? 'Open admin panel' : canWritePosts ? 'See dashboard' : 'Become a writer'}
                 </Button>
               </CardContent>
             </Card>

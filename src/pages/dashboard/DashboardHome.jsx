@@ -8,7 +8,7 @@ export function DashboardHome() {
 
   return (
     <Box>
-      <Typography variant="h4" gutterBottom>
+      <Typography variant="h4" gutterBottom sx={{ fontSize: { xs: '2rem', md: '2.5rem' } }}>
         Welcome, {userProfile?.name}
       </Typography>
 
@@ -88,11 +88,12 @@ export function DashboardHome() {
             <Typography variant="h6" gutterBottom>
               Admin Actions
             </Typography>
-            <Stack direction="row" spacing={2}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <Button
                 component={RouterLink}
                 to="/admin/review"
                 variant="contained"
+                fullWidth
               >
                 Review Drafts
               </Button>
@@ -100,6 +101,7 @@ export function DashboardHome() {
                 component={RouterLink}
                 to="/admin/writers"
                 variant="outlined"
+                fullWidth
               >
                 Manage Writers
               </Button>

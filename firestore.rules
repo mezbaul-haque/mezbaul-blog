@@ -18,6 +18,12 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['writer', 'admin'];
     }
 
+    function hasAccountRole() {
+      return isAuthenticated()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['reader', 'writer', 'admin'];
+    }
+
     function isAdmin() {
       return isAuthenticated()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
@@ -36,12 +42,16 @@ service cloud.firestore {
         || isOwner(userId)
         || isAdmin();
       allow create: if isOwner(userId)
-        && request.resource.data.role == 'writer'
-        && request.resource.data.approvalStatus == 'pending'
+        && request.resource.data.role in ['reader', 'writer']
+        && (
+          (request.resource.data.role == 'writer' && request.resource.data.approvalStatus == 'pending')
+          || (request.resource.data.role == 'reader' && request.resource.data.approvalStatus == 'approved')
+        )
         && request.resource.data.isProfileVisible == false;
       allow update: if isAdmin()
         || (
-          isWriter(userId)
+          hasAccountRole()
+          && request.auth.uid == userId
           && request.resource.data.role == resource.data.role
           && request.resource.data.isActive == resource.data.isActive
           && request.resource.data.approvalStatus == resource.data.approvalStatus

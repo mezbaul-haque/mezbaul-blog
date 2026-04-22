@@ -12,8 +12,8 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
-import { Link as RouterLink, useLocation } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
+import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { navItems, siteDescription, siteTitle } from '../data';
 
@@ -52,7 +52,9 @@ function NavLink({ to, label, onClick }) {
 export function SiteLayout({ children }) {
   const [open, setOpen] = useState(false);
   const currentYear = new Date().getFullYear();
-  const { isAuthenticated, isAdmin, userProfile, logOut } = useAuth();
+  const { isAuthenticated, isAdmin, canWritePosts, userProfile, logOut } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -60,6 +62,17 @@ export function SiteLayout({ children }) {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.key]);
+
+  const navigateFromDrawer = (to) => {
+    setOpen(false);
+    window.setTimeout(() => {
+      navigate(to);
+    }, 0);
   };
 
   async function handleLogout() {
@@ -122,9 +135,11 @@ export function SiteLayout({ children }) {
                       Admin
                     </Button>
                   )}
-                  <Button component={RouterLink} to="/dashboard" variant="outlined">
-                    Dashboard
-                  </Button>
+                  {canWritePosts && (
+                    <Button component={RouterLink} to="/dashboard" variant="outlined">
+                      Dashboard
+                    </Button>
+                  )}
                   <Button onClick={handleLogout} variant="text">
                     Sign out
                   </Button>
@@ -227,11 +242,14 @@ export function SiteLayout({ children }) {
       <Drawer anchor="right" open={open} onClose={handleDrawerClose}>
         <Stack sx={{ p: 3, minWidth: 220 }} spacing={2}>
           {navItems.map((item) => (
-            <NavLink
+            <Button
               key={`drawer-${item.to}`}
-              {...item}
-              onClick={handleDrawerClose}
-            />
+              color="inherit"
+              onClick={() => navigateFromDrawer(item.to)}
+              sx={{ justifyContent: 'flex-start', px: 0 }}
+            >
+              {item.label}
+            </Button>
           ))}
           <Divider />
           {isAuthenticated ? (
@@ -240,25 +258,25 @@ export function SiteLayout({ children }) {
                 Signed in as {userProfile?.name || 'Writer'}
               </Typography>
               {isAdmin && (
-                <Button component={RouterLink} to="/admin" onClick={handleDrawerClose}>
+                <Button onClick={() => navigateFromDrawer('/admin')}>
                   Admin
                 </Button>
               )}
-              <Button component={RouterLink} to="/dashboard" onClick={handleDrawerClose}>
-                Dashboard
-              </Button>
+              {canWritePosts && (
+                <Button onClick={() => navigateFromDrawer('/dashboard')}>
+                  Dashboard
+                </Button>
+              )}
               <Button onClick={handleLogout}>Sign out</Button>
             </>
           ) : (
             <>
-              <Button component={RouterLink} to="/login" onClick={handleDrawerClose}>
+              <Button onClick={() => navigateFromDrawer('/login')}>
                 Sign in
               </Button>
               <Button
-                component={RouterLink}
-                to="/register"
                 variant="contained"
-                onClick={handleDrawerClose}
+                onClick={() => navigateFromDrawer('/register')}
               >
                 Become a writer
               </Button>

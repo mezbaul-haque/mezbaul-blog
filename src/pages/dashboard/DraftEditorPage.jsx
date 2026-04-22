@@ -166,7 +166,13 @@ export function DraftEditorPage() {
 
   return (
     <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'flex-start', sm: 'center' }}
+        spacing={2}
+        sx={{ mb: 3 }}
+      >
         <Typography variant="h4">
           {isNew ? 'New Draft' : 'Edit Draft'}
         </Typography>
@@ -201,10 +207,10 @@ export function DraftEditorPage() {
               rows={2}
             />
 
-            <Stack direction="row" spacing={2}>
+            <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
               <Box sx={{ flex: 1 }}>
                 <Typography variant="subtitle2" gutterBottom>Hero Image</Typography>
-                <Button component="label" variant="outlined">
+                <Button component="label" variant="outlined" fullWidth>
                   Upload
                   <input
                     type="file"
@@ -221,7 +227,7 @@ export function DraftEditorPage() {
               </Box>
               <Box sx={{ flex: 1 }}>
                 <Typography variant="subtitle2" gutterBottom>Thumbnail</Typography>
-                <Button component="label" variant="outlined">
+                <Button component="label" variant="outlined" fullWidth>
                   Upload
                   <input
                     type="file"
@@ -250,7 +256,12 @@ export function DraftEditorPage() {
       {sections.map((section, sIndex) => (
         <Card key={sIndex} sx={{ mb: 2 }}>
           <CardContent>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ mb: 2 }}
+            >
               <Typography variant="subtitle1">Section {sIndex + 1}</Typography>
               <IconButton onClick={() => removeSection(sIndex)} color="error">
                 <DeleteIcon />
@@ -300,11 +311,12 @@ export function DraftEditorPage() {
 
       <Divider sx={{ my: 3 }} />
 
-      <Stack direction="row" spacing={2}>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
         <Button
           variant="outlined"
           onClick={() => handleSave(true)}
           disabled={isSaving}
+          fullWidth
         >
           {isSaving ? 'Saving...' : 'Save Draft'}
         </Button>
@@ -314,6 +326,7 @@ export function DraftEditorPage() {
             variant="contained"
             onClick={handleSubmitForReview}
             disabled={isSaving || !title}
+            fullWidth
           >
             Submit for Review
           </Button>

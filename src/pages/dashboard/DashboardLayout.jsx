@@ -1,5 +1,6 @@
 import { Outlet, Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import {
+  AppBar,
   Box,
   Drawer,
   List,
@@ -9,7 +10,13 @@ import {
   Typography,
   Button,
   Divider,
+  IconButton,
+  Toolbar,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 
 const drawerWidth = 240;
@@ -30,16 +37,122 @@ export function DashboardLayout() {
   const { userProfile, logOut, isAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
     await logOut();
     navigate('/');
   };
 
+  const handleDrawerToggle = () => {
+    setMobileOpen((open) => !open);
+  };
+
+  const handleNavigate = () => {
+    if (isMobile) {
+      setMobileOpen(false);
+    }
+  };
+
+  const drawerContent = (
+    <>
+      <Box sx={{ p: 2 }}>
+        <Typography variant="h6" noWrap>
+          {userProfile?.name || 'Dashboard'}
+        </Typography>
+        <Typography variant="caption" color="text.secondary">
+          {isAdmin ? 'Admin' : 'Writer'}
+        </Typography>
+      </Box>
+
+      <Divider />
+
+      <List>
+        {navItems.map((item) => (
+          <ListItem key={item.path} disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to={item.path}
+              selected={location.pathname === item.path}
+              onClick={handleNavigate}
+            >
+              <ListItemText primary={item.label} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+
+      {isAdmin && (
+        <>
+          <Divider />
+          <Typography variant="overline" sx={{ px: 2, pt: 2 }}>
+            Admin
+          </Typography>
+          <List>
+            {adminNavItems.map((item) => (
+              <ListItem key={item.path} disablePadding>
+                <ListItemButton
+                  component={RouterLink}
+                  to={item.path}
+                  selected={location.pathname === item.path}
+                  onClick={handleNavigate}
+                >
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+        </>
+      )}
+
+      <Box sx={{ mt: 'auto', p: 2 }}>
+        <Button
+          component={RouterLink}
+          to="/"
+          fullWidth
+          sx={{ mb: 1 }}
+          onClick={handleNavigate}
+        >
+          View Site
+        </Button>
+        <Button
+          onClick={handleLogout}
+          fullWidth
+          color="secondary"
+        >
+          Sign Out
+        </Button>
+      </Box>
+    </>
+  );
+
   return (
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
+      {isMobile && (
+        <AppBar position="fixed" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
+          <Toolbar sx={{ gap: 1 }}>
+            <IconButton edge="start" onClick={handleDrawerToggle} aria-label="open dashboard navigation">
+              <MenuIcon />
+            </IconButton>
+            <Box sx={{ minWidth: 0 }}>
+              <Typography variant="subtitle1" noWrap>
+                {userProfile?.name || 'Dashboard'}
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                {isAdmin ? 'Admin' : 'Writer'}
+              </Typography>
+            </Box>
+          </Toolbar>
+        </AppBar>
+      )}
+
       <Drawer
-        variant="permanent"
+        variant={isMobile ? 'temporary' : 'permanent'}
+        open={isMobile ? mobileOpen : true}
+        onClose={handleDrawerToggle}
+        ModalProps={{ keepMounted: true }}
         sx={{
           width: drawerWidth,
           flexShrink: 0,
@@ -47,75 +160,21 @@ export function DashboardLayout() {
             width: drawerWidth,
             boxSizing: 'border-box',
           },
+          display: { xs: 'block', md: 'block' },
         }}
       >
-        <Box sx={{ p: 2 }}>
-          <Typography variant="h6" noWrap>
-            {userProfile?.name || 'Dashboard'}
-          </Typography>
-          <Typography variant="caption" color="text.secondary">
-            {isAdmin ? 'Admin' : 'Writer'}
-          </Typography>
-        </Box>
-
-        <Divider />
-
-        <List>
-          {navItems.map((item) => (
-            <ListItem key={item.path} disablePadding>
-              <ListItemButton
-                component={RouterLink}
-                to={item.path}
-                selected={location.pathname === item.path}
-              >
-                <ListItemText primary={item.label} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-
-        {isAdmin && (
-          <>
-            <Divider />
-            <Typography variant="overline" sx={{ px: 2, pt: 2 }}>
-              Admin
-            </Typography>
-            <List>
-              {adminNavItems.map((item) => (
-                <ListItem key={item.path} disablePadding>
-                  <ListItemButton
-                    component={RouterLink}
-                    to={item.path}
-                    selected={location.pathname === item.path}
-                  >
-                    <ListItemText primary={item.label} />
-                  </ListItemButton>
-                </ListItem>
-              ))}
-            </List>
-          </>
-        )}
-
-        <Box sx={{ mt: 'auto', p: 2 }}>
-          <Button
-            component={RouterLink}
-            to="/"
-            fullWidth
-            sx={{ mb: 1 }}
-          >
-            View Site
-          </Button>
-          <Button
-            onClick={handleLogout}
-            fullWidth
-            color="secondary"
-          >
-            Sign Out
-          </Button>
-        </Box>
+        {drawerContent}
       </Drawer>
 
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: { xs: 2, sm: 3 },
+          mt: { xs: 8, md: 0 },
+          width: { md: `calc(100% - ${drawerWidth}px)` },
+        }}
+      >
         <Outlet />
       </Box>
     </Box>

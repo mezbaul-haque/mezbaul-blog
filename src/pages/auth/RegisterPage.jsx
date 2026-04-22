@@ -6,6 +6,7 @@ import {
   Card,
   CardContent,
   Link,
+  MenuItem,
   Stack,
   TextField,
   Typography,
@@ -18,6 +19,7 @@ export function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [accountType, setAccountType] = useState('reader');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { signUp } = useAuth();
@@ -40,8 +42,8 @@ export function RegisterPage() {
     setIsSubmitting(true);
 
     try {
-      await signUp(email, password, { name });
-      navigate('/dashboard');
+      await signUp(email, password, { name, role: accountType });
+      navigate(accountType === 'writer' ? '/dashboard' : '/');
     } catch (err) {
       setError(getAuthErrorMessage(err, 'Failed to create account.'));
     } finally {
@@ -55,7 +57,7 @@ export function RegisterPage() {
         Create Account
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Register as a writer to start contributing
+        Create a reader account or apply as a writer
       </Typography>
 
       {error && (
@@ -77,6 +79,16 @@ export function RegisterPage() {
             required
             fullWidth
           />
+          <TextField
+            select
+            label="Account Type"
+            value={accountType}
+            onChange={(e) => setAccountType(e.target.value)}
+            fullWidth
+          >
+            <MenuItem value="reader">Reader</MenuItem>
+            <MenuItem value="writer">Writer</MenuItem>
+          </TextField>
           <TextField
             label="Email"
             type="email"
@@ -105,6 +117,11 @@ export function RegisterPage() {
             fullWidth
             autoComplete="new-password"
           />
+          <Typography variant="caption" color="text.secondary">
+            {accountType === 'writer'
+              ? 'Writer accounts can create drafts and will appear publicly after admin approval.'
+              : 'Reader accounts can sign in and later like posts, follow writers, and join discussions.'}
+          </Typography>
           <Button
             type="submit"
             variant="contained"

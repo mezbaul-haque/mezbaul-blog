@@ -22,7 +22,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const from = location.state?.from?.pathname || '/dashboard';
+  const from = location.state?.from?.pathname;
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -30,8 +30,9 @@ export function LoginPage() {
     setIsSubmitting(true);
 
     try {
-      await signIn(email, password);
-      navigate(from, { replace: true });
+      const result = await signIn(email, password);
+      const destination = from || (['writer', 'admin'].includes(result.profile?.role) ? '/dashboard' : '/');
+      navigate(destination, { replace: true });
     } catch (err) {
       setError(getAuthErrorMessage(err, 'Sign in failed.'));
     } finally {
@@ -45,7 +46,7 @@ export function LoginPage() {
         Sign In
       </Typography>
       <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-        Sign in to your writer account
+        Sign in to your account
       </Typography>
 
       {error && (

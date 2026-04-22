@@ -55,12 +55,19 @@ export function DraftListPage() {
 
   return (
     <Box>
-      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 3 }}>
+      <Stack
+        direction={{ xs: 'column', sm: 'row' }}
+        justifyContent="space-between"
+        alignItems={{ xs: 'stretch', sm: 'center' }}
+        spacing={2}
+        sx={{ mb: 3 }}
+      >
         <Typography variant="h4">My Drafts</Typography>
         <Button
           component={RouterLink}
           to="/dashboard/drafts/new"
           variant="contained"
+          fullWidth={false}
         >
           New Draft
         </Button>
@@ -78,11 +85,17 @@ export function DraftListPage() {
         <List>
           {drafts.map((draft) => (
             <Card key={draft.id} sx={{ mb: 2 }}>
-              <ListItem>
+              <ListItem
+                sx={{
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: { xs: 'flex-start', sm: 'center' },
+                  gap: 2,
+                }}
+              >
                 <ListItemText
                   primary={draft.title || 'Untitled'}
                   secondary={
-                    <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
+                    <Stack direction="row" spacing={1} sx={{ mt: 1, flexWrap: 'wrap' }}>
                       <Chip
                         label={draft.status}
                         size="small"
@@ -97,6 +110,7 @@ export function DraftListPage() {
                 <Button
                   component={RouterLink}
                   to={`/dashboard/drafts/${draft.id}/edit`}
+                  sx={{ alignSelf: { xs: 'stretch', sm: 'center' } }}
                 >
                   Edit
                 </Button>

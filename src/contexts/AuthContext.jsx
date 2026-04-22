@@ -46,11 +46,12 @@ export function AuthProvider({ children }) {
     return null;
   }
 
-  async function signUp(email, password, { name }) {
+  async function signUp(email, password, { name, role = 'reader' }) {
     if (!auth || !db) {
       throw new Error('Firebase is not configured');
     }
     const credential = await createUserWithEmailAndPassword(auth, email, password);
+    const isWriter = role === 'writer';
     const newUser = {
       id: credential.user.uid,
       email,
@@ -61,11 +62,11 @@ export function AuthProvider({ children }) {
       coverPhoto: '',
       website: '',
       twitter: '',
-      role: 'writer',
+      role,
       isActive: true,
       isProfileVisible: false,
-      approvalStatus: 'pending',
-      approvedAt: null,
+      approvalStatus: isWriter ? 'pending' : 'approved',
+      approvedAt: isWriter ? null : serverTimestamp(),
       approvedBy: '',
       createdAt: serverTimestamp(),
       updatedAt: serverTimestamp(),
@@ -94,7 +95,11 @@ export function AuthProvider({ children }) {
     isLoading,
     isFirebaseConfigured,
     isAuthenticated: !!user,
+    isReader: userProfile?.role === 'reader',
+    isWriter: userProfile?.role === 'writer',
     isAdmin: userProfile?.role === 'admin',
+    canWritePosts: ['writer', 'admin'].includes(userProfile?.role),
+    canEngage: ['reader', 'writer', 'admin'].includes(userProfile?.role),
     signIn,
     signUp,
     logOut,

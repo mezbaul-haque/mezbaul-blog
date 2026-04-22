@@ -1,45 +1,73 @@
 import { useState, useEffect } from 'react';
 import {
+  Alert,
   Box,
+  Button,
   Card,
   CardContent,
-  Typography,
+  Chip,
+  CircularProgress,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   List,
   ListItem,
   ListItemText,
-  Chip,
   Stack,
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
   TextField,
+  Typography,
+  useMediaQuery,
+  useTheme,
 } from '@mui/material';
-import { collection, query, where, orderBy, onSnapshot, doc, updateDoc, serverTimestamp, setDoc, getDoc } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, doc, updateDoc, serverTimestamp, setDoc, getDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { useAuth } from '../../contexts/AuthContext';
 
+function sortDraftsBySubmittedAt(drafts) {
+  return [...drafts].sort((first, second) => {
+    const firstTime = first.submittedAt?.toDate?.()?.getTime?.() || 0;
+    const secondTime = second.submittedAt?.toDate?.()?.getTime?.() || 0;
+    return secondTime - firstTime;
+  });
+}
+
 export function ReviewDraftsPage() {
   const { user } = useAuth();
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
   const [submittedDrafts, setSubmittedDrafts] = useState([]);
   const [selectedDraft, setSelectedDraft] = useState(null);
   const [rejectionReason, setRejectionReason] = useState('');
   const [showRejectDialog, setShowRejectDialog] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
-    const q = query(
-      collection(db, 'drafts'),
-      where('status', '==', 'submitted'),
-      orderBy('submittedAt', 'desc')
-    );
-
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const drafts = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-      setSubmittedDrafts(drafts);
+    if (!db) {
+      setErrorMessage('Firebase is not configured, so draft review is unavailable.');
       setIsLoading(false);
-    });
+      return undefined;
+    }
+
+    setIsLoading(true);
+    setErrorMessage('');
+
+    const q = query(collection(db, 'drafts'), where('status', '==', 'submitted'));
+
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const drafts = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+        setSubmittedDrafts(sortDraftsBySubmittedAt(drafts));
+        setIsLoading(false);
+      },
+      (error) => {
+        console.error('Failed to load submitted drafts:', error);
+        setErrorMessage('Could not load submitted drafts right now. Please try again.');
+        setIsLoading(false);
+      },
+    );
 
     return unsubscribe;
   }, []);
@@ -93,7 +121,12 @@ export function ReviewDraftsPage() {
   }
 
   if (isLoading) {
-    return <Typography>Loading...</Typography>;
+    return (
+      <Stack alignItems="center" spacing={2} sx={{ py: 6 }}>
+        <CircularProgress size={28} />
+        <Typography color="text.secondary">Loading submitted drafts...</Typography>
+      </Stack>
+    );
   }
 
   return (
@@ -102,7 +135,13 @@ export function ReviewDraftsPage() {
         Review Drafts
       </Typography>
 
-      {submittedDrafts.length === 0 ? (
+      {errorMessage && (
+        <Alert severity="error" sx={{ mt: 2 }}>
+          {errorMessage}
+        </Alert>
+      )}
+
+      {!errorMessage && submittedDrafts.length === 0 ? (
         <Card sx={{ mt: 3 }}>
           <CardContent>
             <Typography color="text.secondary">
@@ -114,11 +153,17 @@ export function ReviewDraftsPage() {
         <List sx={{ mt: 3 }}>
           {submittedDrafts.map((draft) => (
             <Card key={draft.id} sx={{ mb: 2 }}>
-              <ListItem>
+              <ListItem
+                sx={{
+                  flexDirection: { xs: 'column', sm: 'row' },
+                  alignItems: { xs: 'flex-start', sm: 'center' },
+                  gap: 2,
+                }}
+              >
                 <ListItemText
                   primary={draft.title || 'Untitled'}
                   secondary={
-                    <Stack direction="row" spacing={2} sx={{ mt: 1 }}>
+                    <Stack direction="row" spacing={2} sx={{ mt: 1, flexWrap: 'wrap' }}>
                       <Typography variant="caption">
                         Category: {draft.category || 'None'}
                       </Typography>
@@ -130,7 +175,7 @@ export function ReviewDraftsPage() {
                 />
                 <Chip label="Submitted" color="primary" size="small" />
                 <Button
-                  sx={{ ml: 2 }}
+                  sx={{ ml: { sm: 2 }, alignSelf: { xs: 'stretch', sm: 'center' } }}
                   onClick={() => setSelectedDraft(draft)}
                 >
                   Review
@@ -141,7 +186,13 @@ export function ReviewDraftsPage() {
         </List>
       )}
 
-      <Dialog open={!!selectedDraft} onClose={() => setSelectedDraft(null)} maxWidth="md" fullWidth>
+      <Dialog
+        open={!!selectedDraft}
+        onClose={() => setSelectedDraft(null)}
+        maxWidth="md"
+        fullWidth
+        fullScreen={isMobile}
+      >
         <DialogTitle>Review Draft</DialogTitle>
         <DialogContent>
           {selectedDraft && (
@@ -170,11 +221,12 @@ export function ReviewDraftsPage() {
             </Stack>
           )}
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' }, gap: 1, p: 2 }}>
           <Button onClick={() => setSelectedDraft(null)}>Cancel</Button>
           <Button
             onClick={() => setShowRejectDialog(true)}
             color="error"
+            fullWidth={isMobile}
           >
             Reject
           </Button>
@@ -182,13 +234,14 @@ export function ReviewDraftsPage() {
             onClick={() => handleApprove(selectedDraft)}
             variant="contained"
             color="success"
+            fullWidth={isMobile}
           >
             Approve & Publish
           </Button>
         </DialogActions>
       </Dialog>
 
-      <Dialog open={showRejectDialog} onClose={() => setShowRejectDialog(false)}>
+      <Dialog open={showRejectDialog} onClose={() => setShowRejectDialog(false)} fullScreen={isMobile}>
         <DialogTitle>Reject Draft</DialogTitle>
         <DialogContent>
           <TextField
@@ -201,9 +254,9 @@ export function ReviewDraftsPage() {
             sx={{ mt: 1 }}
           />
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{ flexDirection: { xs: 'column-reverse', sm: 'row' }, gap: 1, p: 2 }}>
           <Button onClick={() => setShowRejectDialog(false)}>Cancel</Button>
-          <Button onClick={handleReject} color="error" variant="contained">
+          <Button onClick={handleReject} color="error" variant="contained" fullWidth={isMobile}>
             Reject
           </Button>
         </DialogActions>
