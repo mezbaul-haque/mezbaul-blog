@@ -16,13 +16,15 @@ import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
 import { useAuth } from '../contexts/AuthContext';
 import { featuredPostSlug } from '../data';
+import { getAccountLabel } from '../services/accountRoles';
 import { usePublicContent } from '../services/content';
 
 export function HomePage() {
-  const { isAuthenticated, isAdmin, canWritePosts, userProfile } = useAuth();
+  const { currentRole, isAuthenticated, isAdmin, canWritePosts, userProfile } = useAuth();
   const { postsBySlug, posts } = usePublicContent();
   const featuredPost = postsBySlug[featuredPostSlug] || posts[0];
   const recentPosts = posts.filter((post) => post.slug !== featuredPost?.slug).slice(0, 3);
+  const accountLabel = getAccountLabel(currentRole, 'reader').toLowerCase();
 
   if (!featuredPost) {
     return null;
@@ -72,7 +74,7 @@ export function HomePage() {
       <Box>
         <SectionHeading
           eyebrow="Writer Portal"
-          title={isAuthenticated ? `Welcome back, ${userProfile?.name || 'reader'}` : 'Contribute to Eubello'}
+          title={isAuthenticated ? `Welcome back, ${userProfile?.name || accountLabel}` : 'Contribute to Eubello'}
           copy={
             canWritePosts
               ? 'Your writing workflow is now connected to Firebase with account access, draft management, and admin review tools.'

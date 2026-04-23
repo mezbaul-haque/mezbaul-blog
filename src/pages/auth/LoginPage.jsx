@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate, useLocation } from 'react-router-dom';
+import { Link as RouterLink, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -12,17 +12,22 @@ import {
 } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { getAuthErrorMessage } from '../../services/authErrors';
+import { canWritePostsForRole } from '../../services/accountRoles';
 
 export function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signIn } = useAuth();
+  const { currentRole, isAuthenticated, isLoading, signIn } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from?.pathname;
+
+  if (!isLoading && isAuthenticated) {
+    return <Navigate to={from || (canWritePostsForRole(currentRole) ? '/dashboard' : '/')} replace />;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -31,7 +36,7 @@ export function LoginPage() {
 
     try {
       const result = await signIn(email, password);
-      const destination = from || (['writer', 'admin'].includes(result.profile?.role) ? '/dashboard' : '/');
+      const destination = from || (canWritePostsForRole(result.profile?.role) ? '/dashboard' : '/');
       navigate(destination, { replace: true });
     } catch (err) {
       setError(getAuthErrorMessage(err, 'Sign in failed.'));

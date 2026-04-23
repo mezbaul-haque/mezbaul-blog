@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, Navigate, useNavigate } from 'react-router-dom';
 import {
   Box,
   Button,
@@ -13,17 +13,22 @@ import {
 } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
 import { getAuthErrorMessage } from '../../services/authErrors';
+import { ACCOUNT_ROLE, canWritePostsForRole } from '../../services/accountRoles';
 
 export function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [accountType, setAccountType] = useState('reader');
+  const [accountType, setAccountType] = useState(ACCOUNT_ROLE.reader);
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const { signUp } = useAuth();
+  const { currentRole, isAuthenticated, isLoading, signUp } = useAuth();
   const navigate = useNavigate();
+
+  if (!isLoading && isAuthenticated) {
+    return <Navigate to={canWritePostsForRole(currentRole) ? '/dashboard' : '/'} replace />;
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -43,7 +48,7 @@ export function RegisterPage() {
 
     try {
       await signUp(email, password, { name, role: accountType });
-      navigate(accountType === 'writer' ? '/dashboard' : '/');
+      navigate(accountType === ACCOUNT_ROLE.writer ? '/dashboard' : '/');
     } catch (err) {
       setError(getAuthErrorMessage(err, 'Failed to create account.'));
     } finally {
@@ -86,8 +91,8 @@ export function RegisterPage() {
             onChange={(e) => setAccountType(e.target.value)}
             fullWidth
           >
-            <MenuItem value="reader">Reader</MenuItem>
-            <MenuItem value="writer">Writer</MenuItem>
+            <MenuItem value={ACCOUNT_ROLE.reader}>Reader</MenuItem>
+            <MenuItem value={ACCOUNT_ROLE.writer}>Writer</MenuItem>
           </TextField>
           <TextField
             label="Email"
@@ -118,7 +123,7 @@ export function RegisterPage() {
             autoComplete="new-password"
           />
           <Typography variant="caption" color="text.secondary">
-            {accountType === 'writer'
+            {accountType === ACCOUNT_ROLE.writer
               ? 'Writer accounts can create drafts and will appear publicly after admin approval.'
               : 'Reader accounts can sign in and later like posts, follow writers, and join discussions.'}
           </Typography>

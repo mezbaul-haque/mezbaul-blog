@@ -18,13 +18,13 @@ import { useAuth } from '../../contexts/AuthContext';
 
 export function ManageWritersPage() {
   const { user } = useAuth();
-  const [writers, setWriters] = useState([]);
+  const [accounts, setAccounts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
       const users = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-      setWriters(users);
+      setAccounts(users);
       setIsLoading(false);
     });
 
@@ -61,11 +61,11 @@ export function ManageWritersPage() {
   return (
     <Box>
       <Typography variant="h4" gutterBottom>
-        Manage Writers
+        Manage Accounts
       </Typography>
 
       <List sx={{ mt: 3 }}>
-        {writers.map((writer) => (
+        {accounts.map((writer) => (
           <Card key={writer.id} sx={{ mb: 2 }}>
             <ListItem>
               <Avatar src={writer.avatar} sx={{ mr: 2 }} />

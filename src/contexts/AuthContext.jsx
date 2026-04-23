@@ -7,6 +7,13 @@ import {
 } from 'firebase/auth';
 import { doc, getDoc, serverTimestamp, setDoc } from 'firebase/firestore';
 import { auth, db, isFirebaseConfigured } from '../services/firebase';
+import {
+  ACCOUNT_ROLE,
+  canEngageForRole,
+  canWritePostsForRole,
+  getAccountLabel,
+  normalizeAccountRole,
+} from '../services/accountRoles';
 
 const AuthContext = createContext(null);
 const PENDING_PROFILE_STORAGE_KEY = 'pendingUserProfileSeed';
@@ -18,8 +25,9 @@ function delay(ms) {
   });
 }
 
-function buildUserProfile({ uid, email, name, role = 'reader' }) {
-  const isWriter = role === 'writer';
+function buildUserProfile({ uid, email, name, role = ACCOUNT_ROLE.reader }) {
+  const normalizedRole = normalizeAccountRole(role);
+  const isWriter = normalizedRole === ACCOUNT_ROLE.writer;
 
   return {
     id: uid,
@@ -31,7 +39,7 @@ function buildUserProfile({ uid, email, name, role = 'reader' }) {
     coverPhoto: '',
     website: '',
     twitter: '',
-    role,
+    role: normalizedRole,
     isActive: true,
     isProfileVisible: false,
     approvalStatus: isWriter ? 'pending' : 'approved',
@@ -69,6 +77,24 @@ function clearPendingProfileSeed(uid) {
   if (!uid || existingSeed) {
     window.localStorage.removeItem(PENDING_PROFILE_STORAGE_KEY);
   }
+}
+
+function buildRecoveryProfileSeed(firebaseUser, pendingSeed) {
+  if (pendingSeed) {
+    return {
+      uid: firebaseUser.uid,
+      email: pendingSeed.email || firebaseUser.email || '',
+      name: pendingSeed.name || firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Member',
+      role: normalizeAccountRole(pendingSeed.role),
+    };
+  }
+
+  return {
+    uid: firebaseUser.uid,
+    email: firebaseUser.email || '',
+    name: firebaseUser.displayName || firebaseUser.email?.split('@')[0] || 'Member',
+    role: ACCOUNT_ROLE.reader,
+  };
 }
 
 export function AuthProvider({ children }) {
@@ -141,17 +167,17 @@ export function AuthProvider({ children }) {
 
   async function recoverMissingUserProfile(firebaseUser) {
     const pendingSeed = getPendingProfileSeed(firebaseUser.uid);
-    if (!pendingSeed) return null;
 
     try {
-      return await writeUserProfile(pendingSeed, firebaseUser);
+      const recoverySeed = buildRecoveryProfileSeed(firebaseUser, pendingSeed);
+      return await writeUserProfile(recoverySeed, firebaseUser);
     } catch (error) {
       console.error('Unable to recover missing user profile after sign-in:', error);
       return null;
     }
   }
 
-  async function signUp(email, password, { name, role = 'reader' }) {
+  async function signUp(email, password, { name, role = ACCOUNT_ROLE.reader }) {
     if (!auth || !db) {
       throw new Error('Firebase is not configured');
     }
@@ -161,7 +187,7 @@ export function AuthProvider({ children }) {
       uid: credential.user.uid,
       email,
       name,
-      role,
+      role: normalizeAccountRole(role),
     };
 
     savePendingProfileSeed(profileSeed);
@@ -175,7 +201,12 @@ export function AuthProvider({ children }) {
       throw new Error('Firebase is not configured');
     }
     const credential = await signInWithEmailAndPassword(auth, email, password);
-    const profile = await fetchUserProfile(credential.user.uid);
+    let profile = await fetchUserProfile(credential.user.uid);
+
+    if (!profile) {
+      profile = await recoverMissingUserProfile(credential.user);
+    }
+
     return { user: credential.user, profile };
   }
 
@@ -184,17 +215,22 @@ export function AuthProvider({ children }) {
     await signOut(auth);
   }
 
+  const currentRole = normalizeAccountRole(userProfile?.role, null);
+
   const value = {
     user,
     userProfile,
     isLoading,
     isFirebaseConfigured,
     isAuthenticated: !!user,
-    isReader: userProfile?.role === 'reader',
-    isWriter: userProfile?.role === 'writer',
-    isAdmin: userProfile?.role === 'admin',
-    canWritePosts: ['writer', 'admin'].includes(userProfile?.role),
-    canEngage: ['reader', 'writer', 'admin'].includes(userProfile?.role),
+    hasProfile: !!userProfile,
+    currentRole,
+    accountLabel: getAccountLabel(currentRole),
+    isReader: currentRole === ACCOUNT_ROLE.reader,
+    isWriter: currentRole === ACCOUNT_ROLE.writer,
+    isAdmin: currentRole === ACCOUNT_ROLE.admin,
+    canWritePosts: canWritePostsForRole(currentRole),
+    canEngage: canEngageForRole(currentRole),
     signIn,
     signUp,
     logOut,

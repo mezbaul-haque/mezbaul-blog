@@ -18,6 +18,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { getAccountLabel } from '../../services/accountRoles';
 
 const drawerWidth = 240;
 
@@ -34,7 +35,7 @@ const adminNavItems = [
 ];
 
 export function DashboardLayout() {
-  const { userProfile, logOut, isAdmin } = useAuth();
+  const { currentRole, userProfile, logOut, isAdmin } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const theme = useTheme();
@@ -56,14 +57,17 @@ export function DashboardLayout() {
     }
   };
 
+  const accountLabel = isAdmin ? 'Admin' : getAccountLabel(currentRole);
+  const displayName = userProfile?.name || accountLabel;
+
   const drawerContent = (
     <>
       <Box sx={{ p: 2 }}>
         <Typography variant="h6" noWrap>
-          {userProfile?.name || 'Dashboard'}
+          {displayName}
         </Typography>
         <Typography variant="caption" color="text.secondary">
-          {isAdmin ? 'Admin' : 'Writer'}
+          {accountLabel}
         </Typography>
       </Box>
 
@@ -138,10 +142,10 @@ export function DashboardLayout() {
             </IconButton>
             <Box sx={{ minWidth: 0 }}>
               <Typography variant="subtitle1" noWrap>
-                {userProfile?.name || 'Dashboard'}
+                {displayName}
               </Typography>
               <Typography variant="caption" color="text.secondary">
-                {isAdmin ? 'Admin' : 'Writer'}
+                {accountLabel}
               </Typography>
             </Box>
           </Toolbar>

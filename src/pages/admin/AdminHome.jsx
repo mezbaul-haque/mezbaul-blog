@@ -36,17 +36,17 @@ export function AdminHome() {
         <Card sx={{ flex: 1 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              Manage Writers
+              Manage Accounts
             </Typography>
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-              View and manage writer accounts.
+              View and manage reader, writer, and admin accounts.
             </Typography>
             <Button
               component={RouterLink}
               to="/admin/writers"
               variant="outlined"
             >
-              View Writers
+              View Accounts
             </Button>
           </CardContent>
         </Card>

@@ -16,6 +16,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { navItems, siteDescription, siteTitle } from '../data';
+import { getAccountLabel } from '../services/accountRoles';
 
 function NavLink({ to, label, onClick }) {
   const { pathname } = useLocation();
@@ -52,9 +53,11 @@ function NavLink({ to, label, onClick }) {
 export function SiteLayout({ children }) {
   const [open, setOpen] = useState(false);
   const currentYear = new Date().getFullYear();
-  const { isAuthenticated, isAdmin, canWritePosts, userProfile, logOut } = useAuth();
+  const { isAuthenticated, isAdmin, canWritePosts, currentRole, userProfile, logOut } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const accountLabel = getAccountLabel(currentRole);
+  const displayName = userProfile?.name || accountLabel;
 
   const handleDrawerToggle = () => {
     setOpen(!open);
@@ -128,7 +131,7 @@ export function SiteLayout({ children }) {
               {isAuthenticated ? (
                 <>
                   <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
-                    {userProfile?.name || 'Writer'}
+                    {displayName}
                   </Typography>
                   {isAdmin && (
                     <Button component={RouterLink} to="/admin" variant="text">
@@ -255,7 +258,7 @@ export function SiteLayout({ children }) {
           {isAuthenticated ? (
             <>
               <Typography variant="body2" color="text.secondary">
-                Signed in as {userProfile?.name || 'Writer'}
+                Signed in as {displayName}
               </Typography>
               {isAdmin && (
                 <Button onClick={() => navigateFromDrawer('/admin')}>
