@@ -16,7 +16,7 @@ const authErrorMessages = {
   'auth/unauthorized-domain':
     'This domain is not authorized in Firebase Authentication.',
   'permission-denied':
-    'Firebase accepted the account, but Firestore blocked profile creation. Deploy the latest Firestore rules.',
+    'Your account was created, but profile setup was temporarily blocked. Refresh and try again. If it keeps happening, check the deployed Firestore rules.',
 };
 
 export function getAuthErrorMessage(error, fallbackMessage) {
