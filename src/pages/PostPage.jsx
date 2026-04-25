@@ -15,6 +15,8 @@ import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
 import { PostCard } from '../components/PostCard';
 import { usePublicContent } from '../services/content';
+import { LikeButton } from '../components/engagement/LikeButton';
+import { Comments } from '../components/engagement/Comments';
 
 function AdjacentPostCard({ eyebrow, post }) {
   if (!post) return null;
@@ -107,6 +109,10 @@ export function PostPage() {
           {post.intro}
         </Typography>
         <PostMeta date={post.date} readTime={post.readTime} />
+
+        <Box sx={{ mt: 2 }}>
+          <LikeButton postId={post.slug} />
+        </Box>
 
         <Box
           sx={{
@@ -262,6 +268,8 @@ export function PostPage() {
             ))}
         </Grid>
       </Box>
+
+      <Comments postId={post.slug} />
     </Stack>
   );
 }

@@ -1,6 +1,7 @@
 import { Box, Card, CardMedia, Stack, Typography, Link, IconButton } from '@mui/material';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import XIcon from '@mui/icons-material/X';
+import { FollowButton } from './engagement/FollowButton';
 
 export function AuthorProfile({ author }) {
   const initials = author.name
@@ -147,6 +148,11 @@ export function AuthorProfile({ author }) {
         >
           {author.bio}
         </Typography>
+
+        {/* Follow Button */}
+        <Box sx={{ mb: 2 }}>
+          <FollowButton writerId={author.id} />
+        </Box>
 
         {/* Social Links */}
         <Stack

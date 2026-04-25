@@ -1,5 +1,6 @@
 import { Box, Card, CardActionArea, CardMedia, Divider, Stack, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import { FollowButton } from './engagement/FollowButton';
 
 export function AuthorCard({ author, showLink = true, profileUrl, compact = false, variant = 'default' }) {
   const initials = author.name
@@ -126,6 +127,11 @@ export function AuthorCard({ author, showLink = true, profileUrl, compact = fals
               {author.bio}
             </Typography>
           )}
+
+          {/* Follow Button */}
+          <Box sx={{ pt: 1, mt: 'auto' }}>
+            <FollowButton writerId={author.id} variant="outlined" />
+          </Box>
         </Stack>
       </CardActionArea>
     </Card>

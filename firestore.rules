@@ -81,5 +81,40 @@ service cloud.firestore {
       allow delete: if isActiveWriter() && resource.data.authorId == request.auth.uid
         || isAdmin();
     }
+
+    // Likes collection - authenticated users can like posts
+    match /likes/{likeId} {
+      allow read: if true;
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.postId is string;
+      allow delete: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+    }
+
+    // Follows collection - authenticated users can follow writers
+    match /follows/{followId} {
+      allow read: if true;
+      allow create: if isAuthenticated()
+        && request.resource.data.followerId == request.auth.uid
+        && request.resource.data.writerId is string;
+      allow delete: if isAuthenticated()
+        && resource.data.followerId == request.auth.uid;
+    }
+
+    // Comments collection - authenticated users can comment on posts
+    match /comments/{commentId} {
+      allow read: if true;
+      allow create: if isAuthenticated()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.postId is string
+        && request.resource.data.content is string
+        && request.resource.data.createdAt is timestamp;
+      allow update: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated()
+        && resource.data.userId == request.auth.uid
+        || isAdmin();
+    }
   }
 }
