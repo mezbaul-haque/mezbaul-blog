@@ -23,6 +23,11 @@ export function ManagePostsPage() {
   const [activePostId, setActivePostId] = useState(null);
 
   useEffect(() => {
+    if (!db) {
+      setIsLoading(false);
+      return undefined;
+    }
+
     const q = query(collection(db, 'posts'), orderBy('publishedAt', 'desc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
@@ -77,6 +82,14 @@ export function ManagePostsPage() {
 
   if (isLoading) {
     return <Typography>Loading...</Typography>;
+  }
+
+  if (!db) {
+    return (
+      <Alert severity="warning">
+        Firebase is not configured, so post management is unavailable.
+      </Alert>
+    );
   }
 
   return (

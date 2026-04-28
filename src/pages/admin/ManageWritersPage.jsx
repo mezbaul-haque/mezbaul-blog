@@ -22,6 +22,11 @@ export function ManageWritersPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!db) {
+      setIsLoading(false);
+      return undefined;
+    }
+
     const unsubscribe = onSnapshot(collection(db, 'users'), (snapshot) => {
       const users = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
       setAccounts(users);
@@ -56,6 +61,14 @@ export function ManageWritersPage() {
 
   if (isLoading) {
     return <Typography>Loading...</Typography>;
+  }
+
+  if (!db) {
+    return (
+      <Typography color="text.secondary">
+        Firebase is not configured, so account management is unavailable.
+      </Typography>
+    );
   }
 
   return (

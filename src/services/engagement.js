@@ -8,7 +8,6 @@ import {
   query,
   where,
   serverTimestamp,
-  increment,
   onSnapshot,
 } from 'firebase/firestore';
 import { db } from './firebase';
@@ -33,25 +32,20 @@ async function like(postId, userId) {
   if (!db) return;
 
   const likeRef = doc(db, 'likes', `${userId}_${postId}`);
-  const postRef = doc(db, 'posts', postId);
 
   await setDoc(likeRef, {
     userId,
     postId,
     createdAt: serverTimestamp(),
   });
-
-  await setDoc(postRef, { likeCount: increment(1) }, { merge: true });
 }
 
 async function unlike(postId, userId) {
   if (!db) return;
 
   const likeRef = doc(db, 'likes', `${userId}_${postId}`);
-  const postRef = doc(db, 'posts', postId);
 
   await deleteDoc(likeRef);
-  await setDoc(postRef, { likeCount: increment(-1) }, { merge: true });
 }
 
 export async function isUserLikedPost(postId, userId) {
@@ -65,9 +59,10 @@ export async function isUserLikedPost(postId, userId) {
 export async function getLikeCount(postId) {
   if (!db) return 0;
 
-  const postRef = doc(db, 'posts', postId);
-  const postSnap = await getDoc(postRef);
-  return postSnap.exists() ? postSnap.data().likeCount || 0 : 0;
+  const likesRef = collection(db, 'likes');
+  const likesQuery = query(likesRef, where('postId', '==', postId));
+  const snapshot = await getDocs(likesQuery);
+  return snapshot.size;
 }
 
 export function subscribeToLikeCount(postId, callback) {
@@ -76,9 +71,11 @@ export function subscribeToLikeCount(postId, callback) {
     return () => {};
   }
 
-  const postRef = doc(db, 'posts', postId);
-  return onSnapshot(postRef, (snap) => {
-    callback(snap.exists() ? snap.data().likeCount || 0 : 0);
+  const likesRef = collection(db, 'likes');
+  const likesQuery = query(likesRef, where('postId', '==', postId));
+
+  return onSnapshot(likesQuery, (snapshot) => {
+    callback(snapshot.size);
   });
 }
 
@@ -102,25 +99,20 @@ async function follow(writerId, followerId) {
   if (!db) return;
 
   const followRef = doc(db, 'follows', `${followerId}_${writerId}`);
-  const writerRef = doc(db, 'users', writerId);
 
   await setDoc(followRef, {
     followerId,
     writerId,
     createdAt: serverTimestamp(),
   });
-
-  await setDoc(writerRef, { followerCount: increment(1) }, { merge: true });
 }
 
 async function unfollow(writerId, followerId) {
   if (!db) return;
 
   const followRef = doc(db, 'follows', `${followerId}_${writerId}`);
-  const writerRef = doc(db, 'users', writerId);
 
   await deleteDoc(followRef);
-  await setDoc(writerRef, { followerCount: increment(-1) }, { merge: true });
 }
 
 export async function isUserFollowing(writerId, followerId) {
@@ -134,9 +126,10 @@ export async function isUserFollowing(writerId, followerId) {
 export async function getFollowerCount(writerId) {
   if (!db) return 0;
 
-  const writerRef = doc(db, 'users', writerId);
-  const writerSnap = await getDoc(writerRef);
-  return writerSnap.exists() ? writerSnap.data().followerCount || 0 : 0;
+  const followsRef = collection(db, 'follows');
+  const followsQuery = query(followsRef, where('writerId', '==', writerId));
+  const snapshot = await getDocs(followsQuery);
+  return snapshot.size;
 }
 
 export function subscribeToFollowerCount(writerId, callback) {
@@ -145,9 +138,11 @@ export function subscribeToFollowerCount(writerId, callback) {
     return () => {};
   }
 
-  const writerRef = doc(db, 'users', writerId);
-  return onSnapshot(writerRef, (snap) => {
-    callback(snap.exists() ? snap.data().followerCount || 0 : 0);
+  const followsRef = collection(db, 'follows');
+  const followsQuery = query(followsRef, where('writerId', '==', writerId));
+
+  return onSnapshot(followsQuery, (snapshot) => {
+    callback(snapshot.size);
   });
 }
 

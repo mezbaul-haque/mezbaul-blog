@@ -37,6 +37,10 @@ export function DraftEditorPage() {
   const [related, setRelated] = useState([]);
 
   useEffect(() => {
+    if (!db) {
+      return undefined;
+    }
+
     if (!isNew && draftId) {
       const unsubscribe = onSnapshot(doc(db, 'drafts', draftId), (doc) => {
         if (doc.exists()) {
@@ -57,6 +61,10 @@ export function DraftEditorPage() {
   }, [draftId, isNew]);
 
   useEffect(() => {
+    if (!db) {
+      return;
+    }
+
     const fetchPosts = async () => {
       const q = query(collection(db, 'posts'), where('status', '==', 'published'));
       const snapshot = await getDocs(q);
@@ -67,7 +75,7 @@ export function DraftEditorPage() {
 
   async function handleImageUpload(e, field) {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file || !user || !storage) return;
 
     try {
       const storageRef = ref(storage, `posts/${user.uid}/${Date.now()}_${file.name}`);
@@ -110,7 +118,7 @@ export function DraftEditorPage() {
   }
 
   async function handleSave(saveAsDraft = true) {
-    if (!user) return;
+    if (!user || !db) return;
     setIsSaving(true);
 
     const draftData = {
@@ -150,6 +158,8 @@ export function DraftEditorPage() {
   }
 
   async function handleSubmitForReview() {
+    if (!db) return;
+
     const resolvedDraftId = draftId || (await handleSave(false));
     if (!resolvedDraftId) return;
 
@@ -166,6 +176,11 @@ export function DraftEditorPage() {
 
   return (
     <Box>
+      {!db && (
+        <Typography color="text.secondary" sx={{ mb: 2 }}>
+          Firebase is not configured, so draft editing is unavailable.
+        </Typography>
+      )}
       <Stack
         direction={{ xs: 'column', sm: 'row' }}
         justifyContent="space-between"
@@ -188,6 +203,7 @@ export function DraftEditorPage() {
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
               required
+              disabled={!db}
             />
 
             <TextField
@@ -196,6 +212,7 @@ export function DraftEditorPage() {
               onChange={(e) => setCategory(e.target.value)}
               fullWidth
               placeholder="e.g., Web, Design, Technology"
+              disabled={!db}
             />
 
             <TextField
@@ -205,6 +222,7 @@ export function DraftEditorPage() {
               fullWidth
               multiline
               rows={2}
+              disabled={!db}
             />
 
             <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2}>
@@ -217,6 +235,7 @@ export function DraftEditorPage() {
                     hidden
                     accept="image/*"
                     onChange={(e) => handleImageUpload(e, 'hero')}
+                    disabled={!storage}
                   />
                 </Button>
                 {heroImage && (
@@ -234,6 +253,7 @@ export function DraftEditorPage() {
                     hidden
                     accept="image/*"
                     onChange={(e) => handleImageUpload(e, 'thumb')}
+                    disabled={!storage}
                   />
                 </Button>
               </Box>
@@ -246,6 +266,7 @@ export function DraftEditorPage() {
               fullWidth
               multiline
               rows={4}
+              disabled={!db}
             />
           </Stack>
         </CardContent>

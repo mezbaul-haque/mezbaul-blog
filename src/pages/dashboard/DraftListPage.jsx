@@ -29,7 +29,10 @@ export function DraftListPage() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !db) {
+      setIsLoading(false);
+      return undefined;
+    }
 
     const q = query(
       collection(db, 'drafts'),
@@ -51,6 +54,14 @@ export function DraftListPage() {
 
   if (isLoading) {
     return <Typography>Loading...</Typography>;
+  }
+
+  if (!db) {
+    return (
+      <Typography color="text.secondary">
+        Firebase is not configured, so drafts are unavailable.
+      </Typography>
+    );
   }
 
   return (

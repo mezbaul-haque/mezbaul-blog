@@ -42,7 +42,7 @@ export function ProfileEditorPage() {
 
   async function handleImageUpload(e, field) {
     const file = e.target.files?.[0];
-    if (!file || !user) return;
+    if (!file || !user || !storage) return;
 
     try {
       const storageRef = ref(storage, `${field}/${user.uid}/${file.name}`);
@@ -60,7 +60,7 @@ export function ProfileEditorPage() {
   }
 
   async function handleSave() {
-    if (!user) return;
+    if (!user || !db) return;
     setIsSaving(true);
     setMessage('');
 
@@ -91,6 +91,12 @@ export function ProfileEditorPage() {
         Edit Profile
       </Typography>
 
+      {!db && (
+        <Typography color="text.secondary" sx={{ mb: 2 }}>
+          Firebase is not configured, so profile editing is unavailable.
+        </Typography>
+      )}
+
       <Typography variant="body2" color="text.secondary">
         Approval status: {userProfile?.approvalStatus || 'pending'}
         {userProfile?.isProfileVisible ? ' • visible on Writers page' : ' • hidden from Writers page'}
@@ -111,6 +117,7 @@ export function ProfileEditorPage() {
                   hidden
                   accept="image/*"
                   onChange={(e) => handleImageUpload(e, 'avatars')}
+                  disabled={!storage}
                 />
               </IconButton>
             </Box>
@@ -121,6 +128,7 @@ export function ProfileEditorPage() {
               onChange={(e) => setName(e.target.value)}
               fullWidth
               required
+              disabled={!db}
             />
 
             <TextField
@@ -129,6 +137,7 @@ export function ProfileEditorPage() {
               onChange={(e) => setTitle(e.target.value)}
               fullWidth
               placeholder="Writer, designer, and systems thinker"
+              disabled={!db}
             />
 
             <TextField
@@ -139,6 +148,7 @@ export function ProfileEditorPage() {
               multiline
               rows={3}
               placeholder="A short bio about yourself"
+              disabled={!db}
             />
 
             <TextField
@@ -147,6 +157,7 @@ export function ProfileEditorPage() {
               onChange={(e) => setWebsite(e.target.value)}
               fullWidth
               placeholder="https://yourwebsite.com"
+              disabled={!db}
             />
 
             <TextField
@@ -155,6 +166,7 @@ export function ProfileEditorPage() {
               onChange={(e) => setTwitter(e.target.value)}
               fullWidth
               placeholder="https://twitter.com/username"
+              disabled={!db}
             />
 
             {message && (
@@ -168,7 +180,7 @@ export function ProfileEditorPage() {
             <Button
               variant="contained"
               onClick={handleSave}
-              disabled={isSaving}
+              disabled={isSaving || !db}
             >
               {isSaving ? 'Saving...' : 'Save Profile'}
             </Button>
