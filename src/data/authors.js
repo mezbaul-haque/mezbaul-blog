@@ -39,6 +39,16 @@ export const authors = {
     website: null,
     twitter: 'https://twitter.com/riosantos',
   },
+  akash: {
+    id: 'aAbclPgPFpVdkJPlvCDNVZVv3XS2',
+    name: 'Akash',
+    title: 'Writer',
+    avatar: '/images/authors/akash.png',
+    coverPhoto: '/images/authors/covers/mezbaul-cover.jpg',
+    bio: 'Updating profile...',
+    website: null,
+    twitter: null,
+  },
 };
 
 export const authorList = Object.values(authors);
