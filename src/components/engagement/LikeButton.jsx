@@ -29,7 +29,6 @@ export function LikeButton({ postId, size = 'medium' }) {
     try {
       const newLikedState = await toggleLike(postId, user.uid);
       setIsLiked(newLikedState);
-      setLikeCount((prev) => prev + (newLikedState ? 1 : -1));
     } catch (error) {
       console.error('Error toggling like:', error);
     } finally {

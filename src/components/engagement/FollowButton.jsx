@@ -28,13 +28,16 @@ export function FollowButton({ writerId, variant = 'contained' }) {
     try {
       const newFollowingState = await toggleFollow(writerId, user.uid);
       setIsFollowing(newFollowingState);
-      setFollowerCount((prev) => prev + (newFollowingState ? 1 : -1));
     } catch (error) {
       console.error('Error toggling follow:', error);
     } finally {
       setIsPending(false);
     }
   };
+
+  const isSelf = isAuthenticated && user && user.uid === writerId;
+
+  if (isSelf) return null;
 
   return (
     <Stack direction="row" alignItems="center" spacing={1}>
