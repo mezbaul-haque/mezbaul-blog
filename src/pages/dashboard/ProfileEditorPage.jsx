@@ -15,9 +15,11 @@ import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../services/firebase';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotify } from '../../contexts/NotificationContext';
 
 export function ProfileEditorPage() {
   const { user, userProfile, refreshProfile } = useAuth();
+  const { notify } = useNotify();
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
   const [bio, setBio] = useState('');
@@ -26,7 +28,6 @@ export function ProfileEditorPage() {
   const [avatar, setAvatar] = useState('');
   const [coverPhoto, setCoverPhoto] = useState('');
   const [isSaving, setIsSaving] = useState(false);
-  const [message, setMessage] = useState('');
 
   useEffect(() => {
     if (userProfile) {
@@ -56,13 +57,13 @@ export function ProfileEditorPage() {
       }
     } catch (err) {
       console.error('Upload failed:', err);
+      notify('Image upload failed. Please try again.', 'error');
     }
   }
 
   async function handleSave() {
     if (!user || !db) return;
     setIsSaving(true);
-    setMessage('');
 
     try {
       const userRef = doc(db, 'users', user.uid);
@@ -77,9 +78,9 @@ export function ProfileEditorPage() {
         updatedAt: serverTimestamp(),
       });
       await refreshProfile();
-      setMessage('Profile updated successfully');
+      notify('Profile updated successfully', 'success');
     } catch (err) {
-      setMessage('Failed to update profile');
+      notify('Failed to update profile', 'error');
     } finally {
       setIsSaving(false);
     }
@@ -168,14 +169,6 @@ export function ProfileEditorPage() {
               placeholder="https://twitter.com/username"
               disabled={!db}
             />
-
-            {message && (
-              <Typography
-                color={message.includes('success') ? 'success.main' : 'error.main'}
-              >
-                {message}
-              </Typography>
-            )}
 
             <Button
               variant="contained"

@@ -2,6 +2,8 @@ import { Suspense, lazy, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import { Box, CircularProgress } from '@mui/material';
 import { SiteLayout } from './components/SiteLayout';
+import { NotificationProvider } from './contexts/NotificationContext';
+import { NotificationListener } from './components/NotificationListener';
 
 const AboutPage = lazy(() => import('./pages/AboutPage').then((module) => ({ default: module.AboutPage })));
 const ArchivePage = lazy(() => import('./pages/ArchivePage').then((module) => ({ default: module.ArchivePage })));
@@ -46,61 +48,64 @@ function RouteLoader() {
 
 export default function App() {
   return (
-    <Suspense fallback={<RouteLoader />}>
-      <Routes>
-        {/* Public routes wrapped in SiteLayout */}
-        <Route
-          path="/*"
-          element={
-            <SiteLayout>
-              <ScrollToTop />
-              <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/about" element={<AboutPage />} />
-                <Route path="/archive" element={<ArchivePage />} />
-                <Route path="/writers" element={<WritersPage />} />
-                <Route path="/writers/:authorId" element={<AuthorPage />} />
-                <Route path="/contact" element={<ContactPage />} />
-                <Route path="/posts/:slug" element={<PostPage />} />
-                <Route path="login" element={<LoginPage />} />
-                <Route path="register" element={<RegisterPage />} />
-                <Route path="*" element={<NotFoundPage />} />
-              </Routes>
-            </SiteLayout>
-          }
-        />
+    <NotificationProvider>
+      <NotificationListener />
+      <Suspense fallback={<RouteLoader />}>
+        <Routes>
+          {/* Public routes wrapped in SiteLayout */}
+          <Route
+            path="/*"
+            element={
+              <SiteLayout>
+                <ScrollToTop />
+                <Routes>
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/about" element={<AboutPage />} />
+                  <Route path="/archive" element={<ArchivePage />} />
+                  <Route path="/writers" element={<WritersPage />} />
+                  <Route path="/writers/:authorId" element={<AuthorPage />} />
+                  <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/posts/:slug" element={<PostPage />} />
+                  <Route path="login" element={<LoginPage />} />
+                  <Route path="register" element={<RegisterPage />} />
+                  <Route path="*" element={<NotFoundPage />} />
+                </Routes>
+              </SiteLayout>
+            }
+          />
 
-        {/* Writer dashboard routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        >
-          <Route index element={<DashboardHome />} />
-          <Route path="profile" element={<ProfileEditorPage />} />
-          <Route path="drafts" element={<DraftListPage />} />
-          <Route path="drafts/new" element={<DraftEditorPage />} />
-          <Route path="drafts/:draftId/edit" element={<DraftEditorPage />} />
-        </Route>
+          {/* Writer dashboard routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DashboardHome />} />
+            <Route path="profile" element={<ProfileEditorPage />} />
+            <Route path="drafts" element={<DraftListPage />} />
+            <Route path="drafts/new" element={<DraftEditorPage />} />
+            <Route path="drafts/:draftId/edit" element={<DraftEditorPage />} />
+          </Route>
 
-        {/* Admin routes */}
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute>
-              <AdminLayout />
-            </AdminRoute>
-          }
-        >
-          <Route index element={<AdminHome />} />
-          <Route path="review" element={<ReviewDraftsPage />} />
-          <Route path="writers" element={<ManageWritersPage />} />
-          <Route path="posts" element={<ManagePostsPage />} />
-        </Route>
-      </Routes>
-    </Suspense>
+          {/* Admin routes */}
+          <Route
+            path="/admin"
+            element={
+              <AdminRoute>
+                <AdminLayout />
+              </AdminRoute>
+            }
+          >
+            <Route index element={<AdminHome />} />
+            <Route path="review" element={<ReviewDraftsPage />} />
+            <Route path="writers" element={<ManageWritersPage />} />
+            <Route path="posts" element={<ManagePostsPage />} />
+          </Route>
+        </Routes>
+      </Suspense>
+    </NotificationProvider>
   );
 }

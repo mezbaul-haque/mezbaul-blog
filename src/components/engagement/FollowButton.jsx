@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Button, Stack } from '@mui/material';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotify } from '../../contexts/NotificationContext';
 import { subscribeToFollowerCount, isUserFollowing, toggleFollow } from '../../services/engagement';
 
 export function FollowButton({ writerId, variant = 'contained' }) {
   const { user, isAuthenticated } = useAuth();
+  const { notify } = useNotify();
   const [followerCount, setFollowerCount] = useState(0);
   const [isFollowing, setIsFollowing] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -29,7 +31,7 @@ export function FollowButton({ writerId, variant = 'contained' }) {
       const newFollowingState = await toggleFollow(writerId, user.uid);
       setIsFollowing(newFollowingState);
     } catch (error) {
-      console.error('Error toggling follow:', error);
+      notify('Failed to update follow status. Please try again.', 'error');
     } finally {
       setIsPending(false);
     }

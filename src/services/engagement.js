@@ -11,6 +11,9 @@ import {
   onSnapshot,
 } from 'firebase/firestore';
 import { db } from './firebase';
+import { authors } from '../data/authors';
+
+// Likes
 
 // Likes
 export async function toggleLike(postId, userId) {
@@ -80,6 +83,25 @@ export function subscribeToLikeCount(postId, callback) {
 }
 
 // Follows
+export async function fetchUserProfile(userId) {
+  if (!userId) return null;
+
+  // Check static authors first
+  if (authors[userId]) {
+    return { id: userId, ...authors[userId] };
+  }
+
+  if (!db) return null;
+
+  const userRef = doc(db, 'users', userId);
+  const userSnap = await getDoc(userRef);
+
+  if (userSnap.exists()) {
+    return { id: userSnap.id, ...userSnap.data() };
+  }
+  return null;
+}
+
 export async function toggleFollow(writerId, followerId) {
   if (!db) return;
 

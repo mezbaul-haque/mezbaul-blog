@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react';
 import { IconButton, Stack, Typography } from '@mui/material';
 import { FavoriteBorder, Favorite } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
+import { useNotify } from '../../contexts/NotificationContext';
 import { subscribeToLikeCount, toggleLike, isUserLikedPost } from '../../services/engagement';
 
 export function LikeButton({ postId, size = 'medium' }) {
   const { user, isAuthenticated } = useAuth();
+  const { notify } = useNotify();
   const [likeCount, setLikeCount] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
   const [isPending, setIsPending] = useState(false);
@@ -30,7 +32,7 @@ export function LikeButton({ postId, size = 'medium' }) {
       const newLikedState = await toggleLike(postId, user.uid);
       setIsLiked(newLikedState);
     } catch (error) {
-      console.error('Error toggling like:', error);
+      notify('Failed to update like status. Please try again.', 'error');
     } finally {
       setIsPending(false);
     }

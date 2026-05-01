@@ -8,14 +8,18 @@ import {
   Stack,
   TextField,
   Typography,
+  Avatar,
 } from '@mui/material';
 import { DeleteOutline, EditOutlined } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
-import { subscribeToComments, addComment, updateComment, deleteComment } from '../../services/engagement';
+import { useNotify } from '../../contexts/NotificationContext';
+import { subscribeToComments, addComment, updateComment, deleteComment, fetchUserProfile } from '../../services/engagement';
 
 export function Comments({ postId }) {
   const { user, isAuthenticated } = useAuth();
+  const { notify } = useNotify();
   const [comments, setComments] = useState([]);
+  const [profiles, setProfiles] = useState({});
   const [newComment, setNewComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [editingId, setEditingId] = useState(null);
@@ -28,6 +32,28 @@ export function Comments({ postId }) {
     return unsubscribe;
   }, [postId]);
 
+  useEffect(() => {
+    const fetchMissingProfiles = async () => {
+      const uniqueUserIds = [...new Set(comments.map((c) => c.userId))];
+      const missingIds = uniqueUserIds.filter((id) => !profiles[id]);
+
+      if (missingIds.length === 0) return;
+
+      const newProfiles = { ...profiles };
+      await Promise.all(
+        missingIds.map(async (id) => {
+          const profile = await fetchUserProfile(id);
+          if (profile) {
+            newProfiles[id] = profile;
+          }
+        })
+      );
+      setProfiles(newProfiles);
+    };
+
+    fetchMissingProfiles();
+  }, [comments]);
+
   const handleSubmitComment = async (e) => {
     e.preventDefault();
     if (!newComment.trim() || !isAuthenticated || isSubmitting) return;
@@ -37,7 +63,7 @@ export function Comments({ postId }) {
       await addComment(postId, user.uid, newComment.trim());
       setNewComment('');
     } catch (error) {
-      console.error('Error adding comment:', error);
+      notify('Failed to post comment. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
     }
@@ -49,7 +75,7 @@ export function Comments({ postId }) {
       setEditingId(null);
       setEditContent('');
     } catch (error) {
-      console.error('Error updating comment:', error);
+      notify('Failed to update comment. Please try again.', 'error');
     }
   };
 
@@ -57,7 +83,7 @@ export function Comments({ postId }) {
     try {
       await deleteComment(commentId);
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      notify('Failed to delete comment. Please try again.', 'error');
     }
   };
 
@@ -115,6 +141,17 @@ export function Comments({ postId }) {
           return (
             <Card key={comment.id} sx={{ p: 2 }}>
               <Stack spacing={1}>
+                <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: 1 }}>
+                  <Avatar
+                    src={profiles[comment.userId]?.avatar}
+                    sx={{ width: 32, height: 32 }}
+                  >
+                    {profiles[comment.userId]?.name?.charAt(0) || '?'}
+                  </Avatar>
+                  <Typography variant="subtitle2" fontWeight={600}>
+                    {profiles[comment.userId]?.name || 'Loading...'}
+                  </Typography>
+                </Stack>
                 {isEditing ? (
                   <>
                     <TextField
