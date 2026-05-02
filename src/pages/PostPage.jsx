@@ -5,6 +5,7 @@ import {
   CardActionArea,
   CardContent,
   Chip,
+  CircularProgress,
   Grid,
   Link as MuiLink,
   Stack,
@@ -37,11 +38,20 @@ function AdjacentPostCard({ eyebrow, post }) {
 
 export function PostPage() {
   const { slug } = useParams();
-  const { authorsById, postsBySlug, posts } = usePublicContent();
+  const { isLoading, authorsById, postsBySlug, posts } = usePublicContent();
   const postIndex = posts.findIndex((item) => item.slug === slug);
   const post = postIndex >= 0 ? posts[postIndex] : undefined;
 
   if (!post) {
+    if (isLoading) {
+      return (
+        <Stack alignItems="center" spacing={2} sx={{ py: 8 }}>
+          <CircularProgress size={28} />
+          <Typography color="text.secondary">Loading post...</Typography>
+        </Stack>
+      );
+    }
+
     return <Navigate to="/" replace />;
   }
 

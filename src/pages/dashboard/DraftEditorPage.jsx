@@ -143,7 +143,7 @@ export function DraftEditorPage() {
         navigate(`/dashboard/drafts/${draftRef.id}/edit`);
         return draftRef.id;
       } else {
-        if (saveAsDraft && status === 'submitted') {
+        if (saveAsDraft && ['submitted', 'rejected'].includes(status)) {
           draftData.status = 'draft';
         }
         await updateDoc(doc(db, 'drafts', draftId), draftData);
@@ -342,7 +342,7 @@ export function DraftEditorPage() {
           {isSaving ? 'Saving...' : 'Save Draft'}
         </Button>
 
-        {!isNew && status !== 'submitted' && (
+        {status !== 'submitted' && (
           <Button
             variant="contained"
             onClick={handleSubmitForReview}

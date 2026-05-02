@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { Box, Button, Typography } from '@mui/material';
 
 export class ErrorBoundary extends Component {
@@ -44,7 +45,9 @@ export class ErrorBoundary extends Component {
             </Button>
             <Button
               variant="outlined"
-              onClick={() => window.location.href = '/'}
+              component={RouterLink}
+              to="/"
+              onClick={() => this.setState({ hasError: false, error: null })}
             >
               Go Home
             </Button>

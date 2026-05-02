@@ -37,6 +37,26 @@ service cloud.firestore {
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isActive == true;
     }
 
+    function writerDraftUpdateIsSafe() {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'title',
+          'slug',
+          'category',
+          'summary',
+          'heroImage',
+          'thumbImage',
+          'intro',
+          'sections',
+          'related',
+          'status',
+          'submittedAt',
+          'updatedAt'
+        ])
+        && request.resource.data.authorId == resource.data.authorId
+        && request.resource.data.status in ['draft', 'submitted']
+        && resource.data.status != 'approved';
+    }
+
     // Users collection - public read, writers manage own profile, admins manage all
     match /users/{userId} {
       allow read: if (resource.data.approvalStatus == 'approved' && resource.data.isProfileVisible == true)
@@ -76,9 +96,11 @@ service cloud.firestore {
       allow create: if isActiveWriter()
         && request.resource.data.authorId == request.auth.uid
         && request.resource.data.status == 'draft';
-      allow update: if (isActiveWriter() && resource.data.authorId == request.auth.uid)
+      allow update: if (isActiveWriter()
+          && resource.data.authorId == request.auth.uid
+          && writerDraftUpdateIsSafe())
         || isAdmin();
-      allow delete: if isActiveWriter() && resource.data.authorId == request.auth.uid
+      allow delete: if (isActiveWriter() && resource.data.authorId == request.auth.uid)
         || isAdmin();
     }
 
@@ -86,8 +108,10 @@ service cloud.firestore {
     match /likes/{likeId} {
       allow read: if true;
       allow create: if isAuthenticated()
+        && request.resource.data.keys().hasOnly(['userId', 'postId', 'createdAt'])
         && request.resource.data.userId == request.auth.uid
-        && request.resource.data.postId is string;
+        && request.resource.data.postId is string
+        && likeId == request.auth.uid + '_' + request.resource.data.postId;
       allow delete: if isAuthenticated()
         && resource.data.userId == request.auth.uid;
     }
@@ -96,8 +120,10 @@ service cloud.firestore {
     match /follows/{followId} {
       allow read: if true;
       allow create: if isAuthenticated()
+        && request.resource.data.keys().hasOnly(['followerId', 'writerId', 'createdAt'])
         && request.resource.data.followerId == request.auth.uid
-        && request.resource.data.writerId is string;
+        && request.resource.data.writerId is string
+        && followId == request.auth.uid + '_' + request.resource.data.writerId;
       allow delete: if isAuthenticated()
         && resource.data.followerId == request.auth.uid;
     }
@@ -106,14 +132,18 @@ service cloud.firestore {
     match /comments/{commentId} {
       allow read: if true;
       allow create: if isAuthenticated()
+        && request.resource.data.keys().hasOnly(['postId', 'userId', 'content', 'createdAt', 'updatedAt'])
         && request.resource.data.userId == request.auth.uid
         && request.resource.data.postId is string
         && request.resource.data.content is string
         && request.resource.data.createdAt is timestamp;
       allow update: if isAuthenticated()
-        && resource.data.userId == request.auth.uid;
-      allow delete: if isAuthenticated()
         && resource.data.userId == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['content', 'updatedAt'])
+        && request.resource.data.userId == resource.data.userId
+        && request.resource.data.postId == resource.data.postId
+        && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if (isAuthenticated() && resource.data.userId == request.auth.uid)
         || isAdmin();
     }
   }
