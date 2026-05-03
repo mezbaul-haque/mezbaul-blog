@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
 import { Snackbar, Alert, Stack } from '@mui/material';
 import { useNotify } from '../contexts/NotificationContext';
 
 export function NotificationListener() {
-  const { notifications } = useNotify();
+  const { notifications, dismissNotification } = useNotify();
 
   return (
     <Stack spacing={1} sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2000 }}>
@@ -17,7 +16,7 @@ export function NotificationListener() {
           <Alert
             severity={notification.severity}
             variant="filled"
-            onClose={() => {}}
+            onClose={() => dismissNotification(notification.id)}
             sx={{ alignItems: 'center' }}
           >
             {notification.message}
