@@ -2,7 +2,7 @@ import { Box, Card, CardActionArea, CardMedia, Divider, Stack, Typography } from
 import { Link as RouterLink } from 'react-router-dom';
 import { FollowButton } from './engagement/FollowButton';
 
-export function AuthorCard({ author, showLink = true, profileUrl, compact = false, variant = 'default' }) {
+export function AuthorCard({ author, profileUrl }) {
   const initials = author.name
     .split(' ')
     .map((part) => part[0])

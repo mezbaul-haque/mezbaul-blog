@@ -31,7 +31,6 @@ export function WritersPage() {
               <AuthorCard
                 author={author}
                 profileUrl={`/writers/${author.id}`}
-                variant="directory"
               />
             </Grid>
           ))}

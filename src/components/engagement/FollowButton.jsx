@@ -30,7 +30,7 @@ export function FollowButton({ writerId, variant = 'contained' }) {
     try {
       const newFollowingState = await toggleFollow(writerId, user.uid);
       setIsFollowing(newFollowingState);
-    } catch (error) {
+    } catch {
       notify('Failed to update follow status. Please try again.', 'error');
     } finally {
       setIsPending(false);

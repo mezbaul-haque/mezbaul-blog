@@ -13,7 +13,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { Delete as DeleteIcon, Add as AddIcon } from '@mui/icons-material';
-import { collection, doc, addDoc, updateDoc, onSnapshot, serverTimestamp, query, where, getDocs } from 'firebase/firestore';
+import { collection, doc, addDoc, updateDoc, onSnapshot, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../services/firebase';
 import { useAuth } from '../../contexts/AuthContext';
@@ -33,7 +33,6 @@ export function DraftEditorPage() {
   const [sections, setSections] = useState([]);
   const [isSaving, setIsSaving] = useState(false);
   const [status, setStatus] = useState('draft');
-  const [publishedPosts, setPublishedPosts] = useState([]);
   const [related, setRelated] = useState([]);
 
   useEffect(() => {
@@ -59,19 +58,6 @@ export function DraftEditorPage() {
       return unsubscribe;
     }
   }, [draftId, isNew]);
-
-  useEffect(() => {
-    if (!db) {
-      return;
-    }
-
-    const fetchPosts = async () => {
-      const q = query(collection(db, 'posts'), where('status', '==', 'published'));
-      const snapshot = await getDocs(q);
-      setPublishedPosts(snapshot.docs.map((d) => ({ id: d.id, ...d.data() })));
-    };
-    fetchPosts();
-  }, []);
 
   async function handleImageUpload(e, field) {
     const file = e.target.files?.[0];

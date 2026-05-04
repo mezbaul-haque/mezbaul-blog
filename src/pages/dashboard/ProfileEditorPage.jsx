@@ -79,7 +79,7 @@ export function ProfileEditorPage() {
       });
       await refreshProfile();
       notify('Profile updated successfully', 'success');
-    } catch (err) {
+    } catch {
       notify('Failed to update profile', 'error');
     } finally {
       setIsSaving(false);

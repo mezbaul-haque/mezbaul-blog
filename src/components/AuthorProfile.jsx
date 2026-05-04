@@ -176,7 +176,6 @@ export function AuthorProfile({ author }) {
                 color: 'text.secondary',
                 '&:hover': {
                   color: 'primary.main',
-                  bgcolor: 'primary.light',
                   bgcolor: 'action.hover',
                 },
               }}

@@ -31,7 +31,7 @@ export function LikeButton({ postId, size = 'medium' }) {
     try {
       const newLikedState = await toggleLike(postId, user.uid);
       setIsLiked(newLikedState);
-    } catch (error) {
+    } catch {
       notify('Failed to update like status. Please try again.', 'error');
     } finally {
       setIsPending(false);

@@ -126,6 +126,8 @@ export function AuthProvider({ children }) {
     });
 
     return unsubscribe;
+    // Auth state subscription should be registered once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchUserProfile(uid) {

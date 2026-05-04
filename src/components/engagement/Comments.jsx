@@ -3,7 +3,6 @@ import {
   Box,
   Button,
   Card,
-  Divider,
   IconButton,
   Stack,
   TextField,
@@ -39,20 +38,20 @@ export function Comments({ postId }) {
 
       if (missingIds.length === 0) return;
 
-      const newProfiles = { ...profiles };
+      const fetchedProfiles = {};
       await Promise.all(
         missingIds.map(async (id) => {
           const profile = await fetchUserProfile(id);
           if (profile) {
-            newProfiles[id] = profile;
+            fetchedProfiles[id] = profile;
           }
         })
       );
-      setProfiles(newProfiles);
+      setProfiles((currentProfiles) => ({ ...currentProfiles, ...fetchedProfiles }));
     };
 
     fetchMissingProfiles();
-  }, [comments]);
+  }, [comments, profiles]);
 
   const handleSubmitComment = async (e) => {
     e.preventDefault();
@@ -62,7 +61,7 @@ export function Comments({ postId }) {
     try {
       await addComment(postId, user.uid, newComment.trim());
       setNewComment('');
-    } catch (error) {
+    } catch {
       notify('Failed to post comment. Please try again.', 'error');
     } finally {
       setIsSubmitting(false);
@@ -74,7 +73,7 @@ export function Comments({ postId }) {
       await updateComment(commentId, user.uid, content);
       setEditingId(null);
       setEditContent('');
-    } catch (error) {
+    } catch {
       notify('Failed to update comment. Please try again.', 'error');
     }
   };
@@ -82,7 +81,7 @@ export function Comments({ postId }) {
   const handleDeleteComment = async (commentId) => {
     try {
       await deleteComment(commentId);
-    } catch (error) {
+    } catch {
       notify('Failed to delete comment. Please try again.', 'error');
     }
   };
