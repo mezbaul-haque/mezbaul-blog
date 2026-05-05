@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { CssBaseline, ThemeProvider } from '@mui/material';
-import { HashRouter } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
@@ -15,14 +15,14 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
-        {/* GitHub Pages deployment does not yet include SPA rewrite fallback for BrowserRouter. */}
-        <HashRouter>
+        {/* Using BrowserRouter for better SEO and social media sharing support */}
+        <BrowserRouter>
           <AuthProvider>
             <ErrorBoundary>
               <App />
             </ErrorBoundary>
           </AuthProvider>
-        </HashRouter>
+        </BrowserRouter>
       </QueryClientProvider>
     </ThemeProvider>
   </React.StrictMode>,

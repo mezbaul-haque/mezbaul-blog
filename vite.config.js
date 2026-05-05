@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   base: '/',
+  appType: 'spa',
   plugins: [react()],
   test: {
     environment: 'jsdom',

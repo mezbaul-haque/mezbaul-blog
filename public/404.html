@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0; url=/" />
+    <script>
+      // Extract post slug from URL and redirect to app with post data
+      // This allows social crawlers to potentially read some metadata
+      const path = window.location.pathname;
+      if (path && path !== '/') {
+        // Store the path so React can navigate to it after loading
+        sessionStorage.setItem('redirectPath', path);
+      }
+      // Redirect to home page where React Router will handle routing
+      window.location.href = '/';
+    </script>
+  </head>
+  <body>
+    <p>If you are not redirected automatically, follow this <a href="/">link</a>.</p>
+  </body>
+</html>
+
