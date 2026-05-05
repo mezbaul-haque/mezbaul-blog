@@ -8,31 +8,68 @@ export function SharePostButton({ title, url = typeof window !== 'undefined' ? w
   async function handleShare() {
     try {
       if (navigator.share) {
-        const shareData = {
+        // Prepare base share data
+        let shareData = {
           title,
           text: `Read this post: ${title}`,
           url,
         };
 
-        // Try to add image if available
+        let file = null;
+
+        // Try to fetch and prepare image if available
         if (image) {
           try {
             const response = await fetch(image);
             const blob = await response.blob();
-            const file = new File([blob], 'post-image.jpg', { type: blob.type });
-            
-            // Check if canShare is available and supports files
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {
-              shareData.files = [file];
-            }
+            file = new File([blob], 'post-image.jpg', { type: blob.type });
           } catch (err) {
-            // If image fetch fails, continue with text share
             console.warn('Could not fetch image for sharing:', err);
           }
         }
 
-        await navigator.share(shareData);
-        return;
+        // Strategy: Try different share combinations based on browser support
+        let shared = false;
+
+        // Try 1: Share with all data (title, text, url, files)
+        if (file && navigator.canShare) {
+          try {
+            const fullShare = { ...shareData, files: [file] };
+            if (navigator.canShare(fullShare)) {
+              await navigator.share(fullShare);
+              shared = true;
+            }
+          } catch (err) {
+            console.warn('Full share with image failed:', err);
+          }
+        }
+
+        // Try 2: If full share didn't work, try with files only
+        if (!shared && file && navigator.canShare) {
+          try {
+            const filesOnly = { files: [file] };
+            if (navigator.canShare(filesOnly)) {
+              await navigator.share(filesOnly);
+              shared = true;
+            }
+          } catch (err) {
+            console.warn('Files-only share failed:', err);
+          }
+        }
+
+        // Try 3: Fall back to text + url without files
+        if (!shared) {
+          try {
+            await navigator.share(shareData);
+            shared = true;
+          } catch (err) {
+            console.warn('Text share failed:', err);
+          }
+        }
+
+        if (shared) {
+          return;
+        }
       }
 
       // Fallback: copy URL to clipboard
