@@ -20,7 +20,7 @@ import { SharePostButton } from '../components/SharePostButton';
 import { usePublicContent } from '../services/content';
 import { LikeButton } from '../components/engagement/LikeButton';
 import { Comments } from '../components/engagement/Comments';
-import { updateOpenGraphMeta, getAbsoluteImageUrl } from '../services/seo';
+import { updateOpenGraphMeta } from '../services/seo';
 
 function AdjacentPostCard({ eyebrow, post }) {
   if (!post) return null;
@@ -48,11 +48,15 @@ export function PostPage() {
   // Update Open Graph meta tags for social sharing
   useEffect(() => {
     if (post) {
+      const absoluteImageUrl = post.heroImage?.startsWith('http') 
+        ? post.heroImage 
+        : `${window.location.origin}${post.heroImage}`;
+      
       updateOpenGraphMeta({
         title: post.title,
         description: post.intro,
         url: `${window.location.origin}/posts/${post.slug}`,
-        image: getAbsoluteImageUrl(post.heroImage),
+        image: absoluteImageUrl,
       });
     }
   }, [post?.slug, post?.title, post?.intro, post?.heroImage]);
@@ -137,7 +141,7 @@ export function PostPage() {
 
         <Stack direction="row" spacing={1.25} sx={{ mt: 2 }} alignItems="center" flexWrap="wrap" useFlexGap>
           <LikeButton postId={post.slug} />
-          <SharePostButton title={post.title} image={getAbsoluteImageUrl(post.heroImage)} />
+          <SharePostButton title={post.title} />
         </Stack>
 
         <Box
