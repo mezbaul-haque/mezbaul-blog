@@ -21,6 +21,7 @@ import { usePublicContent } from '../services/content';
 import { LikeButton } from '../components/engagement/LikeButton';
 import { Comments } from '../components/engagement/Comments';
 import { updateOpenGraphMeta } from '../services/seo';
+import { generatePostMetadata } from '../services/metaDataGenerator';
 
 function AdjacentPostCard({ eyebrow, post }) {
   if (!post) return null;
@@ -48,18 +49,12 @@ export function PostPage() {
   // Update Open Graph meta tags for social sharing
   useEffect(() => {
     if (post) {
-      const absoluteImageUrl = post.heroImage?.startsWith('http') 
-        ? post.heroImage 
-        : `${window.location.origin}${post.heroImage}`;
-      
-      updateOpenGraphMeta({
-        title: post.title,
-        description: post.intro,
-        url: `${window.location.origin}/posts/${post.slug}`,
-        image: absoluteImageUrl,
-      });
+      const metadata = generatePostMetadata(post.slug);
+      if (metadata) {
+        updateOpenGraphMeta(metadata);
+      }
     }
-  }, [post?.slug, post?.title, post?.intro, post?.heroImage]);
+  }, [post?.slug]);
 
   if (!post) {
     if (isLoading) {
