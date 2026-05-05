@@ -14,14 +14,15 @@ export function SharePostButton({ title, url = typeof window !== 'undefined' ? w
           url,
         };
 
-        // Add image if available and if the browser supports it
-        if (image && navigator.canShare) {
+        // Try to add image if available
+        if (image) {
           try {
             const response = await fetch(image);
             const blob = await response.blob();
             const file = new File([blob], 'post-image.jpg', { type: blob.type });
             
-            if (navigator.canShare({ files: [file] })) {
+            // Check if canShare is available and supports files
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
               shareData.files = [file];
             }
           } catch (err) {
@@ -34,7 +35,8 @@ export function SharePostButton({ title, url = typeof window !== 'undefined' ? w
         return;
       }
 
-      if (navigator.clipboard?.writeText) {
+      // Fallback: copy URL to clipboard
+      if (navigator.clipboard && navigator.clipboard.writeText) {
         await navigator.clipboard.writeText(url);
         notify('Link copied. Share it anywhere you like.', 'success');
         return;
