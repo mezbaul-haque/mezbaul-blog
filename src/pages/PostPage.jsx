@@ -11,6 +11,7 @@ import {
   Stack,
   Typography,
 } from '@mui/material';
+import { useEffect } from 'react';
 import { Link as RouterLink, Navigate, useParams } from 'react-router-dom';
 import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
@@ -19,6 +20,7 @@ import { SharePostButton } from '../components/SharePostButton';
 import { usePublicContent } from '../services/content';
 import { LikeButton } from '../components/engagement/LikeButton';
 import { Comments } from '../components/engagement/Comments';
+import { updateOpenGraphMeta, getAbsoluteImageUrl } from '../services/seo';
 
 function AdjacentPostCard({ eyebrow, post }) {
   if (!post) return null;
@@ -42,6 +44,18 @@ export function PostPage() {
   const { isLoading, authorsById, postsBySlug, posts } = usePublicContent();
   const postIndex = posts.findIndex((item) => item.slug === slug);
   const post = postIndex >= 0 ? posts[postIndex] : undefined;
+
+  // Update Open Graph meta tags for social sharing
+  useEffect(() => {
+    if (post) {
+      updateOpenGraphMeta({
+        title: post.title,
+        description: post.intro,
+        url: `${window.location.origin}/posts/${post.slug}`,
+        image: getAbsoluteImageUrl(post.heroImage),
+      });
+    }
+  }, [post?.slug, post?.title, post?.intro, post?.heroImage]);
 
   if (!post) {
     if (isLoading) {
@@ -123,7 +137,7 @@ export function PostPage() {
 
         <Stack direction="row" spacing={1.25} sx={{ mt: 2 }} alignItems="center" flexWrap="wrap" useFlexGap>
           <LikeButton postId={post.slug} />
-          <SharePostButton title={post.title} />
+          <SharePostButton title={post.title} image={getAbsoluteImageUrl(post.heroImage)} />
         </Stack>
 
         <Box
