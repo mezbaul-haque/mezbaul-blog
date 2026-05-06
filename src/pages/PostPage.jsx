@@ -20,8 +20,9 @@ import { SharePostButton } from '../components/SharePostButton';
 import { usePublicContent } from '../services/content';
 import { LikeButton } from '../components/engagement/LikeButton';
 import { Comments } from '../components/engagement/Comments';
-import { updateOpenGraphMeta } from '../services/seo';
+import { updateOpenGraphMeta, setCanonicalUrl } from '../services/seo';
 import { generatePostMetadata } from '../services/metaDataGenerator';
+import { addStructuredDataScript, generateArticleSchema } from '../services/structuredData';
 
 function AdjacentPostCard({ eyebrow, post }) {
   if (!post) return null;
@@ -46,12 +47,25 @@ export function PostPage() {
   const postIndex = posts.findIndex((item) => item.slug === slug);
   const post = postIndex >= 0 ? posts[postIndex] : undefined;
 
-  // Update Open Graph meta tags for social sharing
+  // Update Open Graph meta tags for social sharing and SEO
   useEffect(() => {
     if (post) {
       const metadata = generatePostMetadata(post.slug);
       if (metadata) {
         updateOpenGraphMeta(metadata);
+        setCanonicalUrl(metadata.url);
+        
+        // Add article structured data
+        addStructuredDataScript(generateArticleSchema({
+          title: metadata.title,
+          description: metadata.description,
+          image: metadata.image,
+          author: metadata.author,
+          publishDate: metadata.date,
+          modifiedDate: metadata.date,
+          url: metadata.url,
+          category: metadata.category,
+        }));
       }
     }
   }, [post?.slug]);

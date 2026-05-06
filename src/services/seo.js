@@ -1,3 +1,73 @@
+const BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://blog.mezbaul.bd';
+
+/**
+ * Update canonical URL meta tag
+ */
+export function setCanonicalUrl(url) {
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    document.head.appendChild(canonical);
+  }
+  canonical.setAttribute('href', url || window.location.href);
+}
+
+/**
+ * Add structured data (JSON-LD) for SEO
+ */
+export function addStructuredData(data) {
+  let script = document.querySelector('script[type="application/ld+json"]');
+  if (!script) {
+    script = document.createElement('script');
+    script.setAttribute('type', 'application/ld+json');
+    document.head.appendChild(script);
+  }
+  script.textContent = JSON.stringify(data);
+}
+
+/**
+ * Generate structured data for an article
+ */
+export function generateArticleStructuredData({ title, description, image, author, publishDate, modifiedDate, url, category }) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'BlogPosting',
+    headline: title,
+    description: description,
+    image: image,
+    author: {
+      '@type': 'Person',
+      name: author || 'Mezbaul',
+    },
+    datePublished: publishDate,
+    dateModified: modifiedDate || publishDate,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': url,
+    },
+    articleSection: category,
+  };
+}
+
+/**
+ * Generate structured data for the site
+ */
+export function generateOrganizationStructuredData() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: 'Eubello',
+    url: BASE_URL,
+    logo: `${BASE_URL}/images/logo.png`,
+    description: 'Thoughtful writing on work, systems, technology, and everyday life.',
+    sameAs: [
+      'https://twitter.com/mezbaul',
+      'https://linkedin.com/in/mezbaul',
+    ],
+  };
+}
+
 /**
  * Update Open Graph meta tags for social sharing
  */
@@ -120,6 +190,5 @@ export function updateOpenGraphMeta({ title, description, url, image }) {
 export function getAbsoluteImageUrl(imagePath) {
   if (!imagePath) return '';
   if (imagePath.startsWith('http')) return imagePath;
-  const baseUrl = window.location.origin;
-  return `${baseUrl}${imagePath}`;
+  return `${BASE_URL}${imagePath}`;
 }

@@ -4,6 +4,7 @@ import { Box, CircularProgress } from '@mui/material';
 import { SiteLayout } from './components/SiteLayout';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { NotificationListener } from './components/NotificationListener';
+import { addStructuredDataScript, generateOrganizationSchema, generateWebsiteSchema } from './services/structuredData';
 
 const AboutPage = lazy(() => import('./pages/AboutPage').then((module) => ({ default: module.AboutPage })));
 const ArchivePage = lazy(() => import('./pages/ArchivePage').then((module) => ({ default: module.ArchivePage })));
@@ -47,6 +48,15 @@ function RouteLoader() {
 }
 
 export default function App() {
+  // Add structured data for SEO on mount
+  useEffect(() => {
+    // Add organization schema
+    addStructuredDataScript(generateOrganizationSchema());
+    
+    // Add website schema
+    addStructuredDataScript(generateWebsiteSchema());
+  }, []);
+
   return (
     <NotificationProvider>
       <NotificationListener />

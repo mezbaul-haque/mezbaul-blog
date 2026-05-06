@@ -17,6 +17,9 @@ export function generatePostMetadata(slug) {
     ? post.heroImage 
     : `${baseUrl}${post.heroImage}`;
 
+  // Generate keywords from title, category, and other post data
+  const keywords = generateKeywords(post.title, post.category, post.summary);
+
   return {
     title: post.title,
     description: post.intro,
@@ -27,7 +30,48 @@ export function generatePostMetadata(slug) {
     author: post.authorName || 'Mezbaul',
     date: post.date,
     category: post.category,
+    keywords: keywords,
+    slug: slug,
   };
+}
+
+/**
+ * Generate keywords from post content
+ */
+function generateKeywords(title, category, summary) {
+  const words = [];
+  
+  // Add category as keyword
+  if (category) {
+    words.push(category);
+  }
+  
+  // Extract significant words from title (length > 3, not stop words)
+  const titleWords = title
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(word => word.length > 3 && !isStopWord(word))
+    .slice(0, 3);
+  
+  words.push(...titleWords);
+  
+  // Add generic blog keywords
+  words.push('blog', 'writing', 'article');
+  
+  return Array.from(new Set(words)).join(', ');
+}
+
+/**
+ * Check if word is a common stop word
+ */
+function isStopWord(word) {
+  const stopWords = [
+    'the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'her',
+    'was', 'one', 'our', 'out', 'day', 'get', 'has', 'him', 'his', 'how',
+    'its', 'may', 'new', 'now', 'old', 'see', 'two', 'way', 'who', 'boy',
+    'did', 'got', 'let', 'put', 'say', 'she', 'too', 'use', 'with', 'your',
+  ];
+  return stopWords.includes(word);
 }
 
 /**
@@ -59,6 +103,8 @@ export function generateMetaTagsHtml(slug) {
     <meta name="twitter:image" content="${escapeHtml(metadata.image)}" />
     
     <meta name="description" content="${escapeHtml(metadata.description)}" />
+    <meta name="keywords" content="${escapeHtml(metadata.keywords)}" />
+    <link rel="canonical" href="${escapeHtml(metadata.url)}" />
     <title>${escapeHtml(metadata.title)} - Eubello</title>
   `;
 }

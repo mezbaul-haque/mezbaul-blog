@@ -1,0 +1,16 @@
+# Eubello Blog Robots Configuration
+# Allows all search engines to crawl the site
+
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /.git
+Disallow: /node_modules
+
+# Crawl delay to be respectful to server resources
+Crawl-delay: 1
+
+# Sitemaps
+Sitemap: https://blog.mezbaul.bd/sitemap.xml
+Sitemap: https://blog.mezbaul.bd/sitemap-posts.xml
