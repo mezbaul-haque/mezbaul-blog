@@ -2,7 +2,7 @@
  * Sitemap generator for SEO
  * Generates XML sitemaps for search engine discovery
  */
-import { posts } from '../data/posts';
+import { posts } from '../data/posts.js';
 
 const BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://blog.mezbaul.bd';
 

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Eubello - Thoughtful Writing</title>
+    <link>https://blog.mezbaul.bd</link>
+    <description>Mezbaul's blog on operations, systems, workflows, and practical writing.</description>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 06 May 2026 13:46:43 GMT</lastBuildDate>
+    <docs>http://www.rssboard.org/rss-specification</docs>
+
+    <item>
+      <title>Small websites still matter</title>
+      <link>https://blog.mezbaul.bd/posts/small-websites-still-matter</link>
+      <description>In a web full of platforms, feeds, and heavy templates, a small website still feels valuable because it can be direct, personal, and fully owned by the person making it.</description>
+      <pubDate>Sat, 04 Apr 2026 18:00:00 GMT</pubDate>
+      <category>Web</category>
+      <guid>https://blog.mezbaul.bd/posts/small-websites-still-matter</guid>
+    </item>
+    <item>
+      <title>What I actually want from a simple piece of tech</title>
+      <link>https://blog.mezbaul.bd/posts/what-i-actually-want-from-a-simple-piece-of-tech</link>
+      <description>Most of the technology I keep using is not the loudest or most ambitious. It is the technology that stays clear, predictable, and easy to trust after the first excitement disappears.</description>
+      <pubDate>Sat, 04 Apr 2026 18:00:00 GMT</pubDate>
+      <category>Tech</category>
+      <guid>https://blog.mezbaul.bd/posts/what-i-actually-want-from-a-simple-piece-of-tech</guid>
+    </item>
+    <item>
+      <title>Things travel teaches you that routine cannot</title>
+      <link>https://blog.mezbaul.bd/posts/things-travel-teaches-you-that-routine-cannot</link>
+      <description>Routine teaches steadiness, but travel teaches a different kind of attention. It interrupts assumptions, rearranges scale, and makes even ordinary moments feel newly visible.</description>
+      <pubDate>Sat, 04 Apr 2026 18:00:00 GMT</pubDate>
+      <category>Travel</category>
+      <guid>https://blog.mezbaul.bd/posts/things-travel-teaches-you-that-routine-cannot</guid>
+    </item>
+    <item>
+      <title>How operational clarity saves technical time</title>
+      <link>https://blog.mezbaul.bd/posts/how-operational-clarity-saves-technical-time</link>
+      <description>Teams usually feel technical pressure first, but many delays begin somewhere quieter: unclear requests, missing ownership, scattered information, or a process that only exists in memory.</description>
+      <pubDate>Fri, 03 Apr 2026 18:00:00 GMT</pubDate>
+      <category>Operations</category>
+      <guid>https://blog.mezbaul.bd/posts/how-operational-clarity-saves-technical-time</guid>
+    </item>
+    <item>
+      <title>A simple approach to support requests and follow-through</title>
+      <link>https://blog.mezbaul.bd/posts/support-requests-and-follow-through</link>
+      <description>Support work becomes frustrating when requests arrive in fragments, ownership is unclear, and updates live only in private conversations. A simpler system usually works better than a bigger one.</description>
+      <pubDate>Fri, 03 Apr 2026 18:00:00 GMT</pubDate>
+      <category>Support</category>
+      <guid>https://blog.mezbaul.bd/posts/support-requests-and-follow-through</guid>
+    </item>
+    <item>
+      <title>What makes a practical SOP actually useful</title>
+      <link>https://blog.mezbaul.bd/posts/practical-sop-guide</link>
+      <description>A procedure is not valuable because it is long or formal. It is valuable when someone can use it during real work without needing a second explanation.</description>
+      <pubDate>Fri, 03 Apr 2026 18:00:00 GMT</pubDate>
+      <category>Documentation</category>
+      <guid>https://blog.mezbaul.bd/posts/practical-sop-guide</guid>
+    </item>
+  </channel>
+</rss>
