@@ -207,7 +207,7 @@ export function HomePage() {
           {recentPosts.map((post) => (
             <PostCard key={post.slug} post={post} horizontal realtime={false} />
           ))}
-        </Stack>>
+        </Stack>
       </Box>
     </Stack>
   );

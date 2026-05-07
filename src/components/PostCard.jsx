@@ -114,7 +114,7 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
                 sx={{ width: 'fit-content', height: 'auto', py: 0.5 }}
               />
             )}
-          </Box>>
+          </Box>
         </CardContent>
       </CardActionArea>
     </Card>
