@@ -14,6 +14,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { PostCard } from '../components/PostCard';
 import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
+import { PopularPosts } from '../components/PopularPosts';
 import { useAuth } from '../contexts/AuthContext';
 import { featuredPostSlug } from '../data';
 import { getAccountLabel } from '../services/accountRoles';
@@ -185,6 +186,15 @@ export function HomePage() {
             </Grid>
           </Grid>
         </Card>
+      </Box>
+
+      <Box>
+        <SectionHeading
+          eyebrow="Popular"
+          title="What readers love"
+          copy="The most-read articles from our community this month."
+        />
+        <PopularPosts limit={3} showViewCount={true} />
       </Box>
 
       <Box>

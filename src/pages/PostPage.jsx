@@ -23,6 +23,8 @@ import { Comments } from '../components/engagement/Comments';
 import { updateOpenGraphMeta, setCanonicalUrl } from '../services/seo';
 import { generatePostMetadata } from '../services/metaDataGenerator';
 import { addStructuredDataScript, generateArticleSchema } from '../services/structuredData';
+import { trackPostView } from '../services/analytics';
+import { useAuth } from '../contexts/AuthContext';
 
 function AdjacentPostCard({ eyebrow, post }) {
   if (!post) return null;
@@ -44,6 +46,7 @@ function AdjacentPostCard({ eyebrow, post }) {
 export function PostPage() {
   const { slug } = useParams();
   const { isLoading, authorsById, postsBySlug, posts } = usePublicContent();
+  const { user } = useAuth();
   const postIndex = posts.findIndex((item) => item.slug === slug);
   const post = postIndex >= 0 ? posts[postIndex] : undefined;
 
@@ -69,6 +72,13 @@ export function PostPage() {
       }
     }
   }, [post?.slug]);
+
+  // Track post view for analytics
+  useEffect(() => {
+    if (post?.slug) {
+      trackPostView(post.slug, user?.uid || null);
+    }
+  }, [post?.slug, user?.uid]);
 
   if (!post) {
     if (isLoading) {
