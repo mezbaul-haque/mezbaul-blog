@@ -23,8 +23,23 @@ export function PopularPosts({ limit = 3, showViewCount = true }) {
     async function fetchTopPosts() {
       try {
         setIsLoading(true);
-        const stats = await getTopPostsByViews(limit);
+        setError(null);
+        console.log('[PopularPosts] Fetching top', limit, 'posts');
         
+        const stats = await getTopPostsByViews(limit);
+        console.log('[PopularPosts] Received stats:', stats);
+        
+        if (stats.length === 0) {
+          console.warn('[PopularPosts] No posts with stats, showing recent posts as fallback');
+          // Fallback: show recent posts if no view data yet
+          const recentPosts = allPosts.slice(0, limit).map(post => ({
+            ...post,
+            viewCount: 0
+          }));
+          setTopPosts(recentPosts);
+          return;
+        }
+
         // Enrich with full post data
         const enrichedPosts = stats
           .map((stat) => {
@@ -33,10 +48,13 @@ export function PopularPosts({ limit = 3, showViewCount = true }) {
           })
           .filter(Boolean);
 
+        console.log('[PopularPosts] Enriched posts:', enrichedPosts.length);
         setTopPosts(enrichedPosts);
       } catch (err) {
-        console.error('Error fetching popular posts:', err);
+        console.error('[PopularPosts] Error fetching popular posts:', err);
         setError(err);
+        // Fallback to recent posts on error
+        setTopPosts(allPosts.slice(0, limit));
       } finally {
         setIsLoading(false);
       }
@@ -53,10 +71,10 @@ export function PopularPosts({ limit = 3, showViewCount = true }) {
     );
   }
 
-  if (error || topPosts.length === 0) {
+  if (!topPosts || topPosts.length === 0) {
     return (
       <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
-        No popular posts yet. Check back soon!
+        {error ? 'Unable to load popular posts. Check console for errors.' : 'No posts available.'}
       </Typography>
     );
   }

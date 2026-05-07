@@ -44,19 +44,25 @@ function getSessionId() {
  * Prevents duplicate tracking from same user/session within SESSION_DURATION
  */
 export async function trackPostView(postSlug, userId = null) {
-  if (!db) return;
+  if (!db) {
+    console.warn('[Analytics] Firebase not configured. View tracking disabled.');
+    return;
+  }
 
   const sessionId = getSessionId();
   const viewKey = `${postSlug}_${sessionId}`;
 
   // Prevent duplicate tracking in this session
   if (viewSessions.has(viewKey)) {
+    console.debug('[Analytics] Duplicate view ignored:', postSlug);
     return;
   }
 
   viewSessions.set(viewKey, true);
 
   try {
+    console.log('[Analytics] Tracking view for:', postSlug);
+    
     // Record the view
     const viewRef = doc(
       db,
@@ -71,6 +77,8 @@ export async function trackPostView(postSlug, userId = null) {
       viewedAt: serverTimestamp(),
       userAgent: navigator.userAgent,
     });
+
+    console.log('[Analytics] View recorded successfully');
 
     // Update post view count (for quick access)
     const postStatsRef = doc(db, 'postStats', postSlug);
@@ -88,8 +96,10 @@ export async function trackPostView(postSlug, userId = null) {
         lastViewedAt: serverTimestamp(),
       });
     }
+    
+    console.log('[Analytics] Post stats updated');
   } catch (error) {
-    console.error('Error tracking post view:', error);
+    console.error('[Analytics] Error tracking post view:', error);
   }
 }
 
@@ -97,23 +107,29 @@ export async function trackPostView(postSlug, userId = null) {
  * Get the view count for a specific post
  */
 export async function getPostViewCount(postSlug) {
-  if (!db) return 0;
+  if (!db) {
+    console.warn('[Analytics] Firebase not configured. Cannot fetch view count.');
+    return 0;
+  }
 
   try {
     const postStatsRef = doc(db, 'postStats', postSlug);
     const postStatsSnap = await getDoc(postStatsRef);
 
     if (postStatsSnap.exists()) {
-      return postStatsSnap.data().viewCount || 0;
+      const count = postStatsSnap.data().viewCount || 0;
+      console.log('[Analytics] View count for', postSlug, ':', count);
+      return count;
     }
 
     // Fallback: count views from views collection
     const viewsRef = collection(db, 'views');
     const viewsQuery = query(viewsRef, where('postSlug', '==', postSlug));
     const snapshot = await getDocs(viewsQuery);
+    console.log('[Analytics] Fallback view count for', postSlug, ':', snapshot.size);
     return snapshot.size;
   } catch (error) {
-    console.error('Error getting post view count:', error);
+    console.error('[Analytics] Error getting post view count:', error);
     return 0;
   }
 }
@@ -122,7 +138,10 @@ export async function getPostViewCount(postSlug) {
  * Get the top posts by view count
  */
 export async function getTopPostsByViews(topCount = 5) {
-  if (!db) return [];
+  if (!db) {
+    console.warn('[Analytics] Firebase not configured. Cannot fetch top posts.');
+    return [];
+  }
 
   try {
     const statsRef = collection(db, 'postStats');
@@ -133,13 +152,16 @@ export async function getTopPostsByViews(topCount = 5) {
     );
 
     const snapshot = await getDocs(topPostsQuery);
-    return snapshot.docs.map((doc) => ({
+    const results = snapshot.docs.map((doc) => ({
       postSlug: doc.data().postSlug,
       viewCount: doc.data().viewCount,
       lastViewedAt: doc.data().lastViewedAt,
     }));
+    
+    console.log('[Analytics] Top posts:', results);
+    return results;
   } catch (error) {
-    console.error('Error fetching top posts:', error);
+    console.error('[Analytics] Error fetching top posts:', error);
     return [];
   }
 }
