@@ -3,9 +3,9 @@ import { IconButton, Stack, Typography } from '@mui/material';
 import { FavoriteBorder, Favorite } from '@mui/icons-material';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNotify } from '../../contexts/NotificationContext';
-import { subscribeToLikeCount, toggleLike, isUserLikedPost } from '../../services/engagement';
+import { subscribeToLikeCount, toggleLike, isUserLikedPost, getLikeCount } from '../../services/engagement';
 
-export function LikeButton({ postId, size = 'medium' }) {
+export function LikeButton({ postId, size = 'medium', realtime = true }) {
   const { user, isAuthenticated } = useAuth();
   const { notify } = useNotify();
   const [likeCount, setLikeCount] = useState(0);
@@ -15,14 +15,20 @@ export function LikeButton({ postId, size = 'medium' }) {
   useEffect(() => {
     if (!postId) return;
 
-    const unsubscribe = subscribeToLikeCount(postId, setLikeCount);
+    let unsubscribe = () => {};
+
+    if (realtime) {
+      unsubscribe = subscribeToLikeCount(postId, setLikeCount);
+    } else {
+      getLikeCount(postId).then(setLikeCount);
+    }
 
     if (isAuthenticated && user) {
       isUserLikedPost(postId, user.uid).then(setIsLiked);
     }
 
     return unsubscribe;
-  }, [postId, isAuthenticated, user]);
+  }, [postId, isAuthenticated, user, realtime]);
 
   const handleLike = async () => {
     if (!isAuthenticated || isPending) return;

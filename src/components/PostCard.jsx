@@ -10,10 +10,12 @@ import {
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { PostMeta } from './PostMeta';
+import { LikeButton } from './engagement/LikeButton';
 import { usePostViewCount } from '../hooks/useAnalytics';
 
-export function PostCard({ post, horizontal = false }) {
+export function PostCard({ post, horizontal = false, realtime = true }) {
   const { viewCount } = usePostViewCount(post.slug);
+
 
   return (
     <Card
@@ -103,6 +105,7 @@ export function PostCard({ post, horizontal = false }) {
               {post.summary}
             </Typography>
             <PostMeta date={post.date} readTime={post.readTime} compact={true} />
+            <LikeButton postId={post.slug} size="small" realtime={realtime} />
             {viewCount > 0 && (
               <Chip
                 label={`${viewCount} view${viewCount !== 1 ? 's' : ''}`}
@@ -111,7 +114,7 @@ export function PostCard({ post, horizontal = false }) {
                 sx={{ width: 'fit-content', height: 'auto', py: 0.5 }}
               />
             )}
-          </Box>
+          </Box>>
         </CardContent>
       </CardActionArea>
     </Card>

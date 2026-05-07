@@ -205,9 +205,9 @@ export function HomePage() {
         />
         <Stack spacing={2}>
           {recentPosts.map((post) => (
-            <PostCard key={post.slug} post={post} horizontal />
+            <PostCard key={post.slug} post={post} horizontal realtime={false} />
           ))}
-        </Stack>
+        </Stack>>
       </Box>
     </Stack>
   );
