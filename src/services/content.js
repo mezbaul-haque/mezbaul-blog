@@ -78,39 +78,26 @@ function normalizePost(post) {
   };
 }
 
-function mergeAuthors(liveAuthors) {
-  const merged = new Map(
-    Object.values(staticAuthors).map((author) => [author.id, normalizeAuthor(author)]),
-  );
+const STATIC_AUTHORS_MAP = new Map(
+  Object.values(staticAuthors).map((author) => [author.id, normalizeAuthor(author)]),
+);
+const STATIC_POSTS_MAP = new Map(
+  staticPosts.map((post) => [post.slug, normalizePost(post)]),
+);
 
-  liveAuthors.forEach((author) => {
-    merged.set(author.id, normalizeAuthor(author));
-  });
+function sortPostsComparator(a, b) {
+  const first = toDateValue(a.publishedAt || a.date);
+  const second = toDateValue(b.publishedAt || b.date);
 
-  return Array.from(merged.values());
-}
-
-function mergePosts(livePosts) {
-  const merged = new Map(staticPosts.map((post) => [post.slug, normalizePost(post)]));
-
-  livePosts.forEach((post) => {
-    merged.set(post.slug, normalizePost(post));
-  });
-
-  return Array.from(merged.values()).sort((a, b) => {
-    const first = toDateValue(a.publishedAt || a.date);
-    const second = toDateValue(b.publishedAt || b.date);
-
-    if (!first && !second) return 0;
-    if (!first) return 1;
-    if (!second) return -1;
-    return second.getTime() - first.getTime();
-  });
+  if (!first && !second) return 0;
+  if (!first) return 1;
+  if (!second) return -1;
+  return second.getTime() - first.getTime();
 }
 
 export function usePublicContent() {
-  const [livePosts, setLivePosts] = useState([]);
-  const [liveAuthors, setLiveAuthors] = useState([]);
+  const [livePostsMap, setLivePostsMap] = useState(new Map());
+  const [liveAuthorsMap, setLiveAuthorsMap] = useState(new Map());
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -134,11 +121,14 @@ export function usePublicContent() {
     const unsubscribePosts = onSnapshot(
       postsQuery,
       (snapshot) => {
-        setLivePosts(
-          snapshot.docs
-            .map((item) => ({ id: item.id, ...item.data() }))
-            .filter((post) => post.status === 'published'),
-        );
+        const postsMap = new Map();
+        snapshot.docs.forEach((doc) => {
+          const data = { id: doc.id, ...doc.data() };
+          if (data.status === 'published') {
+            postsMap.set(data.slug || data.id, normalizePost(data));
+          }
+        });
+        setLivePostsMap(postsMap);
         postsReady = true;
         syncLoading();
       },
@@ -151,11 +141,14 @@ export function usePublicContent() {
     const unsubscribeAuthors = onSnapshot(
       authorsQuery,
       (snapshot) => {
-        setLiveAuthors(
-          snapshot.docs
-            .map((item) => ({ id: item.id, ...item.data() }))
-            .filter((author) => author.approvalStatus === 'approved' && author.isProfileVisible),
-        );
+        const authorsMap = new Map();
+        snapshot.docs.forEach((doc) => {
+          const data = { id: doc.id, ...doc.data() };
+          if (data.approvalStatus === 'approved' && data.isProfileVisible) {
+            authorsMap.set(data.id, normalizeAuthor(data));
+          }
+        });
+        setLiveAuthorsMap(authorsMap);
         authorsReady = true;
         syncLoading();
       },
@@ -171,14 +164,29 @@ export function usePublicContent() {
     };
   }, []);
 
-  const authors = useMemo(() => mergeAuthors(liveAuthors), [liveAuthors]);
-  const posts = useMemo(() => mergePosts(livePosts), [livePosts]);
+  const mergedAuthorsMap = useMemo(() => {
+    const map = new Map(STATIC_AUTHORS_MAP);
+    liveAuthorsMap.forEach((val, key) => map.set(key, val));
+    return map;
+  }, [liveAuthorsMap]);
+
+  const mergedPostsMap = useMemo(() => {
+    const map = new Map(STATIC_POSTS_MAP);
+    livePostsMap.forEach((val, key) => map.set(key, val));
+    return map;
+  }, [livePostsMap]);
+
+  const posts = useMemo(() => {
+    return Array.from(mergedPostsMap.values()).sort(sortPostsComparator);
+  }, [mergedPostsMap]);
+
+  const authors = useMemo(() => Array.from(mergedAuthorsMap.values()), [mergedAuthorsMap]);
 
   return {
     isLoading,
     authors,
     posts,
-    authorsById: Object.fromEntries(authors.map((author) => [author.id, author])),
-    postsBySlug: Object.fromEntries(posts.map((post) => [post.slug, post])),
+    authorsById: Object.fromEntries(mergedAuthorsMap),
+    postsBySlug: Object.fromEntries(mergedPostsMap),
   };
 }
