@@ -106,13 +106,13 @@ export function PopularPosts({ limit = 3, showViewCount = true }) {
                 >
                   {post.summary}
                 </Typography>
-                <Stack direction="row" spacing={1} sx={{ mt: 'auto', pt: 1 }}>
+                <Stack direction="row" spacing={1} sx={{ mt: 'auto', pt: 1, alignItems: 'center', flexWrap: 'wrap' }}>
                   <Typography variant="caption" color="text.secondary">
                     {post.readTime}
                   </Typography>
-                  {showViewCount && post.viewCount && (
+                  {showViewCount && (
                     <Chip
-                      label={`${post.viewCount} views`}
+                      label={`${post.viewCount || 0} view${post.viewCount !== 1 ? 's' : ''}`}
                       size="small"
                       variant="outlined"
                       sx={{ height: 'auto', py: 0.5 }}

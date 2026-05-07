@@ -5,12 +5,16 @@ import {
   CardContent,
   CardMedia,
   Chip,
+  Stack,
   Typography,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { PostMeta } from './PostMeta';
+import { usePostViewCount } from '../hooks/useAnalytics';
 
 export function PostCard({ post, horizontal = false }) {
+  const { viewCount } = usePostViewCount(post.slug);
+
   return (
     <Card
       sx={{
@@ -99,6 +103,14 @@ export function PostCard({ post, horizontal = false }) {
               {post.summary}
             </Typography>
             <PostMeta date={post.date} readTime={post.readTime} compact={true} />
+            {viewCount > 0 && (
+              <Chip
+                label={`${viewCount} view${viewCount !== 1 ? 's' : ''}`}
+                size="small"
+                variant="outlined"
+                sx={{ width: 'fit-content', height: 'auto', py: 0.5 }}
+              />
+            )}
           </Box>
         </CardContent>
       </CardActionArea>
