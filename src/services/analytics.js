@@ -79,25 +79,6 @@ export async function trackPostView(postSlug, userId = null) {
     });
 
     console.log('[Analytics] View recorded successfully');
-
-    // Update post view count (for quick access)
-    const postStatsRef = doc(db, 'postStats', postSlug);
-    const postStatsSnap = await getDoc(postStatsRef);
-
-    if (postStatsSnap.exists()) {
-      await updateDoc(postStatsRef, {
-        viewCount: increment(1),
-        lastViewedAt: serverTimestamp(),
-      });
-    } else {
-      await setDoc(postStatsRef, {
-        postSlug,
-        viewCount: 1,
-        lastViewedAt: serverTimestamp(),
-      });
-    }
-    
-    console.log('[Analytics] Post stats updated');
   } catch (error) {
     console.error('[Analytics] Error tracking post view:', error);
   }

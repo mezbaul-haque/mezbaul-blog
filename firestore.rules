@@ -165,11 +165,7 @@ service cloud.firestore {
     // Post stats collection - aggregated view statistics
     match /postStats/{postSlug} {
       allow read: if true;
-      allow create, update: if (isAuthenticated() || request.auth == null)
-        && request.resource.data.keys().hasOnly(['postSlug', 'viewCount', 'lastViewedAt'])
-        && request.resource.data.postSlug is string
-        && request.resource.data.viewCount is int
-        && request.resource.data.lastViewedAt is timestamp;
+      allow create, update: if false;
       allow delete: if isAdmin();
     }
   }
