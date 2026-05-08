@@ -1,9 +1,19 @@
+import { useEffect } from 'react';
 import { Box, Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { PageHeader } from '../components/PageHeader';
 import { SectionHeading } from '../components/SectionHeading';
 import { aboutPage } from '../data';
+import { addStructuredDataScript, generateBreadcrumbSchema, generateOrganizationSchema } from '../services/structuredData';
 
 export function AboutPage() {
+  useEffect(() => {
+    addStructuredDataScript(generateBreadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'About', url: '/about' },
+    ]));
+    addStructuredDataScript(generateOrganizationSchema());
+  }, []);
+
   return (
     <Stack spacing={5}>
       <PageHeader

@@ -161,3 +161,26 @@ export function generateBlogCollectionSchema(posts) {
     })),
   };
 }
+
+/**
+ * Generate writers collection schema
+ */
+export function generateWritersCollectionSchema(authors) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Eubello Writers',
+    description: 'A collection of authors contributing to Eubello',
+    itemListElement: authors.map((author, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'Person',
+        name: author.name,
+        url: `${BASE_URL}/writers/${author.id}`,
+        image: author.image ? (author.image.startsWith('http') ? author.image : `${BASE_URL}${author.image}`) : undefined,
+        description: author.bio,
+      },
+    })),
+  };
+}

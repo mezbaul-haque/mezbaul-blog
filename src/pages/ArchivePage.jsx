@@ -9,16 +9,25 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { PageHeader } from '../components/PageHeader';
 import { PostCard } from '../components/PostCard';
 import { SectionHeading } from '../components/SectionHeading';
 import { usePublicContent } from '../services/content';
+import { addStructuredDataScript, generateBreadcrumbSchema, generateBlogCollectionSchema } from '../services/structuredData';
 
 export function ArchivePage() {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [query, setQuery] = useState('');
   const { posts } = usePublicContent();
+
+  useEffect(() => {
+    addStructuredDataScript(generateBreadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Archive', url: '/archive' },
+    ]));
+    addStructuredDataScript(generateBlogCollectionSchema(posts));
+  }, [posts]);
 
   const categories = useMemo(
     () => ['All', ...new Set(posts.map((post) => post.category))],

@@ -1,10 +1,20 @@
+import { useEffect } from 'react';
 import { Box, Grid, Stack } from '@mui/material';
 import { PageHeader } from '../components/PageHeader';
 import { AuthorCard } from '../components/AuthorCard';
 import { usePublicContent } from '../services/content';
+import { addStructuredDataScript, generateBreadcrumbSchema, generateWritersCollectionSchema } from '../services/structuredData';
 
 export function WritersPage() {
   const { authors } = usePublicContent();
+
+  useEffect(() => {
+    addStructuredDataScript(generateBreadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Writers', url: '/writers' },
+    ]));
+    addStructuredDataScript(generateWritersCollectionSchema(authors));
+  }, [authors]);
 
   return (
       <Stack spacing={5}>
