@@ -16,7 +16,6 @@ import { usePostViewCount } from '../hooks/useAnalytics';
 export function PostCard({ post, horizontal = false, realtime = true }) {
   const { viewCount } = usePostViewCount(post.slug);
 
-
   return (
     <Card
       sx={{
@@ -64,6 +63,7 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
             height: horizontal ? { xs: 140, sm: '100%' } : 240,
             bgcolor: '#e9eeea',
             transition: 'transform 220ms ease',
+            objectFit: 'cover',
           }}
         />
         <CardContent
@@ -71,11 +71,12 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
             p: 3,
             display: 'flex',
             flexDirection: 'column',
+            justifyContent: 'center',
             gap: 2,
             minWidth: 0,
           }}
         >
-          <Box>
+          <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <Chip
               label={post.category}
               variant="outlined"
@@ -86,10 +87,11 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
                 textTransform: 'uppercase',
                 letterSpacing: '0.05em',
                 fontSize: '0.7rem',
-                height: 24
+                height: 24,
+                width: 'fit-content'
               }}
             />
-            <Typography variant="h3" gutterBottom>
+            <Typography variant="h3" gutterBottom sx={{ lineHeight: 1.2, mb: 1 }}>
               {post.title}
             </Typography>
             <Typography
@@ -100,20 +102,24 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
                 overflow: 'hidden',
                 WebkitBoxOrient: 'vertical',
                 WebkitLineClamp: 2,
+                lineHeight: 1.6,
+                flexGrow: 1
               }}
             >
               {post.summary}
             </Typography>
-            <PostMeta date={post.date} readTime={post.readTime} compact={true} />
-            <LikeButton postId={post.slug} size="small" realtime={realtime} />
-            {viewCount > 0 && (
-              <Chip
-                label={`${viewCount} view${viewCount !== 1 ? 's' : ''}`}
-                size="small"
-                variant="outlined"
-                sx={{ width: 'fit-content', height: 'auto', py: 0.5 }}
-              />
-            )}
+            <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 'auto' }}>
+              <PostMeta date={post.date} readTime={post.readTime} compact={true} />
+              <LikeButton postId={post.slug} size="small" realtime={realtime} />
+              {viewCount > 0 && (
+                <Chip
+                  label={`${viewCount} view${viewCount !== 1 ? 's' : ''}`}
+                  size="small"
+                  variant="outlined"
+                  sx={{ width: 'fit-content', height: 'auto', py: 0.5 }}
+                />
+              )}
+            </Stack>
           </Box>
         </CardContent>
       </CardActionArea>
