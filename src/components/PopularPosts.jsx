@@ -1,5 +1,4 @@
 import {
-  Box,
   CircularProgress,
   Stack,
   Typography,
@@ -9,7 +8,7 @@ import { getTopPostsByViews } from '../services/analytics';
 import { posts as allPosts } from '../data/posts';
 import { PostCard } from './PostCard';
 
-export function PopularPosts({ limit = 3, showViewCount = true }) {
+export function PopularPosts({ limit = 3 }) {
   const [topPosts, setTopPosts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
