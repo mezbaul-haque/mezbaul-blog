@@ -71,7 +71,7 @@ export function PostPage() {
         }));
       }
     }
-  }, [post?.slug]);
+  }, [post]);
 
   // Track post view for analytics
   useEffect(() => {
