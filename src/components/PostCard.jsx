@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import { PostMeta } from './PostMeta';
-import { LikeButton } from './engagement/LikeButton';
+import { LikeButton, ReadLaterButton, PostStats } from './engagement';
 import { usePostViewCount } from '../hooks/useAnalytics';
 
 export function PostCard({ post, horizontal = false, realtime = true }) {
@@ -22,10 +22,10 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        transition: 'transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease',
+        transition: 'transform 300ms ease, box-shadow 300ms ease, border-color 300ms ease',
         '&:hover': {
-          transform: 'translateY(-3px)',
-          boxShadow: '0 14px 30px rgba(36, 49, 58, 0.08)',
+          transform: 'translateY(-4px)',
+          boxShadow: '0 20px 40px rgba(0,0,0,0.06)',
           borderColor: 'primary.main',
         },
         '&:hover .post-card-media, &:focus-within .post-card-media': {
@@ -43,7 +43,7 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
         sx={{
           display: 'grid',
           gridTemplateColumns: horizontal
-            ? { xs: '1fr', sm: '220px 1fr' }
+            ? { xs: '1fr', sm: '240px 1fr' }
             : '1fr',
           alignItems: 'stretch',
           '&.Mui-focusVisible': {
@@ -60,9 +60,10 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
           className="post-card-media"
           loading="lazy"
           sx={{
-            height: horizontal ? { xs: 140, sm: '100%' } : 240,
+            aspectRatio: horizontal ? { xs: '16/9', sm: '4/3' } : '16/9',
+            width: horizontal ? { sm: '240px' } : '100%',
             bgcolor: '#e9eeea',
-            transition: 'transform 220ms ease',
+            transition: 'transform 300ms ease',
             objectFit: 'cover',
           }}
         />
@@ -77,49 +78,57 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Chip
-              label={post.category}
-              variant="outlined"
-              size="small"
-              sx={{
-                mb: 1.5,
-                fontWeight: 500,
-                textTransform: 'uppercase',
-                letterSpacing: '0.05em',
-                fontSize: '0.7rem',
-                height: 24,
-                width: 'fit-content'
-              }}
-            />
-            <Typography variant="h3" gutterBottom sx={{ lineHeight: 1.2, mb: 1 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
+              <PostMeta date={post.date} readTime={post.readTime} compact={true} />
+              <Chip
+                label={post.category}
+                size="small"
+                sx={{
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontSize: '0.65rem',
+                  height: 22,
+                  border: 'none',
+                  bgcolor: 'primary.light',
+                  opacity: 0.8,
+                  color: 'primary.dark',
+                }}
+              />
+            </Stack>
+            <Typography variant="h3" gutterBottom sx={{ lineHeight: 1.2, mb: 1, fontWeight: 600 }}>
               {post.title}
             </Typography>
             <Typography
               color="text.secondary"
               sx={{
-                mb: 2,
+                mb: 3,
                 display: '-webkit-box',
                 overflow: 'hidden',
                 WebkitBoxOrient: 'vertical',
                 WebkitLineClamp: 2,
                 lineHeight: 1.6,
-                flexGrow: 1
               }}
             >
               {post.summary}
             </Typography>
-            <Stack direction="row" alignItems="center" spacing={1} sx={{ mt: 'auto' }}>
-              <PostMeta date={post.date} readTime={post.readTime} compact={true} />
-              <LikeButton postId={post.slug} size="small" realtime={realtime} />
-              {viewCount > 0 && (
-                <Chip
-                  label={`${viewCount} view${viewCount !== 1 ? 's' : ''}`}
-                  size="small"
-                  variant="outlined"
-                  sx={{ width: 'fit-content', height: 'auto', py: 0.5 }}
-                />
-              )}
-            </Stack>
+            <Box
+              sx={{
+                mt: 'auto',
+                pt: 2,
+                borderTop: '1px solid',
+                borderColor: 'divider',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center'
+              }}
+            >
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <LikeButton postId={post.slug} size="small" realtime={realtime} />
+                <PostStats postId={post.slug} />
+              </Stack>
+              <ReadLaterButton postId={post.slug} size="small" />
+            </Box>
           </Box>
         </CardContent>
       </CardActionArea>

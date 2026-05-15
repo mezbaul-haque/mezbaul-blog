@@ -30,7 +30,11 @@ export function LikeButton({ postId, size = 'medium', realtime = true }) {
     return unsubscribe;
   }, [postId, isAuthenticated, user, realtime]);
 
-  const handleLike = async () => {
+  const handleLike = async (e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
     if (!isAuthenticated || isPending) return;
 
     setIsPending(true);
@@ -47,20 +51,31 @@ export function LikeButton({ postId, size = 'medium', realtime = true }) {
   const iconSize = size === 'small' ? 'small' : 'medium';
 
   return (
-    <Stack direction="row" alignItems="center" spacing={0.5}>
+    <Stack direction="row" alignItems="center" sx={{ gap: '4px' }}>
       <IconButton
         onClick={handleLike}
         color={isLiked ? 'error' : 'default'}
         disabled={!isAuthenticated || isPending}
         size={iconSize}
         aria-label={isLiked ? 'Unlike' : 'Like'}
+        sx={{
+          p: 0,
+          width: 'auto',
+        }}
       >
-        {isLiked ? <Favorite /> : <FavoriteBorder />}
+        {isLiked ? <Favorite sx={{ fontSize: '1.3rem' }} /> : <FavoriteBorder sx={{ fontSize: '1.3rem' }} />}
       </IconButton>
       <Typography
         variant="body2"
         color="text.secondary"
-        sx={{ minWidth: 20, fontSize: size === 'small' ? '0.75rem' : '0.875rem' }}
+        sx={{
+          fontSize: '0.85rem',
+          fontWeight: 500,
+          minWidth: 12,
+          lineHeight: 1,
+          display: 'inline-flex',
+          alignItems: 'center'
+        }}
       >
         {likeCount}
       </Typography>

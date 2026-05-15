@@ -15,6 +15,49 @@ import { authors } from '../data/authors';
 
 // Likes
 
+// Read Later
+
+export async function toggleReadLater(postId, userId) {
+  if (!db) return;
+
+  const readLaterRef = doc(db, 'read_later', `${userId}_${postId}`);
+  const snap = await getDoc(readLaterRef);
+
+  if (snap.exists()) {
+    await deleteDoc(readLaterRef);
+    return false;
+  } else {
+    await setDoc(readLaterRef, {
+      userId,
+      postId,
+      createdAt: serverTimestamp(),
+    });
+    return true;
+  }
+}
+
+export async function isUserReadLaterPost(postId, userId) {
+  if (!db || !userId) return false;
+
+  const readLaterRef = doc(db, 'read_later', `${userId}_${postId}`);
+  const snap = await getDoc(readLaterRef);
+  return snap.exists();
+}
+
+export async function getReadLaterPosts(userId) {
+  if (!db || !userId) return [];
+
+  const readLaterRef = collection(db, 'read_later');
+  const q = query(readLaterRef, where('userId', '==', userId));
+  const snapshot = await getDocs(q);
+
+  const posts = [];
+  snapshot.forEach((doc) => {
+    posts.push(doc.data());
+  });
+  return posts;
+}
+
 // Likes
 export async function toggleLike(postId, userId) {
   if (!db) return;
@@ -212,6 +255,15 @@ export async function getCommentsForPost(postId) {
   });
 
   return comments.sort((a, b) => b.createdAt?.seconds - a.createdAt?.seconds);
+}
+
+export async function getCommentCount(postId) {
+  if (!db) return 0;
+
+  const commentsRef = collection(db, 'comments');
+  const q = query(commentsRef, where('postId', '==', postId));
+  const snapshot = await getDocs(q);
+  return snapshot.size;
 }
 
 export function subscribeToComments(postId, callback) {
