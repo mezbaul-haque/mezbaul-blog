@@ -14,8 +14,6 @@ import { LikeButton, ReadLaterButton, PostStats } from './engagement';
 import { usePostViewCount } from '../hooks/useAnalytics';
 
 export function PostCard({ post, horizontal = false, realtime = true }) {
-  const { viewCount } = usePostViewCount(post.slug);
-
   return (
     <Card
       sx={{
@@ -125,7 +123,7 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
             >
               <Stack direction="row" alignItems="center" spacing={2}>
                 <LikeButton postId={post.slug} size="small" realtime={realtime} />
-                <PostStats postId={post.slug} />
+                <PostStats postId={post.slug} realtime={realtime} />
               </Stack>
               <ReadLaterButton postId={post.slug} size="small" />
             </Box>

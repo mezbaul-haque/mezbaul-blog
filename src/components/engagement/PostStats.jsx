@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Stack, Typography, IconButton } from '@mui/material';
+import { Stack, Typography, Box } from '@mui/material';
 import { Favorite, Visibility, ChatBubbleOutline } from '@mui/icons-material';
 import { getLikeCount, getCommentCount } from '../../services/engagement';
 import { usePostViewCount } from '../../hooks/useAnalytics';
@@ -18,18 +18,17 @@ export function PostStats({ postId, realtime = false }) {
 
   const StatItem = ({ icon: Icon, value }) => (
     <Stack direction="row" alignItems="center" sx={{ gap: '4px' }}>
-      <IconButton
-        disabled
-        size="small"
+      <Box
         sx={{
-          p: 0,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           color: 'text.disabled',
-          '&.Mui-disabled': { color: 'text.disabled' },
           width: 'auto'
         }}
       >
         <Icon sx={{ fontSize: '1.3rem' }} />
-      </IconButton>
+      </Box>
       <Typography
         variant="body2"
         color="text.secondary"
