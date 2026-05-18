@@ -13,8 +13,6 @@ import {
   orderBy,
   limit,
   getDoc,
-  updateDoc,
-  increment,
 } from 'firebase/firestore';
 import { db } from './firebase';
 
@@ -94,21 +92,21 @@ export async function getPostViewCount(postSlug) {
   }
 
   try {
+    let statsCount = 0;
     const postStatsRef = doc(db, 'postStats', postSlug);
     const postStatsSnap = await getDoc(postStatsRef);
 
     if (postStatsSnap.exists()) {
-      const count = postStatsSnap.data().viewCount || 0;
-      console.log('[Analytics] View count for', postSlug, ':', count);
-      return count;
+      statsCount = postStatsSnap.data().viewCount || 0;
     }
 
-    // Fallback: count views from views collection
+    // Count raw view records too, so stale or missing aggregate stats do not freeze the UI.
     const viewsRef = collection(db, 'views');
     const viewsQuery = query(viewsRef, where('postSlug', '==', postSlug));
     const snapshot = await getDocs(viewsQuery);
-    console.log('[Analytics] Fallback view count for', postSlug, ':', snapshot.size);
-    return snapshot.size;
+    const count = Math.max(statsCount, snapshot.size);
+    console.log('[Analytics] View count for', postSlug, ':', count);
+    return count;
   } catch (error) {
     console.error('[Analytics] Error getting post view count:', error);
     return 0;
@@ -209,22 +207,5 @@ export async function getPostViewTrend(postSlug, days = 30) {
   } catch (error) {
     console.error('Error fetching view trend:', error);
     return {};
-  }
-}
-
-/**
- * Get view statistics for a post by author
- */
-export async function getAuthorPostsViewStats(authorId) {
-  if (!db) return [];
-
-  try {
-    // This requires posts data to filter by author
-    // You'll need to pass in the posts list or query it separately
-    // For now, this is a placeholder for the implementation
-    return [];
-  } catch (error) {
-    console.error('Error fetching author post stats:', error);
-    return [];
   }
 }
