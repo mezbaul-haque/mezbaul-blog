@@ -121,7 +121,9 @@ service cloud.firestore {
 
     // Read later collection - authenticated users can save posts privately
     match /read_later/{readLaterId} {
-      allow read: if isAuthenticated()
+      allow get: if isAuthenticated()
+        && readLaterId.matches(request.auth.uid + '_.*');
+      allow list: if isAuthenticated()
         && resource.data.userId == request.auth.uid;
       allow create: if isAuthenticated()
         && request.resource.data.keys().hasOnly(['userId', 'postId', 'createdAt'])
