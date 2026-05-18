@@ -18,7 +18,9 @@ import { authors } from '../data/authors';
 // Read Later
 
 export async function toggleReadLater(postId, userId) {
-  if (!db) return;
+  if (!db) {
+    throw new Error('Firebase is not configured');
+  }
 
   const readLaterRef = doc(db, 'read_later', `${userId}_${postId}`);
   const snap = await getDoc(readLaterRef);

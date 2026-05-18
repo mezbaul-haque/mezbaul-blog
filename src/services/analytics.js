@@ -133,11 +133,15 @@ export async function getTopPostsByViews(topCount = 5) {
     );
 
     const snapshot = await getDocs(topPostsQuery);
-    const results = snapshot.docs.map((doc) => ({
-      postSlug: doc.data().postSlug,
-      viewCount: doc.data().viewCount,
-      lastViewedAt: doc.data().lastViewedAt,
-    }));
+    const results = snapshot.docs.map((doc) => {
+      const data = doc.data();
+
+      return {
+        postSlug: data.postSlug || doc.id,
+        viewCount: data.viewCount || 0,
+        lastViewedAt: data.lastViewedAt,
+      };
+    });
     
     console.log('[Analytics] Top posts:', results);
     return results;

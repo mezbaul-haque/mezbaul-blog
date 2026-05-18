@@ -11,7 +11,6 @@ import {
 import { Link as RouterLink } from 'react-router-dom';
 import { PostMeta } from './PostMeta';
 import { LikeButton, ReadLaterButton, PostStats } from './engagement';
-import { usePostViewCount } from '../hooks/useAnalytics';
 
 export function PostCard({ post, horizontal = false, realtime = true }) {
   return (
@@ -80,17 +79,19 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
               <PostMeta date={post.date} readTime={post.readTime} compact={true} />
               <Chip
                 label={post.category}
+                variant="outlined"
                 size="small"
                 sx={{
-                  fontWeight: 600,
+                  flexShrink: 0,
+                  fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+                  fontWeight: 500,
                   textTransform: 'uppercase',
                   letterSpacing: '0.05em',
                   fontSize: '0.65rem',
                   height: 22,
-                  border: 'none',
-                  bgcolor: 'primary.light',
-                  opacity: 0.8,
-                  color: 'primary.dark',
+                  color: 'text.secondary',
+                  borderColor: 'divider',
+                  bgcolor: 'transparent',
                 }}
               />
             </Stack>

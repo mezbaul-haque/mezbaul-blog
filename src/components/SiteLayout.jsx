@@ -1,4 +1,5 @@
 import MenuIcon from '@mui/icons-material/Menu';
+import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import {
   AppBar,
   Box,
@@ -133,6 +134,14 @@ export function SiteLayout({ children }) {
                   <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>
                     {displayName}
                   </Typography>
+                  <Button
+                    component={RouterLink}
+                    to="/saved"
+                    variant="text"
+                    startIcon={<BookmarkBorderIcon fontSize="small" />}
+                  >
+                    Saved
+                  </Button>
                   {isAdmin && (
                     <Button component={RouterLink} to="/admin" variant="text">
                       Admin
@@ -260,6 +269,12 @@ export function SiteLayout({ children }) {
               <Typography variant="body2" color="text.secondary">
                 Signed in as {displayName}
               </Typography>
+              <Button
+                startIcon={<BookmarkBorderIcon fontSize="small" />}
+                onClick={() => navigateFromDrawer('/saved')}
+              >
+                Saved posts
+              </Button>
               {isAdmin && (
                 <Button onClick={() => navigateFromDrawer('/admin')}>
                   Admin

@@ -43,7 +43,11 @@ export function PopularPosts({ limit = 3 }) {
           .filter(Boolean);
 
         console.log('[PopularPosts] Enriched posts:', enrichedPosts.length);
-        setTopPosts(enrichedPosts);
+        setTopPosts(
+          enrichedPosts.length > 0
+            ? enrichedPosts
+            : allPosts.slice(0, limit).map((post) => ({ ...post, viewCount: 0 }))
+        );
       } catch (err) {
         console.error('[PopularPosts] Error fetching popular posts:', err);
         setError(err);

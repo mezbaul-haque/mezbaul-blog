@@ -13,6 +13,7 @@ const ContactPage = lazy(() => import('./pages/ContactPage').then((module) => ({
 const HomePage = lazy(() => import('./pages/HomePage').then((module) => ({ default: module.HomePage })));
 const NotFoundPage = lazy(() => import('./pages/NotFoundPage').then((module) => ({ default: module.NotFoundPage })));
 const PostPage = lazy(() => import('./pages/PostPage').then((module) => ({ default: module.PostPage })));
+const SavedPostsPage = lazy(() => import('./pages/SavedPostsPage').then((module) => ({ default: module.SavedPostsPage })));
 const WritersPage = lazy(() => import('./pages/WritersPage').then((module) => ({ default: module.WritersPage })));
 const LoginPage = lazy(() => import('./pages/auth/LoginPage').then((module) => ({ default: module.LoginPage })));
 const RegisterPage = lazy(() => import('./pages/auth/RegisterPage').then((module) => ({ default: module.RegisterPage })));
@@ -75,6 +76,7 @@ export default function App() {
                   <Route path="/writers" element={<WritersPage />} />
                   <Route path="/writers/:authorId" element={<AuthorPage />} />
                   <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/saved" element={<SavedPostsPage />} />
                   <Route path="/posts/:slug" element={<PostPage />} />
                   <Route path="login" element={<LoginPage />} />
                   <Route path="register" element={<RegisterPage />} />

@@ -119,6 +119,19 @@ service cloud.firestore {
         && resource.data.userId == request.auth.uid;
     }
 
+    // Read later collection - authenticated users can save posts privately
+    match /read_later/{readLaterId} {
+      allow read: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated()
+        && request.resource.data.keys().hasOnly(['userId', 'postId', 'createdAt'])
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.postId is string
+        && readLaterId == request.auth.uid + '_' + request.resource.data.postId;
+      allow delete: if isAuthenticated()
+        && resource.data.userId == request.auth.uid;
+    }
+
     // Follows collection - authenticated users can follow writers
     match /follows/{followId} {
       allow read: if true;
