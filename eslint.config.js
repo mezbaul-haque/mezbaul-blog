@@ -10,6 +10,12 @@ export default [
   },
   js.configs.recommended,
   {
+    files: ['functions/**/*.js', 'generate-sitemaps.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
       ecmaVersion: 'latest',

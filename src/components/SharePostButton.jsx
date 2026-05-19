@@ -36,7 +36,7 @@ export function SharePostButton({ title, url = typeof window !== 'undefined' ? w
       }
 
       notify('Sharing is not available on this device.', 'warning');
-    } catch (error) {
+    } catch {
       notify('Could not share this post right now.', 'error');
     }
   }

@@ -17,15 +17,13 @@ import { SectionHeading } from '../components/SectionHeading';
 import { PopularPosts } from '../components/PopularPosts';
 import { useAuth } from '../contexts/AuthContext';
 import { featuredPostSlug } from '../data';
-import { getAccountLabel } from '../services/accountRoles';
 import { usePublicContent } from '../services/content';
 
 export function HomePage() {
-  const { currentRole, isAuthenticated, isAdmin, canWritePosts, userProfile } = useAuth();
+  const { isAuthenticated, canWritePosts } = useAuth();
   const { postsBySlug, posts } = usePublicContent();
   const featuredPost = postsBySlug[featuredPostSlug] || posts[0];
   const recentPosts = posts.filter((post) => post.slug !== featuredPost?.slug).slice(0, 3);
-  const accountLabel = getAccountLabel(currentRole, 'reader').toLowerCase();
 
   if (!featuredPost) {
     return null;

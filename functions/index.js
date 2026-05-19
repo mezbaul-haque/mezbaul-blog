@@ -1,5 +1,4 @@
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
-const { setWithMerge } = require("firebase-admin/firestore");
 const admin = require("firebase-admin");
 
 admin.initializeApp();

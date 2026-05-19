@@ -38,7 +38,7 @@ export function generatePostMetadata(slug) {
 /**
  * Generate keywords from post content
  */
-function generateKeywords(title, category, summary) {
+function generateKeywords(title, category) {
   const words = [];
   
   // Add category as keyword

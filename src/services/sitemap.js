@@ -80,7 +80,7 @@ function parseDate(dateString) {
   try {
     const date = new Date(dateString);
     return date.toISOString().split('T')[0];
-  } catch (e) {
+  } catch {
     return new Date().toISOString().split('T')[0];
   }
 }
