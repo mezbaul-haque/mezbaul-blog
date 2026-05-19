@@ -14,7 +14,7 @@ import {
   Typography,
 } from '@mui/material';
 import { useEffect, useMemo, useState } from 'react';
-import { Link as RouterLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { navItems, siteDescription, siteTitle } from '../data';
 import { getAccountLabel } from '../services/accountRoles';
@@ -56,7 +56,6 @@ export function SiteLayout({ children }) {
   const currentYear = new Date().getFullYear();
   const { isAuthenticated, isAdmin, canWritePosts, currentRole, userProfile, logOut } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
   const accountLabel = getAccountLabel(currentRole);
   const displayName = userProfile?.name || accountLabel;
 
@@ -71,13 +70,6 @@ export function SiteLayout({ children }) {
   useEffect(() => {
     setOpen(false);
   }, [location.key]);
-
-  const navigateFromDrawer = (to) => {
-    setOpen(false);
-    window.setTimeout(() => {
-      navigate(to);
-    }, 0);
-  };
 
   async function handleLogout() {
     await logOut();
@@ -252,12 +244,19 @@ export function SiteLayout({ children }) {
       </Box>
 
       <Drawer anchor="right" open={open} onClose={handleDrawerClose}>
-        <Stack sx={{ p: 3, minWidth: 220 }} spacing={2}>
+        <Stack
+          component="nav"
+          aria-label="Mobile navigation"
+          sx={{ p: 3, minWidth: 220 }}
+          spacing={2}
+        >
           {navItems.map((item) => (
             <Button
               key={`drawer-${item.to}`}
+              component={RouterLink}
+              to={item.to}
               color="inherit"
-              onClick={() => navigateFromDrawer(item.to)}
+              onClick={handleDrawerClose}
               sx={{ justifyContent: 'flex-start', px: 0 }}
             >
               {item.label}
@@ -270,18 +269,20 @@ export function SiteLayout({ children }) {
                 Signed in as {displayName}
               </Typography>
               <Button
+                component={RouterLink}
+                to="/saved"
                 startIcon={<BookmarkBorderIcon fontSize="small" />}
-                onClick={() => navigateFromDrawer('/saved')}
+                onClick={handleDrawerClose}
               >
                 Saved posts
               </Button>
               {isAdmin && (
-                <Button onClick={() => navigateFromDrawer('/admin')}>
+                <Button component={RouterLink} to="/admin" onClick={handleDrawerClose}>
                   Admin
                 </Button>
               )}
               {canWritePosts && (
-                <Button onClick={() => navigateFromDrawer('/dashboard')}>
+                <Button component={RouterLink} to="/dashboard" onClick={handleDrawerClose}>
                   Dashboard
                 </Button>
               )}
@@ -289,12 +290,14 @@ export function SiteLayout({ children }) {
             </>
           ) : (
             <>
-              <Button onClick={() => navigateFromDrawer('/login')}>
+              <Button component={RouterLink} to="/login" onClick={handleDrawerClose}>
                 Sign in
               </Button>
               <Button
+                component={RouterLink}
+                to="/register"
                 variant="contained"
-                onClick={() => navigateFromDrawer('/register')}
+                onClick={handleDrawerClose}
               >
                 Become a writer
               </Button>
