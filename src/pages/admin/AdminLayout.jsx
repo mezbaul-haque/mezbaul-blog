@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Outlet, Link as RouterLink, useLocation } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import {
@@ -39,11 +39,17 @@ export function AdminLayout() {
     setMobileOpen((open) => !open);
   };
 
-  const handleNavigate = () => {
-    if (isMobile) {
-      setMobileOpen(false);
-    }
+  const handleDrawerClose = () => {
+    setMobileOpen(false);
   };
+
+  const handleNavigate = () => {
+    handleDrawerClose();
+  };
+
+  useEffect(() => {
+    handleDrawerClose();
+  }, [location.key]);
 
   const drawerContent = (
     <>
@@ -86,7 +92,12 @@ export function AdminLayout() {
       {isMobile && (
         <AppBar position="fixed" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Toolbar sx={{ gap: 1 }}>
-            <IconButton edge="start" onClick={handleDrawerToggle} aria-label="open admin navigation">
+            <IconButton
+              edge="start"
+              onClick={handleDrawerToggle}
+              aria-expanded={mobileOpen}
+              aria-label="open admin navigation"
+            >
               <MenuIcon />
             </IconButton>
             <Box sx={{ minWidth: 0 }}>
@@ -104,7 +115,7 @@ export function AdminLayout() {
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
         open={isMobile ? mobileOpen : true}
-        onClose={handleDrawerToggle}
+        onClose={handleDrawerClose}
         ModalProps={{ keepMounted: true }}
         sx={{
           width: drawerWidth,

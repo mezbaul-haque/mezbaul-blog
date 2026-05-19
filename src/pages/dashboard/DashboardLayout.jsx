@@ -16,7 +16,7 @@ import {
   useTheme,
 } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { getAccountLabel } from '../../services/accountRoles';
 
@@ -43,6 +43,7 @@ export function DashboardLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = async () => {
+    handleDrawerClose();
     await logOut();
     navigate('/');
   };
@@ -51,11 +52,17 @@ export function DashboardLayout() {
     setMobileOpen((open) => !open);
   };
 
-  const handleNavigate = () => {
-    if (isMobile) {
-      setMobileOpen(false);
-    }
+  const handleDrawerClose = () => {
+    setMobileOpen(false);
   };
+
+  const handleNavigate = () => {
+    handleDrawerClose();
+  };
+
+  useEffect(() => {
+    handleDrawerClose();
+  }, [location.key]);
 
   const accountLabel = isAdmin ? 'Admin' : getAccountLabel(currentRole);
   const displayName = userProfile?.name || accountLabel;
@@ -137,7 +144,12 @@ export function DashboardLayout() {
       {isMobile && (
         <AppBar position="fixed" color="inherit" elevation={0} sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <Toolbar sx={{ gap: 1 }}>
-            <IconButton edge="start" onClick={handleDrawerToggle} aria-label="open dashboard navigation">
+            <IconButton
+              edge="start"
+              onClick={handleDrawerToggle}
+              aria-expanded={mobileOpen}
+              aria-label="open dashboard navigation"
+            >
               <MenuIcon />
             </IconButton>
             <Box sx={{ minWidth: 0 }}>
@@ -155,7 +167,7 @@ export function DashboardLayout() {
       <Drawer
         variant={isMobile ? 'temporary' : 'permanent'}
         open={isMobile ? mobileOpen : true}
-        onClose={handleDrawerToggle}
+        onClose={handleDrawerClose}
         ModalProps={{ keepMounted: true }}
         sx={{
           width: drawerWidth,
