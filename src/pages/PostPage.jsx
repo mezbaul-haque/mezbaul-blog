@@ -17,6 +17,7 @@ import { PostMeta } from '../components/PostMeta';
 import { SectionHeading } from '../components/SectionHeading';
 import { PostCard } from '../components/PostCard';
 import { SharePostButton } from '../components/SharePostButton';
+import { PostTableOfContents } from '../components/PostTableOfContents';
 import { usePublicContent } from '../services/content';
 import { LikeButton } from '../components/engagement/LikeButton';
 import { Comments } from '../components/engagement/Comments';
@@ -250,21 +251,29 @@ export function PostPage() {
           </Typography>
         </Box>
 
+        <PostTableOfContents sections={post.sections} />
+
         <Stack spacing={3} sx={{ mt: 4, maxWidth: 720 }}>
-          {post.sections.map((section, sectionIndex) => (
-            <Box key={`section-${sectionIndex}`}>
-              {section.heading ? (
-                <Typography variant="h2" sx={{ mb: 1.5 }}>
-                  {section.heading}
-                </Typography>
-              ) : null}
-              <Stack spacing={2}>
-                {section.paragraphs.map((paragraph, paragraphIndex) => (
-                  <Typography key={`paragraph-${paragraphIndex}`}>{paragraph}</Typography>
-                ))}
-              </Stack>
-            </Box>
-          ))}
+          {post.sections.map((section, sectionIndex) => {
+            const anchorId = section.heading
+              ? section.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '')
+              : null;
+
+            return (
+              <Box key={`section-${sectionIndex}`}>
+                {section.heading ? (
+                  <Typography variant="h2" id={anchorId} sx={{ mb: 1.5 }}>
+                    {section.heading}
+                  </Typography>
+                ) : null}
+                <Stack spacing={2}>
+                  {section.paragraphs.map((paragraph, paragraphIndex) => (
+                    <Typography key={`paragraph-${paragraphIndex}`}>{paragraph}</Typography>
+                  ))}
+                </Stack>
+              </Box>
+            );
+          })}
         </Stack>
       </Card>
 
