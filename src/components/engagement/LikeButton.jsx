@@ -25,6 +25,8 @@ export function LikeButton({ postId, size = 'medium', realtime = true }) {
 
     if (isAuthenticated && user) {
       isUserLikedPost(postId, user.uid).then(setIsLiked);
+    } else {
+      setIsLiked(false);
     }
 
     return unsubscribe;

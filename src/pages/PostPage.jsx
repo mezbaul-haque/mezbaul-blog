@@ -251,16 +251,16 @@ export function PostPage() {
         </Box>
 
         <Stack spacing={3} sx={{ mt: 4, maxWidth: 720 }}>
-          {post.sections.map((section) => (
-            <Box key={section.heading || section.paragraphs[0]}>
+          {post.sections.map((section, sectionIndex) => (
+            <Box key={`section-${sectionIndex}`}>
               {section.heading ? (
                 <Typography variant="h2" sx={{ mb: 1.5 }}>
                   {section.heading}
                 </Typography>
               ) : null}
               <Stack spacing={2}>
-                {section.paragraphs.map((paragraph) => (
-                  <Typography key={paragraph}>{paragraph}</Typography>
+                {section.paragraphs.map((paragraph, paragraphIndex) => (
+                  <Typography key={`paragraph-${paragraphIndex}`}>{paragraph}</Typography>
                 ))}
               </Stack>
             </Box>
