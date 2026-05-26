@@ -1,4 +1,6 @@
 import MenuIcon from '@mui/icons-material/Menu';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import BookmarkBorderIcon from '@mui/icons-material/BookmarkBorder';
 import {
   AppBar,
@@ -16,6 +18,7 @@ import {
 import { useEffect, useMemo, useState } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useThemeMode } from '../contexts/ThemeContext';
 import { navItems, siteDescription, siteTitle } from '../data';
 import { getAccountLabel } from '../services/accountRoles';
 
@@ -55,6 +58,7 @@ export function SiteLayout({ children }) {
   const [open, setOpen] = useState(false);
   const currentYear = new Date().getFullYear();
   const { isAuthenticated, isAdmin, canWritePosts, currentRole, userProfile, logOut } = useAuth();
+  const { mode, toggleTheme } = useThemeMode();
   const location = useLocation();
   const accountLabel = getAccountLabel(currentRole);
   const displayName = userProfile?.name || accountLabel;
@@ -121,6 +125,9 @@ export function SiteLayout({ children }) {
               spacing={1}
               sx={{ display: { xs: 'none', md: 'flex' }, alignItems: 'center' }}
             >
+              <IconButton onClick={toggleTheme} color="inherit" sx={{ mr: 1 }}>
+                {mode === 'light' ? <DarkModeIcon fontSize="small" /> : <LightModeIcon fontSize="small" />}
+              </IconButton>
               {isAuthenticated ? (
                 <>
                   <Typography variant="body2" color="text.secondary" sx={{ mr: 1 }}>

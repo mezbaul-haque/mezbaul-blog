@@ -1,9 +1,11 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
-import { Box, CircularProgress } from '@mui/material';
+import { Box, CircularProgress, ThemeProvider, CssBaseline } from '@mui/material';
 import { SiteLayout } from './components/SiteLayout';
 import { NotificationProvider } from './contexts/NotificationContext';
 import { NotificationListener } from './components/NotificationListener';
+import { ThemeProvider as ModeProvider, useThemeMode } from './contexts/ThemeContext';
+import { getTheme } from './theme';
 import { addStructuredDataScript, generateOrganizationSchema, generateWebsiteSchema } from './services/structuredData';
 
 const AboutPage = lazy(() => import('./pages/AboutPage').then((module) => ({ default: module.AboutPage })));
@@ -48,19 +50,21 @@ function RouteLoader() {
   );
 }
 
-export default function App() {
+function AppContent() {
   // Add structured data for SEO on mount
   useEffect(() => {
     // Add organization schema
     addStructuredDataScript(generateOrganizationSchema());
-    
+
     // Add website schema
     addStructuredDataScript(generateWebsiteSchema());
   }, []);
 
+  const { mode } = useThemeMode();
+
   return (
-    <NotificationProvider>
-      <NotificationListener />
+    <ThemeProvider theme={getTheme(mode)}>
+      <CssBaseline />
       <Suspense fallback={<RouteLoader />}>
         <Routes>
           {/* Public routes wrapped in SiteLayout */}
@@ -118,6 +122,17 @@ export default function App() {
           </Route>
         </Routes>
       </Suspense>
+    </ThemeProvider>
+  );
+}
+
+export default function App() {
+  return (
+    <NotificationProvider>
+      <NotificationListener />
+      <ModeProvider>
+        <AppContent />
+      </ModeProvider>
     </NotificationProvider>
   );
 }

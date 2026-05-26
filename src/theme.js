@@ -1,23 +1,23 @@
 import { createTheme } from '@mui/material/styles';
 
-export const theme = createTheme({
+export const getTheme = (mode) => createTheme({
   palette: {
-    mode: 'light',
+    mode,
     primary: {
-      main: '#2f5d50',
+      main: mode === 'light' ? '#2f5d50' : '#8bbda7',
     },
     secondary: {
-      main: '#6d7d86',
+      main: mode === 'light' ? '#6d7d86' : '#aebbc3',
     },
     background: {
-      default: '#f4f1ea',
-      paper: '#fffdf9',
+      default: mode === 'light' ? '#f4f1ea' : '#121212',
+      paper: mode === 'light' ? '#fffdf9' : '#1e1e1e',
     },
     text: {
-      primary: '#1a1a1a',
-      secondary: '#4a4a4a',
+      primary: mode === 'light' ? '#1a1a1a' : '#e0e0e0',
+      secondary: mode === 'light' ? '#4a4a4a' : '#b0b0b0',
     },
-    divider: '#d7dcd6',
+    divider: mode === 'light' ? '#d7dcd6' : '#333333',
   },
   shape: {
     borderRadius: 12,
@@ -57,14 +57,14 @@ export const theme = createTheme({
       fontSize: '0.78rem',
       letterSpacing: '0.12em',
       textTransform: 'uppercase',
-      color: '#5f6b72',
+      color: mode === 'light' ? '#5f6b72' : '#8a96a0',
     },
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundColor: '#f4f1ea',
+          backgroundColor: mode === 'light' ? '#f4f1ea' : '#121212',
         },
         a: {
           color: 'inherit',
@@ -74,9 +74,10 @@ export const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          border: '1px solid #d7dcd6',
+          border: '1px solid',
+          borderColor: mode === 'light' ? '#d7dcd6' : '#333333',
           boxShadow: 'none',
-          backgroundColor: '#fffdf9',
+          backgroundColor: mode === 'light' ? '#fffdf9' : '#1e1e1e',
         },
       },
     },

@@ -24,7 +24,11 @@ export function LikeButton({ postId, size = 'medium', realtime = true }) {
     }
 
     if (isAuthenticated && user) {
-      isUserLikedPost(postId, user.uid).then(setIsLiked);
+      isUserLikedPost(postId, user.uid).then((liked) => {
+        if (isAuthenticated && user) {
+          setIsLiked(liked);
+        }
+      });
     } else {
       setIsLiked(false);
     }
