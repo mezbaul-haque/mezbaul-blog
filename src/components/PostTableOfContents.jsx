@@ -1,5 +1,4 @@
-import { Box, Typography, List, ListItemButton, ListItemText, Divider } from '@mui/material';
-import { Link as RouterLink } from 'react-router-dom';
+import { Box, Typography, List, ListItemButton, ListItemText } from '@mui/material';
 
 export function PostTableOfContents({ sections }) {
   const headings = sections.filter((section) => section.heading);
@@ -22,8 +21,8 @@ export function PostTableOfContents({ sections }) {
         Table of Contents
       </Typography>
       <List dense disablePadding>
-        {headings.map((section, index) => {
-          const anchorId = section.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '');
+        {headings.map((section) => {
+          const anchorId = section.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
           return (
             <ListItemButton
               key={anchorId}

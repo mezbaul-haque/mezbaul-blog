@@ -256,7 +256,7 @@ export function PostPage() {
         <Stack spacing={3} sx={{ mt: 4, maxWidth: 720 }}>
           {post.sections.map((section, sectionIndex) => {
             const anchorId = section.heading
-              ? section.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^\w\-]/g, '')
+              ? section.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
               : null;
 
             return (

@@ -94,8 +94,8 @@ service cloud.firestore {
 
     // Drafts collection - private per writer, admins can review
     match /drafts/{draftId} {
-      allow read: if isActiveWriter()
-        && (resource.data.authorId == request.auth.uid || isAdmin());
+      allow read: if isAdmin()
+        || (isActiveWriter() && resource.data.authorId == request.auth.uid);
       allow create: if isActiveWriter()
         && request.resource.data.authorId == request.auth.uid
         && request.resource.data.status == 'draft';
