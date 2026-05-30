@@ -38,11 +38,11 @@ function FeaturedPostSlider({ posts }) {
         maxWidth: 1120,
         mx: 'auto',
         overflow: 'hidden',
-        py: 0.5,
-        maskImage: {
-          xs: 'none',
-          md: 'linear-gradient(90deg, transparent, #000 3%, #000 97%, transparent)',
-        },
+        py: 2,
+        borderTop: '1px solid',
+        borderBottom: '1px solid',
+        borderColor: 'divider',
+        bgcolor: 'background.default',
       }}
     >
       <Box
@@ -50,6 +50,7 @@ function FeaturedPostSlider({ posts }) {
           display: 'flex',
           width: 'max-content',
           animation: `${featuredSlide} 34s linear infinite`,
+          pl: 0.25,
           '&:hover': {
             animationPlayState: 'paused',
           },
