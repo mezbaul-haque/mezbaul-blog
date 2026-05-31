@@ -9,11 +9,19 @@ export function WritersPage() {
   const { authors } = usePublicContent();
 
   useEffect(() => {
-    addStructuredDataScript(generateBreadcrumbSchema([
+    const cleanupBreadcrumbs = addStructuredDataScript(generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
       { name: 'Writers', url: '/writers' },
-    ]));
-    addStructuredDataScript(generateWritersCollectionSchema(authors));
+    ]), 'writers-breadcrumbs');
+    const cleanupWriters = addStructuredDataScript(
+      generateWritersCollectionSchema(authors),
+      'writers-collection',
+    );
+
+    return () => {
+      cleanupBreadcrumbs();
+      cleanupWriters();
+    };
   }, [authors]);
 
   return (

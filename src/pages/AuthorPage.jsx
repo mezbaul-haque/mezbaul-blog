@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Box, Grid, Stack, Typography } from '@mui/material';
 import { useParams, Navigate } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
@@ -5,17 +6,44 @@ import { PostCard } from '../components/PostCard';
 import { SectionHeading } from '../components/SectionHeading';
 import { AuthorProfile } from '../components/AuthorProfile';
 import { usePublicContent } from '../services/content';
+import { addStructuredDataScript, generateAuthorSchema, generateBreadcrumbSchema } from '../services/structuredData';
 
 export function AuthorPage() {
   const { authorId } = useParams();
   const { authorsById, posts } = usePublicContent();
   const author = authorsById[authorId];
+  const authorPosts = author ? posts.filter((post) => post.authorId === author.id) : [];
+
+  useEffect(() => {
+    if (!author) return undefined;
+
+    const cleanupBreadcrumbs = addStructuredDataScript(generateBreadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Writers', url: '/writers' },
+      { name: author.name, url: `/writers/${author.id}` },
+    ]), 'author-breadcrumbs');
+    const cleanupAuthor = addStructuredDataScript(
+      generateAuthorSchema({
+        name: author.name,
+        title: author.title,
+        url: `/writers/${author.id}`,
+        image: author.avatar,
+        description: author.bio,
+        website: author.website,
+        twitter: author.twitter,
+      }),
+      'author-profile',
+    );
+
+    return () => {
+      cleanupBreadcrumbs();
+      cleanupAuthor();
+    };
+  }, [author]);
 
   if (!author) {
     return <Navigate to="/writers" replace />;
   }
-
-  const authorPosts = posts.filter((post) => post.authorId === author.id);
 
   return (
     <Stack spacing={5}>

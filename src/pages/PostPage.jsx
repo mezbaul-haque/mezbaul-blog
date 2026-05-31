@@ -23,7 +23,7 @@ import { LikeButton } from '../components/engagement/LikeButton';
 import { Comments } from '../components/engagement/Comments';
 import { updateOpenGraphMeta, setCanonicalUrl } from '../services/seo';
 import { generatePostMetadata } from '../services/metaDataGenerator';
-import { addStructuredDataScript, generateArticleSchema } from '../services/structuredData';
+import { addStructuredDataScript, generateArticleSchema, generateBreadcrumbSchema } from '../services/structuredData';
 import { trackPostView } from '../services/analytics';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -50,29 +50,52 @@ export function PostPage() {
   const { user } = useAuth();
   const postIndex = posts.findIndex((item) => item.slug === slug);
   const post = postIndex >= 0 ? posts[postIndex] : undefined;
+  const postAuthor = post ? authorsById[post.authorId] : null;
 
   // Update Open Graph meta tags for social sharing and SEO
   useEffect(() => {
-    if (post) {
-      const metadata = generatePostMetadata(post.slug);
-      if (metadata) {
-        updateOpenGraphMeta(metadata);
-        setCanonicalUrl(metadata.url);
-        
-        // Add article structured data
-        addStructuredDataScript(generateArticleSchema({
-          title: metadata.title,
-          description: metadata.description,
-          image: metadata.image,
-          author: metadata.author,
-          publishDate: metadata.date,
-          modifiedDate: metadata.date,
-          url: metadata.url,
-          category: metadata.category,
-        }));
-      }
+    if (!post) {
+      return undefined;
     }
-  }, [post]);
+
+    const baseUrl = window.location.origin;
+    const staticMetadata = generatePostMetadata(post.slug);
+    const metadata = staticMetadata || {
+      title: post.title,
+      description: post.intro || post.summary,
+      url: `${baseUrl}/posts/${post.slug}`,
+      image: post.heroImage
+        ? (post.heroImage.startsWith('http') ? post.heroImage : `${baseUrl}${post.heroImage}`)
+        : undefined,
+      author: postAuthor?.name || post.authorName || 'Mezbaul',
+      date: post.publishedAt || post.date,
+      category: post.category,
+    };
+
+    updateOpenGraphMeta(metadata);
+    setCanonicalUrl(metadata.url);
+
+    const cleanupArticle = addStructuredDataScript(generateArticleSchema({
+      title: metadata.title,
+      description: metadata.description,
+      image: metadata.image,
+      author: metadata.author,
+      publishDate: metadata.date,
+      modifiedDate: metadata.date,
+      url: metadata.url,
+      category: metadata.category,
+    }), 'post-article');
+    const cleanupBreadcrumbs = addStructuredDataScript(generateBreadcrumbSchema([
+      { name: 'Home', url: '/' },
+      { name: 'Archive', url: '/archive' },
+      { name: post.title, url: `/posts/${post.slug}` },
+    ]), 'post-breadcrumbs');
+
+    return () => {
+      cleanupArticle();
+      cleanupBreadcrumbs();
+    };
+  }, [post, postAuthor]);
 
   // Track post view for analytics
   useEffect(() => {
@@ -95,7 +118,7 @@ export function PostPage() {
     return <Navigate to="/" replace />;
   }
 
-  const author = authorsById[post.authorId] || (
+  const author = postAuthor || (
     post.authorName
       ? {
           id: post.authorId,

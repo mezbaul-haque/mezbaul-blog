@@ -3,15 +3,26 @@ import { Box, Card, CardContent, Grid, Stack, Typography } from '@mui/material';
 import { PageHeader } from '../components/PageHeader';
 import { SectionHeading } from '../components/SectionHeading';
 import { aboutPage } from '../data';
-import { addStructuredDataScript, generateBreadcrumbSchema, generateOrganizationSchema } from '../services/structuredData';
+import { addStructuredDataScript, generateAboutPageSchema, generateBreadcrumbSchema } from '../services/structuredData';
 
 export function AboutPage() {
   useEffect(() => {
-    addStructuredDataScript(generateBreadcrumbSchema([
+    const cleanupBreadcrumbs = addStructuredDataScript(generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
       { name: 'About', url: '/about' },
-    ]));
-    addStructuredDataScript(generateOrganizationSchema());
+    ]), 'about-breadcrumbs');
+    const cleanupAboutPage = addStructuredDataScript(
+      generateAboutPageSchema({
+        title: aboutPage.title,
+        description: aboutPage.intro,
+      }),
+      'about-page',
+    );
+
+    return () => {
+      cleanupBreadcrumbs();
+      cleanupAboutPage();
+    };
   }, []);
 
   return (

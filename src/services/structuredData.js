@@ -5,21 +5,43 @@
 
 const BASE_URL = typeof window !== 'undefined' ? window.location.origin : 'https://blog.mezbaul.bd';
 
+function absoluteUrl(path = '') {
+  if (!path) return BASE_URL;
+  if (path.startsWith('http')) return path;
+  return `${BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 /**
  * Add a structured data script to the page
  */
-export function addStructuredDataScript(data) {
-  // Remove existing structured data script if present
-  const existingScript = document.querySelector('script[type="application/ld+json"]');
+export function addStructuredDataScript(data, id = 'page') {
+  const existingScript = document.querySelector(
+    `script[type="application/ld+json"][data-structured-data-id="${id}"]`,
+  );
   if (existingScript) {
     existingScript.remove();
   }
 
-  // Create and add new script
   const script = document.createElement('script');
   script.type = 'application/ld+json';
+  script.dataset.structuredDataId = id;
   script.innerHTML = JSON.stringify(data);
   document.head.appendChild(script);
+
+  return () => removeStructuredDataScript(id);
+}
+
+/**
+ * Remove a structured data script from the page
+ */
+export function removeStructuredDataScript(id) {
+  const script = document.querySelector(
+    `script[type="application/ld+json"][data-structured-data-id="${id}"]`,
+  );
+
+  if (script) {
+    script.remove();
+  }
 }
 
 /**
@@ -40,12 +62,12 @@ export function generateArticleSchema({
     '@type': 'BlogPosting',
     headline: title,
     description: description,
-    image: {
+    image: image ? {
       '@type': 'ImageObject',
-      url: image,
+      url: absoluteUrl(image),
       width: 1200,
       height: 630,
-    },
+    } : undefined,
     author: {
       '@type': 'Person',
       name: author || 'Mezbaul',
@@ -119,7 +141,7 @@ export function generateBreadcrumbSchema(items) {
       '@type': 'ListItem',
       position: index + 1,
       name: item.name,
-      item: `${BASE_URL}${item.url}`,
+      item: absoluteUrl(item.url),
     })),
   };
 }
@@ -127,18 +149,35 @@ export function generateBreadcrumbSchema(items) {
 /**
  * Generate author profile schema
  */
-export function generateAuthorSchema({ name, url, image, description }) {
+export function generateAuthorSchema({ name, url, image, description, title, website, twitter }) {
+  const sameAs = [website, twitter].filter(Boolean);
+
   return {
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: name,
-    url: url || BASE_URL,
-    image: image,
+    url: absoluteUrl(url),
+    image: image ? absoluteUrl(image) : undefined,
+    jobTitle: title,
     description: description,
-    sameAs: [
-      'https://twitter.com/mezbaul',
-      'https://linkedin.com/in/mezbaul',
-    ],
+    sameAs: sameAs.length ? sameAs : undefined,
+  };
+}
+
+/**
+ * Generate schema for the about page
+ */
+export function generateAboutPageSchema({ title, description }) {
+  const organization = generateOrganizationSchema();
+  delete organization['@context'];
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'AboutPage',
+    name: title || 'About Eubello',
+    description,
+    url: `${BASE_URL}/about`,
+    about: organization,
   };
 }
 
@@ -151,13 +190,17 @@ export function generateBlogCollectionSchema(posts) {
     '@type': 'CollectionPage',
     name: 'Blog Archive',
     description: 'All blog posts from Eubello',
+    url: `${BASE_URL}/archive`,
     hasPart: posts.map(post => ({
       '@type': 'BlogPosting',
       headline: post.title,
       url: `${BASE_URL}/posts/${post.slug}`,
-      image: post.heroImage?.startsWith('http')
-        ? post.heroImage
-        : `${BASE_URL}${post.heroImage}`,
+      image: post.heroImage ? absoluteUrl(post.heroImage) : undefined,
+      author: post.authorName ? {
+        '@type': 'Person',
+        name: post.authorName,
+      } : undefined,
+      articleSection: post.category,
     })),
   };
 }
@@ -178,8 +221,12 @@ export function generateWritersCollectionSchema(authors) {
         '@type': 'Person',
         name: author.name,
         url: `${BASE_URL}/writers/${author.id}`,
-        image: author.image ? (author.image.startsWith('http') ? author.image : `${BASE_URL}${author.image}`) : undefined,
+        image: author.avatar ? absoluteUrl(author.avatar) : undefined,
+        jobTitle: author.title,
         description: author.bio,
+        sameAs: [author.website, author.twitter].filter(Boolean).length
+          ? [author.website, author.twitter].filter(Boolean)
+          : undefined,
       },
     })),
   };

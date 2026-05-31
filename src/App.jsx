@@ -53,11 +53,13 @@ function RouteLoader() {
 function AppContent() {
   // Add structured data for SEO on mount
   useEffect(() => {
-    // Add organization schema
-    addStructuredDataScript(generateOrganizationSchema());
+    const cleanupOrganization = addStructuredDataScript(generateOrganizationSchema(), 'site-organization');
+    const cleanupWebsite = addStructuredDataScript(generateWebsiteSchema(), 'site-website');
 
-    // Add website schema
-    addStructuredDataScript(generateWebsiteSchema());
+    return () => {
+      cleanupOrganization();
+      cleanupWebsite();
+    };
   }, []);
 
   const { mode } = useThemeMode();

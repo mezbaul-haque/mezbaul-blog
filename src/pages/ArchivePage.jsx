@@ -22,11 +22,19 @@ export function ArchivePage() {
   const { posts } = usePublicContent();
 
   useEffect(() => {
-    addStructuredDataScript(generateBreadcrumbSchema([
+    const cleanupBreadcrumbs = addStructuredDataScript(generateBreadcrumbSchema([
       { name: 'Home', url: '/' },
       { name: 'Archive', url: '/archive' },
-    ]));
-    addStructuredDataScript(generateBlogCollectionSchema(posts));
+    ]), 'archive-breadcrumbs');
+    const cleanupCollection = addStructuredDataScript(
+      generateBlogCollectionSchema(posts),
+      'archive-collection',
+    );
+
+    return () => {
+      cleanupBreadcrumbs();
+      cleanupCollection();
+    };
   }, [posts]);
 
   const categories = useMemo(
