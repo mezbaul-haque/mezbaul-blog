@@ -6,7 +6,7 @@ admin.initializeApp();
 exports.incrementPostViewCount = onDocumentCreated("views/{viewId}", async (event) => {
   const snapshot = event.data;
   if (!snapshot) {
-    console.log("No data associated with the event");
+    console.warn("No data associated with the event");
     return;
   }
 
@@ -14,7 +14,7 @@ exports.incrementPostViewCount = onDocumentCreated("views/{viewId}", async (even
   const postSlug = data.postSlug;
 
   if (!postSlug) {
-    console.log("No postSlug found in view document");
+    console.warn("No postSlug found in view document");
     return;
   }
 
@@ -25,7 +25,6 @@ exports.incrementPostViewCount = onDocumentCreated("views/{viewId}", async (even
       viewCount: admin.firestore.FieldValue.increment(1),
       lastViewedAt: admin.firestore.Timestamp.now(),
     }, { merge: true });
-    console.log(`Successfully incremented view count for post: ${postSlug}`);
   } catch (error) {
     console.error(`Error incrementing view count for ${postSlug}:`, error);
   }

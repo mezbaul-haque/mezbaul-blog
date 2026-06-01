@@ -100,7 +100,6 @@ export function PostPage() {
   // Track post view for analytics
   useEffect(() => {
     if (post?.slug) {
-      console.log('[PostPage] Tracking view for post:', post.slug, 'User:', user?.uid || 'anonymous');
       trackPostView(post.slug, user?.uid || null);
     }
   }, [post?.slug, user?.uid]);

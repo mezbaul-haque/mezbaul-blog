@@ -18,13 +18,10 @@ export function PopularPosts({ limit = 3 }) {
       try {
         setIsLoading(true);
         setError(null);
-        console.log('[PopularPosts] Fetching top', limit, 'posts');
         
         const stats = await getTopPostsByViews(limit);
-        console.log('[PopularPosts] Received stats:', stats);
         
         if (stats.length === 0) {
-          console.warn('[PopularPosts] No posts with stats, showing recent posts as fallback');
           // Fallback: show recent posts if no view data yet
           const recentPosts = allPosts.slice(0, limit).map(post => ({
             ...post,
@@ -42,7 +39,6 @@ export function PopularPosts({ limit = 3 }) {
           })
           .filter(Boolean);
 
-        console.log('[PopularPosts] Enriched posts:', enrichedPosts.length);
         setTopPosts(
           enrichedPosts.length > 0
             ? enrichedPosts
@@ -72,7 +68,7 @@ export function PopularPosts({ limit = 3 }) {
   if (!topPosts || topPosts.length === 0) {
     return (
       <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
-        {error ? 'Unable to load popular posts. Check console for errors.' : 'No posts available.'}
+        {error ? 'Unable to load popular posts.' : 'No posts available.'}
       </Typography>
     );
   }

@@ -52,15 +52,12 @@ export async function trackPostView(postSlug, userId = null) {
 
   // Prevent duplicate tracking in this session
   if (viewSessions.has(viewKey)) {
-    console.debug('[Analytics] Duplicate view ignored:', postSlug);
     return;
   }
 
   viewSessions.set(viewKey, true);
 
   try {
-    console.log('[Analytics] Tracking view for:', postSlug);
-    
     // Record the view
     const viewRef = doc(
       db,
@@ -75,8 +72,6 @@ export async function trackPostView(postSlug, userId = null) {
       viewedAt: serverTimestamp(),
       userAgent: navigator.userAgent,
     });
-
-    console.log('[Analytics] View recorded successfully');
   } catch (error) {
     console.error('[Analytics] Error tracking post view:', error);
   }
@@ -105,7 +100,6 @@ export async function getPostViewCount(postSlug) {
     const viewsQuery = query(viewsRef, where('postSlug', '==', postSlug));
     const snapshot = await getDocs(viewsQuery);
     const count = Math.max(statsCount, snapshot.size);
-    console.log('[Analytics] View count for', postSlug, ':', count);
     return count;
   } catch (error) {
     console.error('[Analytics] Error getting post view count:', error);
@@ -140,8 +134,7 @@ export async function getTopPostsByViews(topCount = 5) {
         lastViewedAt: data.lastViewedAt,
       };
     });
-    
-    console.log('[Analytics] Top posts:', results);
+
     return results;
   } catch (error) {
     console.error('[Analytics] Error fetching top posts:', error);

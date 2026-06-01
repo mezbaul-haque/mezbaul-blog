@@ -72,8 +72,6 @@ export function generateOrganizationStructuredData() {
  * Update Open Graph meta tags for social sharing
  */
 export function updateOpenGraphMeta({ title, description, url, image }) {
-  console.log('Updating OG meta tags:', { title, description, url, image });
-
   // Update og:title
   let ogTitle = document.querySelector('meta[property="og:title"]');
   if (!ogTitle) {
@@ -110,7 +108,6 @@ export function updateOpenGraphMeta({ title, description, url, image }) {
   }
   if (image) {
     ogImage.setAttribute('content', image);
-    console.log('OG image set to:', image);
   }
 
   // Ensure og:type is set
