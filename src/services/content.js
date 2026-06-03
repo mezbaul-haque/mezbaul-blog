@@ -22,16 +22,21 @@ function formatDisplayDate(value, fallback = 'Draft') {
   });
 }
 
+function ensureArray(value) {
+  return Array.isArray(value) ? value : [];
+}
+
 function estimateReadTime(post) {
   if (post.readTime) return post.readTime;
 
+  const sections = ensureArray(post.sections);
   const text = [
     post.title,
     post.summary,
     post.intro,
-    ...(post.sections || []).flatMap((section) => [
+    ...sections.flatMap((section) => [
       section.heading,
-      ...(section.paragraphs || []),
+      ...ensureArray(section.paragraphs),
     ]),
   ]
     .filter(Boolean)
@@ -70,8 +75,8 @@ function normalizePost(post) {
     heroImage: post.heroImage || post.thumbImage || '',
     thumbImage: post.thumbImage || post.heroImage || '',
     heroAlt: post.heroAlt || post.title || 'Post image',
-    sections: post.sections || [],
-    related: post.related || [],
+    sections: ensureArray(post.sections),
+    related: ensureArray(post.related),
     date: post.date || formatDisplayDate(post.publishedAt, 'Unpublished'),
     readTime: estimateReadTime(post),
     status: post.status || 'published',

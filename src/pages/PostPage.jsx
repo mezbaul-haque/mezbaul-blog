@@ -134,6 +134,8 @@ export function PostPage() {
     .slice(0, 2)
     .join('')
     .toUpperCase();
+  const sections = Array.isArray(post.sections) ? post.sections : [];
+  const relatedPosts = Array.isArray(post.related) ? post.related : [];
   const previousPost = postIndex > 0 ? posts[postIndex - 1] : undefined;
   const nextPost = postIndex < posts.length - 1 ? posts[postIndex + 1] : undefined;
 
@@ -251,35 +253,40 @@ export function PostPage() {
           </Stack>
         </Box>
 
-        <Box sx={{ mt: 3 }}>
-          <Box
-            component="img"
-            src={post.heroImage}
-            alt={post.heroAlt}
-            loading="lazy"
-            sx={{
-              width: '100%',
-              borderRadius: 2,
-              border: '1px solid',
-              borderColor: 'divider',
-              display: 'block',
-            }}
-          />
-          <Typography color="text.secondary" variant="body2" sx={{ mt: 1, fontSize: '0.82rem' }}>
-            Photo:{' '}
-            <MuiLink href={post.photoCreditUrl} target="_blank" rel="noreferrer">
-              {post.photoCreditLabel}
-            </MuiLink>
-          </Typography>
-        </Box>
+        {post.heroImage ? (
+          <Box sx={{ mt: 3 }}>
+            <Box
+              component="img"
+              src={post.heroImage}
+              alt={post.heroAlt}
+              loading="lazy"
+              sx={{
+                width: '100%',
+                borderRadius: 2,
+                border: '1px solid',
+                borderColor: 'divider',
+                display: 'block',
+              }}
+            />
+            {post.photoCreditLabel && post.photoCreditUrl ? (
+              <Typography color="text.secondary" variant="body2" sx={{ mt: 1, fontSize: '0.82rem' }}>
+                Photo:{' '}
+                <MuiLink href={post.photoCreditUrl} target="_blank" rel="noreferrer">
+                  {post.photoCreditLabel}
+                </MuiLink>
+              </Typography>
+            ) : null}
+          </Box>
+        ) : null}
 
-        <PostTableOfContents sections={post.sections} />
+        <PostTableOfContents sections={sections} />
 
         <Stack spacing={3} sx={{ mt: 4, maxWidth: 720 }}>
-          {post.sections.map((section, sectionIndex) => {
+          {sections.map((section, sectionIndex) => {
             const anchorId = section.heading
               ? section.heading.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '')
               : null;
+            const paragraphs = Array.isArray(section.paragraphs) ? section.paragraphs : [];
 
             return (
               <Box key={`section-${sectionIndex}`}>
@@ -289,7 +296,7 @@ export function PostPage() {
                   </Typography>
                 ) : null}
                 <Stack spacing={2}>
-                  {section.paragraphs.map((paragraph, paragraphIndex) => (
+                  {paragraphs.map((paragraph, paragraphIndex) => (
                     <Typography key={`paragraph-${paragraphIndex}`}>{paragraph}</Typography>
                   ))}
                 </Stack>
@@ -310,7 +317,7 @@ export function PostPage() {
       <Box>
         <SectionHeading eyebrow="More writing" title="Related posts" />
         <Grid container spacing={2}>
-          {post.related.map((item) => {
+          {relatedPosts.map((item) => {
             const relatedPost = postsBySlug[item.slug];
             if (!relatedPost) return null;
 

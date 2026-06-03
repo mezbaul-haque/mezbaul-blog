@@ -1,7 +1,7 @@
 import { Box, Typography, List, ListItemButton, ListItemText } from '@mui/material';
 
-export function PostTableOfContents({ sections }) {
-  const headings = sections.filter((section) => section.heading);
+export function PostTableOfContents({ sections = [] }) {
+  const headings = Array.isArray(sections) ? sections.filter((section) => section.heading) : [];
 
   if (headings.length === 0) return null;
 
