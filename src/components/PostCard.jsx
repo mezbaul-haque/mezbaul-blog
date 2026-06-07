@@ -12,7 +12,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { PostMeta } from './PostMeta';
 import { LikeButton, ReadLaterButton, PostStats } from './engagement';
 
-export function PostCard({ post, horizontal = false, realtime = true }) {
+export function PostCard({ post, horizontal = false, realtime = true, compact = false }) {
   return (
     <Card
       sx={{
@@ -66,16 +66,16 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
         />
         <CardContent
           sx={{
-            p: 3,
+            p: compact ? 2 : 3,
             display: 'flex',
             flexDirection: 'column',
             justifyContent: 'center',
-            gap: 2,
+            gap: compact ? 1.5 : 2,
             minWidth: 0,
           }}
         >
           <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1.5 }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: compact ? 1 : 1.5 }}>
               <PostMeta date={post.date} readTime={post.readTime} compact={true} />
               <Chip
                 label={post.category}
@@ -95,18 +95,28 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
                 }}
               />
             </Stack>
-            <Typography variant="h3" gutterBottom sx={{ lineHeight: 1.2, mb: 1, fontWeight: 600 }}>
+            <Typography
+              variant="h3"
+              gutterBottom
+              sx={{
+                lineHeight: 1.2,
+                mb: 1,
+                fontWeight: 600,
+                fontSize: compact ? '1.15rem' : undefined,
+              }}
+            >
               {post.title}
             </Typography>
             <Typography
               color="text.secondary"
               sx={{
-                mb: 3,
+                mb: compact ? 2 : 3,
                 display: '-webkit-box',
                 overflow: 'hidden',
                 WebkitBoxOrient: 'vertical',
                 WebkitLineClamp: 2,
-                lineHeight: 1.6,
+                lineHeight: compact ? 1.55 : 1.6,
+                fontSize: compact ? '0.94rem' : undefined,
               }}
             >
               {post.summary}
@@ -114,7 +124,7 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
             <Box
               sx={{
                 mt: 'auto',
-                pt: 2,
+                pt: compact ? 1.5 : 2,
                 borderTop: '1px solid',
                 borderColor: 'divider',
                 display: 'flex',
@@ -122,7 +132,7 @@ export function PostCard({ post, horizontal = false, realtime = true }) {
                 alignItems: 'center'
               }}
             >
-              <Stack direction="row" alignItems="center" spacing={2}>
+              <Stack direction="row" alignItems="center" spacing={compact ? 1 : 2}>
                 <LikeButton postId={post.slug} size="small" realtime={realtime} />
                 <PostStats postId={post.slug} realtime={realtime} />
               </Stack>

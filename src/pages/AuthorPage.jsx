@@ -1,5 +1,12 @@
 import { useEffect } from 'react';
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import {
+  Box,
+  Card,
+  CardContent,
+  Grid,
+  Stack,
+  Typography,
+} from '@mui/material';
 import { useParams, Navigate } from 'react-router-dom';
 import { PageHeader } from '../components/PageHeader';
 import { PostCard } from '../components/PostCard';
@@ -137,14 +144,31 @@ export function AuthorPage() {
       </Box>
 
       <Box>
-        <SectionHeading eyebrow="Writing" title="Posts by this writer" />
-        <Grid container spacing={2}>
-          {authorPosts.map((post) => (
-            <Grid item xs={12} md={6} key={post.slug}>
-              <PostCard post={post} />
-            </Grid>
-          ))}
-        </Grid>
+        <SectionHeading
+          eyebrow="Writing"
+          title="Posts by this writer"
+          copy={`Start with ${author.name}'s newest piece, then keep moving through their recent work.`}
+        />
+        {authorPosts.length > 0 ? (
+          <Grid container spacing={2}>
+            {authorPosts.map((post) => (
+              <Grid item xs={12} sm={6} md={3} key={post.slug}>
+                <PostCard post={post} compact />
+              </Grid>
+            ))}
+          </Grid>
+        ) : (
+          <Card>
+            <CardContent sx={{ p: { xs: 3, md: 4 } }}>
+              <Typography variant="h3" gutterBottom>
+                No posts from this writer yet.
+              </Typography>
+              <Typography color="text.secondary">
+                Their published writing will appear here when it is ready.
+              </Typography>
+            </CardContent>
+          </Card>
+        )}
       </Box>
     </Stack>
   );
